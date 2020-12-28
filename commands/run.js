@@ -12,11 +12,13 @@ module.exports = function (args) {
             //validate the config options
             validate(lt_config).then(function () {
                 //archive the files(config, spec)
-                archive(lt_config).then(function (file_name) {
-                    console.log("file archived",file_name)
+                archive.archive_files(lt_config).then(function (file_name) {
+                    console.log("file archived", file_name)
                     //upload files to Lambdatest
-                    uploader(lt_config,file_name).then(function (response) {
+                    uploader(lt_config, file_name).then(function (response) {
                         console.log("Uploaded", response)
+                        //Synchronously delete the created Zip after Upload
+                        archive.delete_archive(file_name)
                     }).catch(function (error) {
                         console.log(error)
                     })

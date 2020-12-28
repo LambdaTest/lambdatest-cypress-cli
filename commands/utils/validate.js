@@ -8,7 +8,7 @@ module.exports=validate_config=function(lt_config){
             reject("Error!!!  Incompatible Config Auth not present")
         }
 
-        if (lt_config["lambdatest_auth"]["username"]=="<Your LambdaTest username" || lt_config["lambdatest_auth"]["access_key"]=="<Your LambdaTest access key>" ){
+        if (lt_config["lambdatest_auth"]["username"]=="<Your LambdaTest username>" || lt_config["lambdatest_auth"]["access_key"]=="<Your LambdaTest access key>" ){
             reject("Error!!!  Auth details not correct")
         }
         //Validate spec file

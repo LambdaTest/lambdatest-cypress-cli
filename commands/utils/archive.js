@@ -3,7 +3,15 @@ const archiver = require('archiver');
 const path = require('path');
 const { SSL_OP_EPHEMERAL_RSA } = require('constants');
 
+function delete_archive(file_name) {
+        try {
+            fs.unlinkSync(file_name)
+            console.log("file removed")
+        } catch (err) {
+            console.error(err)
+        }
 
+}
 function archive_files(lt_config) {
     return new Promise(function (resolve, reject) {
         if (!'specs' in lt_config) {
@@ -58,12 +66,15 @@ function archive_files(lt_config) {
         lt_config["run_settings"]["cypress_config_file"]
         archive.glob(path.basename(lt_config["run_settings"]["cypress_config_file"]), { cwd: path.dirname(lt_config["run_settings"]["cypress_config_file"]) })
 
-        
+
         archive.finalize();
-        
+
 
 
     })
 };
 
-module.exports = archive_files
+module.exports = {
+    archive_files: archive_files,
+    delete_archive: delete_archive
+}

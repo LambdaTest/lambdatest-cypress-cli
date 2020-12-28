@@ -16,13 +16,13 @@ module.exports = uploadFile =function(lt_config,file_name){
         
         console.log("uploader function")
         let options = {
-            url: "https://teopxx49w8.execute-api.us-east-1.amazonaws.com/dev/hit",
+            url: "http://localhost:8080/cy/run",
             formData: {
-                file: fs.createReadStream(file_name),
+                "test.zip": fs.createReadStream(file_name),
                 filetype: 'zip',
-                filename: file_name,
-                username: lt_config["lambdatest_auth"]["username"],
-                access_key: lt_config["lambdatest_auth"]["access_key"],
+                filename: "test.zip",
+                Username: lt_config["lambdatest_auth"]["username"],
+                token: lt_config["lambdatest_auth"]["access_key"],
             }
         }
 
@@ -34,7 +34,7 @@ module.exports = uploadFile =function(lt_config,file_name){
             try {
                 responseData = JSON.parse(body);
             } catch (e) {
-                console.log(body)
+                console.log("Error in JSON response",body)
                 responseData = null
             }
             if (resp.statusCode != 200) {
