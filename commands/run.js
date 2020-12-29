@@ -19,10 +19,11 @@ module.exports = function (args) {
                         archive.delete_archive(file_name)
                     }).catch(function (error) {
                         console.log(error)
+                        archive.delete_archive(file_name)
                     })
                 })
             }).catch(function (msg) {
-                console.log(msg)
+                console.log(msg)   
             })
         }).catch(function (err) {
             console.log(err)

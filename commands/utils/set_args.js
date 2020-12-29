@@ -1,4 +1,6 @@
+const constants = require("./constants.js")
 const fs = require("fs")
+const path =require('path')
 function sync_args_from_cmd(args) {
     return new Promise(function (resolve, reject) {
         let rawdata = fs.readFileSync(args["lambdatest-config-file"]);
@@ -43,11 +45,30 @@ function sync_args_from_cmd(args) {
             lt_config["run_settings"]["parellels"] = args["parellels"]
         }
 
+        if ((args["specs"] == undefined || args["specs"].length == 0) && fs.existsSync(constants.DEFAULT_TEST_PATH)) {
+            args["specs"] = []
+            read_files(constants.DEFAULT_TEST_PATH).then(function (files) {
+                lt_config["run_settings"]["specs"] = files
+                console.log("resolved",lt_config["run_settings"]["specs"])
+                resolve(lt_config)
+            })
+        } else {
+            resolve(lt_config)
+        }
 
-        resolve(lt_config)
     })
 }
 
+function read_files(dir_path) {
+    return new Promise(function (resolve, reject) {
+        files = []
+        fs.readdirSync(dir_path).forEach(file => {
+            console.log(file);
+            files.push(path.join(dir_path,file))
+        });
+        resolve(files)
+    })
+}
 
 module.exports = {
     sync_args_from_cmd: sync_args_from_cmd
