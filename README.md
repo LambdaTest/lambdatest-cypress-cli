@@ -26,5 +26,7 @@ lambdatest-cypress run --lcf "lambdatest-config.json"
 ```shell
 lambdatest-cypress run --specs "/integration/examples/*.spec.js" --ccf "cypress.json"  --lcf "lambdatest-config.json" -p 1
 ```
-
-
+Run following command to get more configuration parameters
+```shell
+lambdatest-cypress run --help
+```
