@@ -4,8 +4,6 @@ const uploader = require("./utils/uploader.js")
 const validate = require("./utils/validate")
 
 module.exports = function (args) {
-    console.log("inside run function")
-
     if ("lambdatest-config-file" in args) {
         //sync arguments between lt config and command line
         set_args.sync_args_from_cmd(args).then(function (lt_config) {
@@ -22,7 +20,6 @@ module.exports = function (args) {
                     }).catch(function (error) {
                         console.log(error)
                     })
-
                 })
             }).catch(function (msg) {
                 console.log(msg)

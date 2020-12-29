@@ -1,6 +1,7 @@
 const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
+const constants= require('./constants.js')
 const { SSL_OP_EPHEMERAL_RSA } = require('constants');
 
 function delete_archive(file_name) {
@@ -60,7 +61,7 @@ function archive_files(lt_config) {
         }
 
         let lt_config_string = JSON.stringify(lt_config, null, 4);
-        archive.append(lt_config_string, { name: 'lambdatest-config.json' });
+        archive.append(lt_config_string, { name: constants.LT_CONFIG_NAME });
 
         let cypressFolderPath = path.dirname(lt_config['run_settings']['cypress_config_file']);
         lt_config["run_settings"]["cypress_config_file"]

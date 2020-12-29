@@ -4,16 +4,9 @@ const { init } = require('./commands/init');
 
 const argv = require('yargs')
   .usage('Usage: $0 <command> [options]')
-  .command('init', 'create an intial config file', function (yargs) {
-    return yargs.option('p', {
-      alias: 'path',
-      describe: 'path of the file',
-      type: 'string'
-    })
-  },
+  .command('init', 'create an intial config file', {},
     function (argv) {
       require("./commands/init")(argv);
-      
     }
   ).command('run', 'run tests on lambdatest', function (yargs) {
     return yargs.option('ccf', {
@@ -49,7 +42,7 @@ const argv = require('yargs')
     function (argv) {
       console.log("In run command")
       require("./commands/run")(argv);
-      
+
     }
   )
   .help()
