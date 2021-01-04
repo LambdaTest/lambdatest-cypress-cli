@@ -1,21 +1,25 @@
 {
   "name": "lamdatest-cypress",
   "version": "1.0.0",
-  "description": "A cypress wrapper for lambdatest",
+  "description": "A cypress cli for LambdaTest",
   "bin": {
     "lambdatest-cypress": "./index.js"
   },
   "dependencies": {
     "archiver": "^5.1.0",
-    "aws-sdk": "^2.799.0",
-    "globby": "^11.0.1",
     "request": "^2.88.2",
     "sleep": "^6.3.0",
-    "yargs": "^16.1.0",
-    "zip-to-s3": "^0.1.0"
+    "yargs": "^16.1.0"
   },
   "devDependencies": {},
   "author": "",
   "license": "ISC",
-  "preferGlobal": true
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com:LambdaTest/lambdatest-cypress-cli.git"
+  },
+  "engines": {
+    "node": ">=0.6.0"
+  } 
 }

@@ -1,15 +1,10 @@
 const fs = require('fs');
-const AWS = require('aws-sdk');
 const stream = require("stream");
 const { sleep } = require('sleep');
 const request = require("request")
 const constants = require("./constants.js")
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
 
-//const fileName = 'test.zip';
+
 function login(lt_config) {
     return new Promise(function (resolve, reject) {
 
@@ -51,10 +46,9 @@ function login(lt_config) {
 module.exports = uploadFile = function (lt_config, file_name) {
 
     return new Promise(function (resolve, reject) {
-        login(lt_config).then(function () {
-            resolve("Done")
-
-            console.log("uploader function")
+        login(lt_config).then(function (responseDataLogin) {
+            
+            console.log("uploader function",responseDataLogin)
             let options = {
                 url: constants.INTEGRATION_BASE_URL + constants.RUN_URL,
                 formData: {
@@ -91,8 +85,8 @@ module.exports = uploadFile = function (lt_config, file_name) {
                     }
                 }
             });
-        }).catch(function(){
-            reject("Not Authorized")
+        }).catch(function(responseDataLogin){
+            reject("Not Authorized",responseDataLogin)
         })
     })
 };
