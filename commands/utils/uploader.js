@@ -1,6 +1,4 @@
 const fs = require('fs');
-const stream = require("stream");
-const { sleep } = require('sleep');
 const request = require("request")
 const constants = require("./constants.js")
 
