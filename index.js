@@ -44,6 +44,29 @@ const argv = require('yargs')
       require("./commands/run")(argv);
 
     }
+  ).command('build-info', 'info about the build', 
+    function(yargs) {
+      return yargs.option('id', {
+        alias: 'build-id',
+        describe: 'Build Identifier',
+        type: 'string',
+        demandOption: true
+      }).option('user', {
+        alias: 'user',
+        describe: 'username',
+        type: 'string',
+        demandOption: true
+      }).option('pass', {
+        alias: 'pass',
+        describe: 'Password',
+        type: 'string',
+        demandOption: true
+      })
+    }
+  ,
+    function (argv) {
+      require("./commands/build_info")(argv);
+    }
   )
   .help()
   .argv
