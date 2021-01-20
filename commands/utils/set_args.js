@@ -1,10 +1,39 @@
 const constants = require("./constants.js")
 const fs = require("fs")
 const path =require('path')
+const process = require("process")
+
 function sync_args_from_cmd(args) {
     return new Promise(function (resolve, reject) {
         let rawdata = fs.readFileSync(args["lambdatest-config-file"]);
         let lt_config = JSON.parse(rawdata);
+
+        
+        if ("lambdatest_auth" in lt_config && "username" in lt_config["lambdatest_auth"] && lt_config["lambdatest_auth"]["username"] == "<Your LambdaTest username>"){
+            if(process.env.lt_user){
+                console.log("setting user name from environment",process.env.lt_user)
+                lt_config['lambdatest_auth']['username']=process.env.lt_user
+            }
+            
+        }
+        if ("lambdatest_auth" in lt_config && "access_key" in lt_config["lambdatest_auth"] && lt_config["lambdatest_auth"]["access_key"] == "<Your LambdaTest access key>") {
+            if(process.env.lt_access_key){
+                console.log("setting access key from environment",process.env.lt_access_key)
+                lt_config['lambdatest_auth']['access_key']=process.env.lt_access_key
+            }
+        }
+
+        if (!("browsers" in lt_config) || lt_config["browsers"].length == 0) {
+            lt_config["browsers"]=[]
+            console.log("Testing on default browser")
+            lt_config["browsers"].push( {
+                "browser": "Chrome",
+                "platform": "Windows 10",
+                "versions": [
+                 "86.0"
+                ]
+             })
+        }
 
         if (!("specs" in args)) {
             args["specs"] = lt_config["run_settings"]["specs"]
@@ -49,7 +78,6 @@ function sync_args_from_cmd(args) {
             args["specs"] = []
             read_files(constants.DEFAULT_TEST_PATH).then(function (files) {
                 lt_config["run_settings"]["specs"] = files
-                console.log("resolved",lt_config["run_settings"]["specs"])
                 resolve(lt_config)
             })
         } else {
