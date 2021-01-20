@@ -9,7 +9,7 @@ function sync_args_from_cmd(args) {
         let lt_config = JSON.parse(rawdata);
 
         
-        if ("lambdatest_auth" in lt_config && "username" in lt_config["lambdatest_auth"] && lt_config["lambdatest_auth"]["username"] == "<Your LambdaTest username>"){// || lt_config["lambdatest_auth"]["access_key"] == "<Your LambdaTest access key>") {
+        if ("lambdatest_auth" in lt_config && "username" in lt_config["lambdatest_auth"] && lt_config["lambdatest_auth"]["username"] == "<Your LambdaTest username>"){
             if(process.env.lt_user){
                 console.log("setting user name from environment",process.env.lt_user)
                 lt_config['lambdatest_auth']['username']=process.env.lt_user
