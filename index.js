@@ -71,16 +71,3 @@ const argv = require('yargs')
   .help()
   .argv
 
-
-
-///Users/japneet/Desktop/cypress_poc/cypress/integration/examples/actions.spec.js,/Users/japneet/Desktop/cypress_poc/cypress/integration/examples/aliasing.spec.js
-
-
-//Run with spec glob without config
-
-
-// Run with spec glob with config
-
-//node ./index.js run --specs "/Users/japneet/Desktop/cypress_poc/cypress/integration/examples/actions.spec.js,/Users/japneet/Desktop/cypress_poc/cypress/integration/examples/*.js,/Users/japneet/Desktop/lamdatest-cypress/commands/*.js" --ccf"/Users/japneet/Desktop/cypress_poc/cypress/*.json"  --lcf "/Users/japneet/Desktop/lamdatest-cypress/lambdatest-config.json" -p 11
-
-//node ./index.js run --specs "/Users/japneet/Desktop/cypress_poc/cypress/integration/examples/actions.spec.js" --ccf "/Users/japneet/Desktop/cypress_poc/cypress.json"  --lcf "/Users/japneet/Desktop/lambdatest-config.json" -p 1
