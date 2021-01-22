@@ -2,8 +2,16 @@ const archive = require("./utils/archive.js");
 const set_args = require("./utils/set_args.js")
 const uploader = require("./utils/uploader.js")
 const validate = require("./utils/validate")
+const constants=require("./utils/constants.js")
+const fs=require("fs")
 
 module.exports = function (args) {
+    if (!("lambdatest-config-file" in args)){
+        console.log("Checking Lambda Config in current directory")
+        if (fs.existsSync(constants.LAMBDA_CONFIG)) {
+            args["lambdatest-config-file"]=constants.LAMBDA_CONFIG
+        }
+    }
     if ("lambdatest-config-file" in args) {
         //sync arguments between lt config and command line
         set_args.sync_args_from_cmd(args).then(function (lt_config) {
@@ -30,10 +38,7 @@ module.exports = function (args) {
         })
     }
     else {
-        set_args.set_args_from_cmd(args)
+       console.log("Lambda Test config not present")
     }
-    /*archive(args).then(function(){
-        console.log("promise returned")
-    })
-    */
+    
 };

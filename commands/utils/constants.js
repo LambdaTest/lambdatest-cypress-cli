@@ -5,5 +5,6 @@ module.exports={
     LOGIN_URL:"/cy/login",
     RUN_URL:"/cy/run",
     LT_CONFIG_NAME:"lambdatest-config.json",
-    DEFAULT_TEST_PATH:"./integration/examples"
+    DEFAULT_TEST_PATH:".",
+    LAMBDA_CONFIG:"./lambdatest-config.json"
 }

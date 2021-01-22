@@ -14,7 +14,7 @@ function delete_archive(file_name) {
 
 }
 function archive_files(lt_config) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {     
         if (!'specs' in lt_config) {
             throw "Specs not found"
         }
@@ -33,17 +33,20 @@ function archive_files(lt_config) {
         output.on('end', function () {
             console.log('Data has been drained');
         });
-
+        
         archive.on('warning', function (err) {
             if (err.code === 'ENOENT') {
                 // log warning
+                console.log("WARN:",err)
             } else {
                 // throw error
+                console.log("WARN:",err)
                 throw err;
             }
         });
 
         archive.on('error', function (err) {
+            console.log("ERROR",err)
             throw err;
         });
 
