@@ -2,7 +2,7 @@ const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
 const constants= require('./constants.js')
-const { SSL_OP_EPHEMERAL_RSA } = require('constants');
+var glob_fs = require('glob-fs')({ gitignore: false });
 
 function delete_archive(file_name) {
         try {
@@ -14,11 +14,13 @@ function delete_archive(file_name) {
 
 }
 function archive_files(lt_config) {
+    var count=0
     return new Promise(function (resolve, reject) {     
         if (!'specs' in lt_config) {
             throw "Specs not found"
         }
 
+        files = lt_config['run_settings']['specs']
         const output = fs.createWriteStream('test.zip');
         const archive = archiver('zip', {
             zlib: { level: 9 } // Sets the compression level.
@@ -27,9 +29,11 @@ function archive_files(lt_config) {
         output.on('close', function () {
             console.log(archive.pointer() + ' total bytes');
             console.log('archiver has been finalized and the output file descriptor has closed.');
-            resolve("test.zip")
+            resolve({name:"test.zip",count:count})
         });
-
+        archive.on("progress", (progress) => {
+           count++
+        })
         output.on('end', function () {
             console.log('Data has been drained');
         });
@@ -53,9 +57,6 @@ function archive_files(lt_config) {
         // pipe archive data to the file
         archive.pipe(output);
 
-
-
-        files = lt_config['run_settings']['specs']
         for (const property in files) {
 
             console.log("archiving file...", path.basename(files[property]))
@@ -67,10 +68,10 @@ function archive_files(lt_config) {
         archive.append(lt_config_string, { name: constants.LT_CONFIG_NAME });
 
         let cypressFolderPath = path.dirname(lt_config['run_settings']['cypress_config_file']);
-        lt_config["run_settings"]["cypress_config_file"]
-        archive.glob(path.basename(lt_config["run_settings"]["cypress_config_file"]), { cwd: path.dirname(lt_config["run_settings"]["cypress_config_file"]) })
-
-
+        if(lt_config["run_settings"]["cypress_config_file"] && fs.existsSync( lt_config["run_settings"]["cypress_config_file"] )){
+            archive.glob(path.basename(lt_config["run_settings"]["cypress_config_file"]), { cwd: path.dirname(lt_config["run_settings"]["cypress_config_file"]) })
+            count--
+        }
         archive.finalize();
 
 

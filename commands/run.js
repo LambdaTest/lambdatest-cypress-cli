@@ -18,7 +18,13 @@ module.exports = function (args) {
             //validate the config options
             validate(lt_config).then(function () {
                 //archive the files(config, spec)
-                archive.archive_files(lt_config).then(function (file_name) {
+                archive.archive_files(lt_config).then(function (file_obj) {
+                    file_name=file_obj["name"]
+                    count=file_obj["count"]
+                    if(count<2){
+                        console.log("Spec not passed")
+                        return
+                    }
                     console.log("file archived", file_name)
                     //upload files to Lambdatest
                     uploader(lt_config, file_name).then(function (response) {
