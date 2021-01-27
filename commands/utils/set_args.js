@@ -1,6 +1,6 @@
 const constants = require("./constants.js")
 const fs = require("fs")
-const path =require('path')
+const path = require('path')
 const process = require("process")
 
 function sync_args_from_cmd(args) {
@@ -8,37 +8,50 @@ function sync_args_from_cmd(args) {
         let rawdata = fs.readFileSync(args["lambdatest-config-file"]);
         let lt_config = JSON.parse(rawdata);
 
-        
-        if ("lambdatest_auth" in lt_config && "username" in lt_config["lambdatest_auth"] && lt_config["lambdatest_auth"]["username"] == "<Your LambdaTest username>"){
-            if(process.env.lt_user){
-                console.log("setting user name from environment",process.env.lt_user)
-                lt_config['lambdatest_auth']['username']=process.env.lt_user
+        if ("lambdatest_auth" in lt_config && "username" in lt_config["lambdatest_auth"] && lt_config["lambdatest_auth"]["username"] == "<Your LambdaTest username>") {
+            if (process.env.lt_user) {
+                console.log("Setting user name from environment", process.env.lt_user)
+                lt_config['lambdatest_auth']['username'] = process.env.lt_user
             }
-            
+
+        } else if (process.env.lt_user && (!("lambdatest_auth" in lt_config) || !("username" in lt_config["lambdatest_auth"]))) {
+            console.log("Setting user name from environment", process.env.lt_user)
+            if (!lt_config['lambdatest_auth']) {
+                lt_config['lambdatest_auth'] = {}
+            }
+            lt_config['lambdatest_auth']['username'] = process.env.lt_user
         }
+
         if ("lambdatest_auth" in lt_config && "access_key" in lt_config["lambdatest_auth"] && lt_config["lambdatest_auth"]["access_key"] == "<Your LambdaTest access key>") {
-            if(process.env.lt_access_key){
-                console.log("setting access key from environment",process.env.lt_access_key)
-                lt_config['lambdatest_auth']['access_key']=process.env.lt_access_key
+            if (process.env.lt_access_key) {
+                console.log("setting access key from environment", process.env.lt_access_key)
+                lt_config['lambdatest_auth']['access_key'] = process.env.lt_access_key
             }
+        } else if (process.env.lt_access_key && (!("lambdatest_auth" in lt_config) || !("access_key" in lt_config["lambdatest_auth"]))) {
+            if (!lt_config['lambdatest_auth']) {
+                lt_config['lambdatest_auth'] = {}
+            }
+            console.log("Setting access key from environment", process.env.lt_access_key)
+            lt_config['lambdatest_auth']['access_key'] = process.env.lt_access_key
         }
 
         if (!("browsers" in lt_config) || lt_config["browsers"].length == 0) {
-            lt_config["browsers"]=[]
+            lt_config["browsers"] = []
             console.log("Testing on default browser")
-            lt_config["browsers"].push( {
+            lt_config["browsers"].push({
                 "browser": "Chrome",
                 "platform": "Windows 10",
                 "versions": [
-                 "86.0"
+                    "86.0"
                 ]
-             })
+            })
         }
 
-        if (!("specs" in args)) {
-            args["specs"] = lt_config["run_settings"]["specs"]
+        if (!("specs" in args) && "specs" in lt_config["run_settings"]) {
+            lt_config["run_settings"]["specs"] = lt_config["run_settings"]["specs"].split(',')
+
         }
-        else {
+        else if ("specs" in args) {
             args['specs'] = args['specs'].split(',')
             lt_config["run_settings"]["specs"] = args["specs"]
         }
@@ -73,9 +86,10 @@ function sync_args_from_cmd(args) {
         if ("parellels" in args) {
             lt_config["run_settings"]["parellels"] = args["parellels"]
         }
-
-        if ((args["specs"] == undefined || args["specs"].length == 0) && fs.existsSync(constants.DEFAULT_TEST_PATH)) {
+        //get specs from current directory if specs are not passed in config or cli
+        if ((lt_config["run_settings"]["specs"] == undefined || lt_config["run_settings"]["specs"].length == 0) && fs.existsSync(constants.DEFAULT_TEST_PATH)) {
             args["specs"] = []
+            console.log("Checking for specs in Current directory")
             read_files(constants.DEFAULT_TEST_PATH).then(function (files) {
                 lt_config["run_settings"]["specs"] = files
                 resolve(lt_config)
@@ -90,9 +104,11 @@ function sync_args_from_cmd(args) {
 function read_files(dir_path) {
     return new Promise(function (resolve, reject) {
         files = []
+        const regex = new RegExp('^.*?\.spec\.js$');
         fs.readdirSync(dir_path).forEach(file => {
-            console.log(file);
-            files.push(path.join(dir_path,file))
+            if (regex.test(file)) {
+                files.push(path.join(dir_path, file))
+            } 
         });
         resolve(files)
     })
