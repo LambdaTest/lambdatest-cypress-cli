@@ -2,7 +2,6 @@ const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
 const constants= require('./constants.js')
-var glob_fs = require('glob-fs')({ gitignore: false });
 
 function delete_archive(file_name) {
         try {
