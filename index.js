@@ -54,13 +54,11 @@ const argv = require('yargs')
       }).option('user', {
         alias: 'user',
         describe: 'username',
-        type: 'string',
-        demandOption: true
-      }).option('pass', {
-        alias: 'pass',
-        describe: 'Password',
-        type: 'string',
-        demandOption: true
+        type: 'string'
+      }).option('access_key', {
+        alias: 'access_key',
+        describe: 'Access Key',
+        type: 'string'
       })
     }
   ,

@@ -9,30 +9,30 @@ function sync_args_from_cmd(args) {
         let lt_config = JSON.parse(rawdata);
 
         if ("lambdatest_auth" in lt_config && "username" in lt_config["lambdatest_auth"] && lt_config["lambdatest_auth"]["username"] == "<Your LambdaTest username>") {
-            if (process.env.lt_user) {
-                console.log("Setting user name from environment", process.env.lt_user)
-                lt_config['lambdatest_auth']['username'] = process.env.lt_user
+            if (process.env.LT_USERNAME) {
+                console.log("Setting user name from environment", process.env.LT_USERNAME)
+                lt_config['lambdatest_auth']['username'] = process.env.LT_USERNAME
             }
 
-        } else if (process.env.lt_user && (!("lambdatest_auth" in lt_config) || !("username" in lt_config["lambdatest_auth"]))) {
-            console.log("Setting user name from environment", process.env.lt_user)
+        } else if (process.env.LT_USERNAME && (!("lambdatest_auth" in lt_config) || !("username" in lt_config["lambdatest_auth"]))) {
+            console.log("Setting user name from environment", process.env.LT_USERNAME)
             if (!lt_config['lambdatest_auth']) {
                 lt_config['lambdatest_auth'] = {}
             }
-            lt_config['lambdatest_auth']['username'] = process.env.lt_user
+            lt_config['lambdatest_auth']['username'] = process.env.LT_USERNAME
         }
 
         if ("lambdatest_auth" in lt_config && "access_key" in lt_config["lambdatest_auth"] && lt_config["lambdatest_auth"]["access_key"] == "<Your LambdaTest access key>") {
-            if (process.env.lt_access_key) {
-                console.log("setting access key from environment", process.env.lt_access_key)
-                lt_config['lambdatest_auth']['access_key'] = process.env.lt_access_key
+            if (process.env.LT_ACCESS_KEY) {
+                console.log("setting access key from environment", process.env.LT_ACCESS_KEY)
+                lt_config['lambdatest_auth']['access_key'] = process.env.LT_ACCESS_KEY
             }
-        } else if (process.env.lt_access_key && (!("lambdatest_auth" in lt_config) || !("access_key" in lt_config["lambdatest_auth"]))) {
+        } else if (process.env.LT_ACCESS_KEY && (!("lambdatest_auth" in lt_config) || !("access_key" in lt_config["lambdatest_auth"]))) {
             if (!lt_config['lambdatest_auth']) {
                 lt_config['lambdatest_auth'] = {}
             }
-            console.log("Setting access key from environment", process.env.lt_access_key)
-            lt_config['lambdatest_auth']['access_key'] = process.env.lt_access_key
+            console.log("Setting access key from environment", process.env.LT_ACCESS_KEY)
+            lt_config['lambdatest_auth']['access_key'] = process.env.LT_ACCESS_KEY
         }
 
         if (!("browsers" in lt_config) || lt_config["browsers"].length == 0) {
