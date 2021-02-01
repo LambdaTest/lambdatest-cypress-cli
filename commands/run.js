@@ -12,6 +12,19 @@ module.exports = function (args) {
             args["lambdatest-config-file"]=constants.LAMBDA_CONFIG
         }
     }
+    var env="prod"
+    if ("env" in args) {
+
+        if (["stage", "prod", "beta"].includes(args["env"])) {
+            env = args["env"]
+
+        } else {
+            console.log("Environment can be stage, beta or prod, setting Env to prod")
+
+        }
+
+    }
+
     if ("lambdatest-config-file" in args) {
         //sync arguments between lt config and command line
         set_args.sync_args_from_cmd(args).then(function (lt_config) {
@@ -27,7 +40,7 @@ module.exports = function (args) {
                     }
                     console.log("file archived", file_name)
                     //upload files to Lambdatest
-                    uploader(lt_config, file_name).then(function (response) {
+                    uploader(lt_config, file_name,env).then(function (response) {
                         console.log("Uploaded", response)
                         //Synchronously delete the created Zip after Upload
                         archive.delete_archive(file_name)
