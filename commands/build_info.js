@@ -31,8 +31,20 @@ function get_build_info(args) {
         if (!("buildId" in args)) {
             reject("Please provide a build ID")
         }
+        var env = "prod"
+        if ("env" in args) {
 
-        request(constants.BUILD_BASE_URL + args.buildId, {
+            if (["stage", "prod", "beta"].includes(args["env"])) {
+                env = args["env"]
+
+            } else {
+                console.log("Environment can be stage, beta or prod, setting Env to prod")
+
+            }
+
+        }
+
+        request(constants[env].BUILD_BASE_URL + args.buildId, {
             auth: {
                 username: username,
                 password: access_key

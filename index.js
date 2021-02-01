@@ -37,6 +37,10 @@ const argv = require('yargs')
       alias: 'parellels',
       describe: 'no of parellel sessions',
       type: 'string'
+    }).option('env', {
+      alias: 'env',
+      describe: 'environment',
+      type: 'string'
     })
   },
     function (argv) {
@@ -58,6 +62,10 @@ const argv = require('yargs')
       }).option('access_key', {
         alias: 'access_key',
         describe: 'Access Key',
+        type: 'string'
+      }).option('env', {
+        alias: 'env',
+        describe: 'environment',
         type: 'string'
       })
     }
