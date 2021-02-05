@@ -1,3 +1,4 @@
+const fs = require("fs")
 module.exports = validate_config = function (lt_config) {
     return new Promise(function (resolve, reject) {
         //validate auth keys are present
@@ -25,7 +26,13 @@ module.exports = validate_config = function (lt_config) {
         if (parellels == undefined || parellels == null || isNaN(parellels) || (Number(parellels) && Number(parellels) % 1 !== 0) || parseInt(parellels, 10) <= 0 || parellels === "Here goes the number of parallels you want to run") {
             reject("Error!! Parellels value not correct")
         }
-        
+
+        //validate if cypress config file is passed and exists
+        if (lt_config["run_settings"]["cypress_config_file"] && lt_config["run_settings"]["cypress_config_file"] != "") {
+            if (!fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
+                reject("Error!! Cypress Config File does not exists")
+            }
+        }
         resolve("Validated the Config")
     })
 }
