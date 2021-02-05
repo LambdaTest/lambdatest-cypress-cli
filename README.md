@@ -50,8 +50,7 @@ For each test, you can view the live video feed, screenshots for each test run, 
 
 
 
-To learn more about LambdaTest Cypress CLI, refer to the [LambdaTest Cypress documentation
-Documentation](https://www.lambdatest.com/support/docs/getting-started-with-cypress-testing/)
+To learn more about LambdaTest Cypress CLI, refer to the [LambdaTest Cypress Documentation](https://www.lambdatest.com/support/docs/getting-started-with-cypress-testing/)
 
 # Documentation
 
