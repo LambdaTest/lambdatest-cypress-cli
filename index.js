@@ -23,7 +23,7 @@ const argv = require('yargs')
       type: 'string'
     }).option('env', {
       alias: 'env',
-      describe: 'environment variables',
+      describe: 'environment',
       type: 'string'
     }).option('bn', {
       alias: 'build-name',
@@ -37,8 +37,20 @@ const argv = require('yargs')
       alias: 'parellels',
       describe: 'no of parellel sessions',
       type: 'string'
-    }).option('env', {
-      alias: 'env',
+    }).option('envs', {
+      alias: 'envs',
+      describe: 'environment variables',
+      type: 'string'
+    }).option('tun', {
+      alias: 'tunnel',
+      describe: 'environment',
+      type: 'string'
+    }).option('tname', {
+      alias: 'tunnelName',
+      describe: 'environment',
+      type: 'string'
+    }).option('cef', {
+      alias: 'cypress-env-file',
       describe: 'environment',
       type: 'string'
     })
@@ -73,7 +85,32 @@ const argv = require('yargs')
     function (argv) {
       require("./commands/build_info")(argv);
     }
-  )
+  ).command('build-stop', 'stop all tests in the build', 
+  function(yargs) {
+    return yargs.option('id', {
+      alias: 'build-id',
+      describe: 'Build Identifier',
+      type: 'string',
+      demandOption: true
+    }).option('user', {
+      alias: 'user',
+      describe: 'username',
+      type: 'string'
+    }).option('access_key', {
+      alias: 'access_key',
+      describe: 'Access Key',
+      type: 'string'
+    }).option('env', {
+      alias: 'env',
+      describe: 'environment',
+      type: 'string'
+    })
+  }
+,
+  function (argv) {
+    require("./commands/build_stop")(argv);
+  }
+)
   .help()
   .argv
 
