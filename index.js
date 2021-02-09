@@ -23,7 +23,7 @@ const argv = require('yargs')
       type: 'string'
     }).option('env', {
       alias: 'env',
-      describe: 'environment variables',
+      describe: 'environment',
       type: 'string'
     }).option('bn', {
       alias: 'build-name',
@@ -37,9 +37,9 @@ const argv = require('yargs')
       alias: 'parellels',
       describe: 'no of parellel sessions',
       type: 'string'
-    }).option('env', {
-      alias: 'env',
-      describe: 'environment',
+    }).option('envs', {
+      alias: 'envs',
+      describe: 'environment variables',
       type: 'string'
     }).option('tun', {
       alias: 'tunnel',
@@ -47,6 +47,10 @@ const argv = require('yargs')
       type: 'string'
     }).option('tname', {
       alias: 'tunnelName',
+      describe: 'environment',
+      type: 'string'
+    }).option('cef', {
+      alias: 'cypress-env-file',
       describe: 'environment',
       type: 'string'
     })
