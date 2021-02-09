@@ -66,9 +66,10 @@ function archive_files(lt_config) {
         let lt_config_string = JSON.stringify(lt_config, null, 4);
         archive.append(lt_config_string, { name: constants.LT_CONFIG_NAME });
 
-        let cypressFolderPath = path.dirname(lt_config['run_settings']['cypress_config_file']);
+
         if(lt_config["run_settings"]["cypress_config_file"] && fs.existsSync( lt_config["run_settings"]["cypress_config_file"] )){
-            archive.glob(path.basename(lt_config["run_settings"]["cypress_config_file"]), { cwd: path.dirname(lt_config["run_settings"]["cypress_config_file"]) })
+            let rawdata = fs.readFileSync(lt_config["run_settings"]["cypress_config_file"]);
+            archive.append(rawdata, { name: constants.CYPRESS_CONFIG_NAME });
             count--
         }
         archive.finalize();

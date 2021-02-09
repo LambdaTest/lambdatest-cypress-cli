@@ -59,22 +59,36 @@ function sync_args_from_cmd(args) {
         if ("cypress-config-file" in args) {
             lt_config["run_settings"]["cypress_config_file"] = args["cypress-config-file"]
         }
-
-        if ("env" in args) {
-            env_vars = args["env"].split(",")
-            envs = {}
-            for (env in env_vars) {
-                console.log(env_vars[env].split("="))
-                envs[env_vars[env].split("=")[0]] = env_vars[env].split("=")[1]
-            }
-            if (fs.existsSync('cypress.env.json')) {
-                let raw_env = fs.readFileSync('cypress.env.json');
-                let env_json = JSON.parse(raw_env);
-                envs = Object.assign(env_json, envs)
-            }
-            lt_config["run_settings"]["env"] = envs
+        //Set the env variables
+        let env_vars = undefined
+        if ("envs" in args) {
+            env_vars = args["envs"].split(",")
+        } else if (lt_config["run_settings"]['envs']) {
+            env_vars = lt_config["run_settings"]['envs'].split(",")
         }
 
+        if (env_vars) {
+            let envs = {}
+            for (env in env_vars) {
+                envs[env_vars[env].split("=")[0]] = env_vars[env].split("=")[1]
+            }
+            lt_config["run_settings"]["envs"] = envs
+        }
+        if ("cypress-env-file" in args) {
+            let env_json
+            if (fs.existsSync(args['cypress-env-file'])) {
+                let raw_env = fs.readFileSync(args['cypress-env-file']);
+                env_json = JSON.parse(raw_env);
+
+                if (lt_config["run_settings"]["envs"]) {
+                    lt_config["run_settings"]["envs"] = Object.assign(lt_config["run_settings"]["envs"], env_json)
+                } else {
+                    lt_config["run_settings"]["envs"] = env_json
+                }
+            } else {
+                reject("Cypress-env-file file not found but passed in command line")
+            }
+        }
         if ("build-name" in args) {
             lt_config["run_settings"]["build_name"] = args["build-name"]
         }
@@ -85,6 +99,31 @@ function sync_args_from_cmd(args) {
 
         if ("parellels" in args) {
             lt_config["run_settings"]["parellels"] = args["parellels"]
+        }
+
+        //set tunnel options
+        if ("tunnel" in args) {
+            if (!("tunnel_settings" in lt_config)) {
+                lt_config["tunnel_settings"] = {}
+            }
+            lt_config["tunnel_settings"]["tunnel"] = true?args["tunnel"]=="true":false
+        } else if (!("tunnel_settings" in lt_config)) {
+            lt_config["tunnel_settings"] = {}
+            lt_config["tunnel_settings"]["tunnel"] = false
+        } else if (!("tunnel" in lt_config["tunnel_settings"])) {
+            lt_config["tunnel_settings"]["tunnel"] = false
+        }
+
+        if ("tunnelName" in args) {
+            if (!("tunnel_settings" in lt_config)) {
+                lt_config["tunnel_settings"] = {}
+            }
+            lt_config["tunnel_settings"]["tunnelName"] = args["tunnelName"]
+        } else if (!("tunnel_settings" in lt_config)) {
+            lt_config["tunnel_settings"] = {}
+            lt_config["tunnel_settings"]["tunnelName"] = ""
+        } else if (!("tunnelName" in lt_config["tunnel_settings"])) {
+            lt_config["tunnel_settings"]["tunnelName"] = ""
         }
         //get specs from current directory if specs are not passed in config or cli
         if ((lt_config["run_settings"]["specs"] == undefined || lt_config["run_settings"]["specs"].length == 0) && fs.existsSync(constants.DEFAULT_TEST_PATH)) {
@@ -108,7 +147,7 @@ function read_files(dir_path) {
         fs.readdirSync(dir_path).forEach(file => {
             if (regex.test(file)) {
                 files.push(path.join(dir_path, file))
-            } 
+            }
         });
         resolve(files)
     })

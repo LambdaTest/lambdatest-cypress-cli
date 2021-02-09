@@ -41,6 +41,14 @@ const argv = require('yargs')
       alias: 'env',
       describe: 'environment',
       type: 'string'
+    }).option('tun', {
+      alias: 'tunnel',
+      describe: 'environment',
+      type: 'string'
+    }).option('tname', {
+      alias: 'tunnelName',
+      describe: 'environment',
+      type: 'string'
     })
   },
     function (argv) {
