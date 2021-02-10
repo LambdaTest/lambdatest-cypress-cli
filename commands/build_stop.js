@@ -28,7 +28,7 @@ function stop_build(args) {
             reject("Access Key not provided")
         }
 
-        if (!("buildId" in args)) {
+        if ((!("buildId" in args)) || args["buildid"] == "" || args["buildid"] == undefined) {
             reject("Please provide a build ID")
         }
         var env = "prod"
@@ -44,13 +44,13 @@ function stop_build(args) {
 
         }
 
-        
+
         let options = {
-            url: constants[env].BUILD_STOP_URL+args.buildId,
+            url: constants[env].BUILD_STOP_URL + args.buildId,
             headers: {
-                'Authorization': 'Token '+access_key,
+                'Authorization': 'Token ' + access_key,
                 'Username': username
-              }
+            }
         }
         request.put(options, function (err, resp, body) {
             if (err) {

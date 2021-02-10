@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "archiver": "^5.1.0",
+    "glob": "^7.1.6",
     "request": "^2.88.2",
     "yargs": "^16.1.0"
   },

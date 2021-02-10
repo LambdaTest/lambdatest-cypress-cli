@@ -53,6 +53,14 @@ const argv = require('yargs')
       alias: 'cypress-env-file',
       describe: 'environment',
       type: 'string'
+    }).option('browsers', {
+      alias: 'browsers',
+      describe: 'browsers to run test format: platform:browser:version',
+      type: 'string'
+    }).option('bi', {
+      alias: 'build-identifier',
+      describe: 'Build Identifier / Build Counter',
+      type: 'string'
     })
   },
     function (argv) {
@@ -60,8 +68,8 @@ const argv = require('yargs')
       require("./commands/run")(argv);
 
     }
-  ).command('build-info', 'info about the build', 
-    function(yargs) {
+  ).command('build-info', 'info about the build',
+    function (yargs) {
       return yargs.option('id', {
         alias: 'build-id',
         describe: 'Build Identifier',
@@ -81,36 +89,36 @@ const argv = require('yargs')
         type: 'string'
       })
     }
-  ,
+    ,
     function (argv) {
       require("./commands/build_info")(argv);
     }
-  ).command('build-stop', 'stop all tests in the build', 
-  function(yargs) {
-    return yargs.option('id', {
-      alias: 'build-id',
-      describe: 'Build Identifier',
-      type: 'string',
-      demandOption: true
-    }).option('user', {
-      alias: 'user',
-      describe: 'username',
-      type: 'string'
-    }).option('access_key', {
-      alias: 'access_key',
-      describe: 'Access Key',
-      type: 'string'
-    }).option('env', {
-      alias: 'env',
-      describe: 'environment',
-      type: 'string'
-    })
-  }
-,
-  function (argv) {
-    require("./commands/build_stop")(argv);
-  }
-)
+  ).command('build-stop', 'stop all tests in the build',
+    function (yargs) {
+      return yargs.option('id', {
+        alias: 'build-id',
+        describe: 'Build Identifier',
+        type: 'string',
+        demandOption: true
+      }).option('user', {
+        alias: 'user',
+        describe: 'username',
+        type: 'string'
+      }).option('access_key', {
+        alias: 'access_key',
+        describe: 'Access Key',
+        type: 'string'
+      }).option('env', {
+        alias: 'env',
+        describe: 'environment',
+        type: 'string'
+      })
+    }
+    ,
+    function (argv) {
+      require("./commands/build_stop")(argv);
+    }
+  )
   .help()
   .argv
 
