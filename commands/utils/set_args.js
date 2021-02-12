@@ -153,7 +153,14 @@ function sync_args_from_cmd(args) {
             }
             lt_config["browsers"] = browsers_formatted
         }
-
+        if (!(lt_config["run_settings"]["ignore_files"])) {
+            lt_config["run_settings"]["ignore_files"] = []
+        } else {
+            lt_config["run_settings"]["ignore_files"] = lt_config["run_settings"]["ignore_files"].split(",")
+        }
+        if ("ignore_files" in args) {
+            lt_config["run_settings"]["ignore_files"] = args["ignore_files"].split(",")
+        }
         //get specs from current directory if specs are not passed in config or cli
         if ((lt_config["run_settings"]["specs"] == undefined || lt_config["run_settings"]["specs"].length == 0) && fs.existsSync(constants.DEFAULT_TEST_PATH)) {
             args["specs"] = []

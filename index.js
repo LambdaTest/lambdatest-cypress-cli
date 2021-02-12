@@ -43,15 +43,15 @@ const argv = require('yargs')
       type: 'string'
     }).option('tun', {
       alias: 'tunnel',
-      describe: 'environment',
+      describe: 'tunnel',
       type: 'string'
     }).option('tname', {
       alias: 'tunnelName',
-      describe: 'environment',
+      describe: 'tunnel name',
       type: 'string'
     }).option('cef', {
       alias: 'cypress-env-file',
-      describe: 'environment',
+      describe: 'cypress environment file',
       type: 'string'
     }).option('browsers', {
       alias: 'browsers',
@@ -60,6 +60,11 @@ const argv = require('yargs')
     }).option('bi', {
       alias: 'build-identifier',
       describe: 'Build Identifier / Build Counter',
+      type: 'string'
+    })
+    .option('ignore_files', {
+      alias: 'ignore_files',
+      describe: 'Files to ignore in the project zip',
       type: 'string'
     })
   },

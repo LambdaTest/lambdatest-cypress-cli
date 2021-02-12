@@ -23,7 +23,8 @@ module.exports={
         "cypress_config_file": "/path/to/<cypress config file>.json",
         "build_name": "build-name",
         "parallels": 1,
-        "specs":"./*.spec.js"
+        "specs":"./*.spec.js",
+        "ignore_files":[]
         },
     "tunnel_settings": {
         "tunnel": false,

@@ -37,8 +37,8 @@ module.exports = function (args) {
                     console.log(err)
                 })
 
-            }).catch(function (msg) {
-                console.log(msg)
+            }).catch(function (err) {
+                console.log(err)
             })
         }).catch(function (err) {
             console.log(err)
