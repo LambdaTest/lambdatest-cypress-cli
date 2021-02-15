@@ -161,6 +161,9 @@ function sync_args_from_cmd(args) {
         if ("ignore_files" in args) {
             lt_config["run_settings"]["ignore_files"] = args["ignore_files"].split(",")
         }
+        if("cypress_version" in args){
+            lt_config["run_settings"]["cypress_version"] = args["cypress_version"]
+        }
         //get specs from current directory if specs are not passed in config or cli
         if ((lt_config["run_settings"]["specs"] == undefined || lt_config["run_settings"]["specs"].length == 0) && fs.existsSync(constants.DEFAULT_TEST_PATH)) {
             args["specs"] = []

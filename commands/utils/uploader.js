@@ -53,7 +53,8 @@ function upload_project(lt_config, file_name, env = "prod") {
                     filename: "project.zip",
                     Username: lt_config["lambdatest_auth"]["username"],
                     token: lt_config["lambdatest_auth"]["access_key"],
-                }
+                },
+                timeout:"600000"
             }
 
             let responseData = null;
@@ -80,7 +81,6 @@ function upload_project(lt_config, file_name, env = "prod") {
                 }
             });
         }).catch(function (err) {
-            console.log("rejected",err)
             reject("Not Authorized")
         })
     })
@@ -101,7 +101,8 @@ function upload_file(lt_config, file_name, env = "prod") {
                     filename: "test.zip",
                     Username: lt_config["lambdatest_auth"]["username"],
                     token: lt_config["lambdatest_auth"]["access_key"],
-                }
+                },
+                timeout:"600000"
             }
 
             let responseData = null;

@@ -24,7 +24,8 @@ module.exports={
         "build_name": "build-name",
         "parallels": 1,
         "specs":"./*.spec.js",
-        "ignore_files":[]
+        "ignore_files":"",
+        "cypress_version":"5"
         },
     "tunnel_settings": {
         "tunnel": false,

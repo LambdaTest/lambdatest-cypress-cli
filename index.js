@@ -53,7 +53,7 @@ const argv = require('yargs')
       alias: 'cypress-env-file',
       describe: 'cypress environment file',
       type: 'string'
-    }).option('browsers', {
+    }).option('brs', {
       alias: 'browsers',
       describe: 'browsers to run test format: platform:browser:version',
       type: 'string'
@@ -61,10 +61,13 @@ const argv = require('yargs')
       alias: 'build-identifier',
       describe: 'Build Identifier / Build Counter',
       type: 'string'
-    })
-    .option('ignore_files', {
+    }).option('if', {
       alias: 'ignore_files',
       describe: 'Files to ignore in the project zip',
+      type: 'string'
+    }).option('cv', {
+      alias: 'cypress_version',
+      describe: 'Cypress Version',
       type: 'string'
     })
   },
