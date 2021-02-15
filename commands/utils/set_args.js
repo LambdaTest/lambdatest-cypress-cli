@@ -89,8 +89,18 @@ function sync_args_from_cmd(args) {
                 reject("Cypress-env-file file not found but passed in command line")
             }
         }
+        //set the build name on the basis of build identifier
         if ("build-name" in args) {
-            lt_config["run_settings"]["build_name"] = args["build-name"]
+            if ("build-identifier" in args) {
+                lt_config["run_settings"]["build_name"] = args["build-name"] + "-" + args["build-identifier"]
+            } else {
+                lt_config["run_settings"]["build_name"] = args["build-name"]
+            }
+        } else if ("build-identifier" in args && lt_config["run_settings"]["build_name"]) {
+            lt_config["run_settings"]["build_name"] = lt_config["run_settings"]["build_name"] + "-" + args["build-identifier"]
+
+        } else {
+            lt_config["run_settings"]["build_name"] = args["build-identifier"]
         }
 
         if ("tags" in args) {
@@ -99,6 +109,8 @@ function sync_args_from_cmd(args) {
 
         if ("parellels" in args) {
             lt_config["run_settings"]["parellels"] = args["parellels"]
+        } else {
+            lt_config["run_settings"]["parellels"] = 0
         }
 
         //set tunnel options
@@ -106,7 +118,7 @@ function sync_args_from_cmd(args) {
             if (!("tunnel_settings" in lt_config)) {
                 lt_config["tunnel_settings"] = {}
             }
-            lt_config["tunnel_settings"]["tunnel"] = true?args["tunnel"]=="true":false
+            lt_config["tunnel_settings"]["tunnel"] = true ? args["tunnel"] == "true" : false
         } else if (!("tunnel_settings" in lt_config)) {
             lt_config["tunnel_settings"] = {}
             lt_config["tunnel_settings"]["tunnel"] = false
@@ -124,6 +136,33 @@ function sync_args_from_cmd(args) {
             lt_config["tunnel_settings"]["tunnelName"] = ""
         } else if (!("tunnelName" in lt_config["tunnel_settings"])) {
             lt_config["tunnel_settings"]["tunnelName"] = ""
+        }
+
+        //add browsers from cli
+        if ("browsers" in args) {
+            browsers = args["browsers"].split(",")
+            browsers_formatted = []
+            for (browser in browsers) {
+
+                browsers_formatted.push({
+                    "platform": browsers[browser].split(":")[0],
+                    "browser": browsers[browser].split(":")[1],
+                    "versions": [browsers[browser].split(":")[2]]
+                })
+
+            }
+            lt_config["browsers"] = browsers_formatted
+        }
+        if (!(lt_config["run_settings"]["ignore_files"])) {
+            lt_config["run_settings"]["ignore_files"] = []
+        } else {
+            lt_config["run_settings"]["ignore_files"] = lt_config["run_settings"]["ignore_files"].split(",")
+        }
+        if ("ignore_files" in args) {
+            lt_config["run_settings"]["ignore_files"] = args["ignore_files"].split(",")
+        }
+        if("cypress_version" in args){
+            lt_config["run_settings"]["cypress_version"] = args["cypress_version"]
         }
         //get specs from current directory if specs are not passed in config or cli
         if ((lt_config["run_settings"]["specs"] == undefined || lt_config["run_settings"]["specs"].length == 0) && fs.existsSync(constants.DEFAULT_TEST_PATH)) {

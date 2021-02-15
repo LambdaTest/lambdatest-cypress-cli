@@ -1,85 +1,123 @@
-const fs = require('fs');
-const archiver = require('archiver');
-const path = require('path');
-const constants= require('./constants.js')
+const path = require('path')
+const fs = require('fs')
+const archiver = require('archiver')
+const constants = require('./constants.js')
+const process = require("process")
+
 
 function delete_archive(file_name) {
-        try {
-            fs.unlinkSync(file_name)
-            console.log("file removed")
-        } catch (err) {
-            console.error(err)
-        }
+    try {
+        fs.unlinkSync(file_name)
+        console.log("%s File Deleted", file_name)
+    } catch (err) {
+        console.error(err)
+    }
 
 }
-function archive_files(lt_config) {
-    var count=0
-    return new Promise(function (resolve, reject) {     
-        if (!'specs' in lt_config) {
-            throw "Specs not found"
-        }
 
-        files = lt_config['run_settings']['specs']
-        const output = fs.createWriteStream('test.zip');
+function archive_project(ignore_files = []) {
+    return new Promise(function (resolve, reject) {
+        const output = fs.createWriteStream('project.zip');
         const archive = archiver('zip', {
             zlib: { level: 9 } // Sets the compression level.
         });
-
         output.on('close', function () {
-            console.log(archive.pointer() + ' total bytes');
-            console.log('archiver has been finalized and the output file descriptor has closed.');
-            resolve({name:"test.zip",count:count})
+            resolve({ name: "project.zip" })
         });
         archive.on("progress", (progress) => {
-           count++
         })
         output.on('end', function () {
-            console.log('Data has been drained');
+
         });
-        
+
         archive.on('warning', function (err) {
             if (err.code === 'ENOENT') {
                 // log warning
-                console.log("WARN:",err)
+                console.log("WARN:", err)
+                reject(err)
             } else {
                 // throw error
-                console.log("WARN:",err)
-                throw err;
+                console.log("WARN:", err)
+                reject(err)
             }
         });
 
         archive.on('error', function (err) {
-            console.log("ERROR",err)
+            console.log("ERROR", err)
+            throw err;
+        });
+
+        // pipe archive data to the file
+        archive.pipe(output);
+        ignore_files = ['node_modules', 'node_modules/**/*', 'test.zip', 'project.zip'].concat(ignore_files)
+        console.log("Ignoring files: ", ignore_files)
+        archive.glob('**/*', { cwd: process.cwd(), ignore: ignore_files }, { prefix: "project/" })
+
+        archive.finalize();
+    })
+
+}
+
+
+function archive_batch(lt_config, batch) {
+
+    return new Promise(function (resolve, reject) {
+        const output = fs.createWriteStream('test.zip');
+        const archive = archiver('zip', {
+            zlib: { level: 9 } // Sets the compression level.
+        });
+        output.on('close', function () {
+            resolve({ name: "test.zip" })
+        });
+        archive.on("progress", (progress) => {
+        })
+        output.on('end', function () {
+
+        });
+
+        archive.on('warning', function (err) {
+            if (err.code === 'ENOENT') {
+                // log warning
+                console.log("WARN:", err)
+                reject(err)
+            } else {
+                // throw error
+                console.log("WARN:", err)
+                reject(err)
+            }
+        });
+
+        archive.on('error', function (err) {
+            console.log("ERROR", err)
             throw err;
         });
 
         // pipe archive data to the file
         archive.pipe(output);
 
-        for (const property in files) {
-
-            console.log("archiving file...", path.basename(files[property]))
-            archive.glob(path.basename(files[property]), { cwd: path.dirname(files[property]), matchBase: true, dot: true }, { prefix: "test/" });
+        spec_files = []
+        for (i in batch) {
+            spec_files.push(batch[i]["spec_file"])
+        }
+        spec_files = Array.from(new Set(spec_files))
+        for (i in spec_files) {
+            console.log("Archiving --------- ", spec_files[i])
+            archive.file(spec_files[i], { name: "test/" + path.basename(spec_files[i]) });
+        }
+        if (lt_config["run_settings"]["cypress_config_file"] && fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
+            let rawdata = fs.readFileSync(lt_config["run_settings"]["cypress_config_file"]);
+            archive.append(rawdata, { name: constants.CYPRESS_CONFIG_NAME });
 
         }
 
         let lt_config_string = JSON.stringify(lt_config, null, 4);
         archive.append(lt_config_string, { name: constants.LT_CONFIG_NAME });
-
-
-        if(lt_config["run_settings"]["cypress_config_file"] && fs.existsSync( lt_config["run_settings"]["cypress_config_file"] )){
-            let rawdata = fs.readFileSync(lt_config["run_settings"]["cypress_config_file"]);
-            archive.append(rawdata, { name: constants.CYPRESS_CONFIG_NAME });
-            count--
-        }
         archive.finalize();
-
-
-
     })
-};
+}
 
-module.exports = {
-    archive_files: archive_files,
-    delete_archive: delete_archive
+module.exports={
+delete_archive:delete_archive,
+archive_project:archive_project,
+archive_batch:archive_batch
 }
