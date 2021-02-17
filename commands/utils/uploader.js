@@ -120,11 +120,10 @@ function upload_file(lt_config, file_name, env = "prod") {
                         if (responseData && responseData["error"]) {
                             reject(responseData["error"]);
                         } else {
-                            reject("error", responseData);
+                            reject( responseData);
                         }
                     } else {
                         console.log(`Uploaded tests successfully `);
-                        //fileHelpers.deleteZip();
                         resolve(responseData);
                     }
                 }
