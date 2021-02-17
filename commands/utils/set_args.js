@@ -90,18 +90,17 @@ function sync_args_from_cmd(args) {
             }
         }
         //set the build name on the basis of build identifier
-        if ("build-name" in args) {
-            if ("build-identifier" in args) {
-                lt_config["run_settings"]["build_name"] = args["build-name"] + "-" + args["build-identifier"]
-            } else {
-                lt_config["run_settings"]["build_name"] = args["build-name"]
-            }
-        } else if ("build-identifier" in args && lt_config["run_settings"]["build_name"]) {
-            lt_config["run_settings"]["build_name"] = lt_config["run_settings"]["build_name"] + "-" + args["build-identifier"]
-
-        } else {
-            lt_config["run_settings"]["build_name"] = args["build-identifier"]
+        if("build-name" in args){
+            lt_config["run_settings"]["build_name"]=args["build-name"]
         }
+        if ("build-identifier" in args && lt_config["run_settings"]["build_name"]){
+            lt_config["run_settings"]["build_name"]=lt_config["run_settings"]["build_name"]+args["build-identifier"]
+        }else if("build-identifier" in args && !(lt_config["run_settings"]["build_name"])){
+            lt_config["run_settings"]["build_name"]=args["build-identifier"]
+        }else if (lt_config["run_settings"]["build_name"] && lt_config["run_settings"]["build_identifier"]){
+            lt_config["run_settings"]["build_name"]=lt_config["run_settings"]["build_name"]+lt_config["run_settings"]["build_identifier"]
+        }
+
 
         if ("tags" in args) {
             lt_config["run_settings"]["tags"] = args["tags"].split(",")
