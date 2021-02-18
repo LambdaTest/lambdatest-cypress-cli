@@ -1,4 +1,5 @@
 const fs = require("fs")
+const constants=require("./constants.js")
 module.exports = validate_config = function (lt_config) {
     return new Promise(function (resolve, reject) {
         //validate auth keys are present
@@ -22,9 +23,9 @@ module.exports = validate_config = function (lt_config) {
             reject("Error!! please provide browsers, browsers list can not be empty")
         }
         //validate parellel session
-        let parellels = lt_config["run_settings"]["parallels"]
-        if (parellels == undefined || parellels == null || isNaN(parellels) || (Number(parellels) && Number(parellels) % 1 !== 0) || parseInt(parellels, 10) <= 0 || parellels === "Here goes the number of parallels you want to run") {
-            reject("Error!! Parellels value not correct")
+        let parallels = lt_config["run_settings"]["parallels"]
+        if (parallels == undefined || parallels == null || isNaN(parallels) || (Number(parallels) && Number(parallels) % 1 !== 0) || parseInt(parallels, 10) <= 0 || parallels === "Here goes the number of parallels you want to run") {
+            reject("Error!! Parallels value not correct")
         }
 
         //validate if cypress config file is passed and exists
@@ -32,6 +33,10 @@ module.exports = validate_config = function (lt_config) {
             if (!fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
                 reject("Error!! Cypress Config File does not exists")
             }
+        }
+
+        if(lt_config["run_settings"]["cypress_version"] && !(constants.SUPPORTED_CYPRESS_VERSIONS.includes(lt_config["run_settings"]["cypress_version"]))){
+            reject("Error!! Cypress Version not supported")
         }
         resolve("Validated the Config")
     })

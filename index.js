@@ -34,7 +34,7 @@ const argv = require('yargs')
       describe: 'build tags',
       type: 'string'
     }).option('p', {
-      alias: 'parellels',
+      alias: 'parallels',
       describe: 'no of parellel sessions',
       type: 'string'
     }).option('envs', {
