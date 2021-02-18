@@ -1,4 +1,5 @@
 const fs = require("fs")
+const constants=require("./constants.js")
 module.exports = validate_config = function (lt_config) {
     return new Promise(function (resolve, reject) {
         //validate auth keys are present
@@ -32,6 +33,10 @@ module.exports = validate_config = function (lt_config) {
             if (!fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
                 reject("Error!! Cypress Config File does not exists")
             }
+        }
+
+        if(lt_config["run_settings"]["cypress_version"] && !(constants.SUPPORTED_CYPRESS_VERSIONS.includes(lt_config["run_settings"]["cypress_version"]))){
+            reject("Error!! Cypress Version not supported")
         }
         resolve("Validated the Config")
     })
