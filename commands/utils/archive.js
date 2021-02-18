@@ -51,7 +51,7 @@ function archive_project(ignore_files = []) {
         archive.pipe(output);
         ignore_files = ['node_modules', 'node_modules/**/*', 'test.zip', 'project.zip', 'mochawesome-report', 'cypress/screenshots', 'cypress/videos', 'cypress/results'].concat(ignore_files)
         console.log("Ignoring files: ", ignore_files)
-        archive.glob('**/*', { cwd: process.cwd(), ignore: ignore_files })
+        archive.glob('**/*', { cwd: process.cwd(), ignore: ignore_files }, { prefix: "project/" })
 
         archive.finalize();
     })
