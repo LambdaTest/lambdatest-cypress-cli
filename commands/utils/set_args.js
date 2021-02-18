@@ -106,10 +106,12 @@ function sync_args_from_cmd(args) {
             lt_config["run_settings"]["tags"] = args["tags"].split(",")
         }
 
-        if ("parellels" in args) {
-            lt_config["run_settings"]["parellels"] = args["parellels"]
-        } else {
-            lt_config["run_settings"]["parellels"] = 0
+        if ("parallels" in args) {
+            lt_config["run_settings"]["parallels"] = parseInt(args["parallels"])
+        }else if (!(lt_config["run_settings"]["parallels"])){
+            lt_config["run_settings"]["parallels"]=0
+        }else{
+            lt_config["run_settings"]["parallels"]=parseInt(lt_config["run_settings"]["parallels"])
         }
 
         //set tunnel options
