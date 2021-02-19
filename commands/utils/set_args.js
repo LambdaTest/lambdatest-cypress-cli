@@ -55,9 +55,10 @@ function sync_args_from_cmd(args) {
             args['specs'] = args['specs'].split(',')
             lt_config["run_settings"]["specs"] = args["specs"]
         }
-
         if ("cypress-config-file" in args) {
             lt_config["run_settings"]["cypress_config_file"] = args["cypress-config-file"]
+        } else if ((!lt_config["run_settings"]["cypress_config_file"]) && fs.existsSync(path.join(process.cwd(), "cypress.json"))) {
+            lt_config["run_settings"]["cypress_config_file"] = path.join(process.cwd() , "cypress.json")
         }
         //Set the env variables
         let env_vars = undefined
@@ -90,15 +91,15 @@ function sync_args_from_cmd(args) {
             }
         }
         //set the build name on the basis of build identifier
-        if("build-name" in args){
-            lt_config["run_settings"]["build_name"]=args["build-name"]
+        if ("build-name" in args) {
+            lt_config["run_settings"]["build_name"] = args["build-name"]
         }
-        if ("build-identifier" in args && lt_config["run_settings"]["build_name"]){
-            lt_config["run_settings"]["build_name"]=lt_config["run_settings"]["build_name"]+args["build-identifier"]
-        }else if("build-identifier" in args && !(lt_config["run_settings"]["build_name"])){
-            lt_config["run_settings"]["build_name"]=args["build-identifier"]
-        }else if (lt_config["run_settings"]["build_name"] && lt_config["run_settings"]["build_identifier"]){
-            lt_config["run_settings"]["build_name"]=lt_config["run_settings"]["build_name"]+lt_config["run_settings"]["build_identifier"]
+        if ("build-identifier" in args && lt_config["run_settings"]["build_name"]) {
+            lt_config["run_settings"]["build_name"] = lt_config["run_settings"]["build_name"] + args["build-identifier"]
+        } else if ("build-identifier" in args && !(lt_config["run_settings"]["build_name"])) {
+            lt_config["run_settings"]["build_name"] = args["build-identifier"]
+        } else if (lt_config["run_settings"]["build_name"] && lt_config["run_settings"]["build_identifier"]) {
+            lt_config["run_settings"]["build_name"] = lt_config["run_settings"]["build_name"] + lt_config["run_settings"]["build_identifier"]
         }
 
 
@@ -108,10 +109,10 @@ function sync_args_from_cmd(args) {
 
         if ("parallels" in args) {
             lt_config["run_settings"]["parallels"] = parseInt(args["parallels"])
-        }else if (!(lt_config["run_settings"]["parallels"])){
-            lt_config["run_settings"]["parallels"]=0
-        }else{
-            lt_config["run_settings"]["parallels"]=parseInt(lt_config["run_settings"]["parallels"])
+        } else if (!(lt_config["run_settings"]["parallels"])) {
+            lt_config["run_settings"]["parallels"] = 0
+        } else {
+            lt_config["run_settings"]["parallels"] = parseInt(lt_config["run_settings"]["parallels"])
         }
 
         //set tunnel options
@@ -162,10 +163,10 @@ function sync_args_from_cmd(args) {
         if ("ignore_files" in args) {
             lt_config["run_settings"]["ignore_files"] = args["ignore_files"].split(",")
         }
-        if("cypress_version" in args){
+        if ("cypress_version" in args) {
             lt_config["run_settings"]["cypress_version"] = args["cypress_version"]
-        }else if (lt_config["run_settings"]["cypress_version"]){
-            lt_config["run_settings"]["cypress_version"]=String(lt_config["run_settings"]["cypress_version"])
+        } else if (lt_config["run_settings"]["cypress_version"]) {
+            lt_config["run_settings"]["cypress_version"] = String(lt_config["run_settings"]["cypress_version"])
         }
         //get specs from current directory if specs are not passed in config or cli
         if ((lt_config["run_settings"]["specs"] == undefined || lt_config["run_settings"]["specs"].length == 0) && fs.existsSync(constants.DEFAULT_TEST_PATH)) {
