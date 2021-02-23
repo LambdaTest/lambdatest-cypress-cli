@@ -39,12 +39,15 @@ async function run(lt_config, batches, env, i = 0) {
 
                 }
                 archive.delete_archive(project_file)
+                resolve("done")
             }).catch(function (err) {
                 console.log(err)
                 archive.delete_archive(project_file)
+                reject(err)
             })
         }).catch(function (err) {
             console.log(err)
+            reject(err)
         })
 
     })

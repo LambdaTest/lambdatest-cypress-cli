@@ -49,7 +49,7 @@ function archive_project(ignore_files = []) {
 
         // pipe archive data to the file
         archive.pipe(output);
-        ignore_files = ['node_modules', 'node_modules/**/*', 'test.zip', 'project.zip', 'mochawesome-report', 'cypress/screenshots', 'cypress/videos', 'cypress/results'].concat(ignore_files)
+        ignore_files = ['cypress.json','node_modules', 'node_modules/**/*', 'test.zip', 'project.zip', 'mochawesome-report', 'cypress/screenshots', 'cypress/videos', 'cypress/results'].concat(ignore_files)
         console.log("Ignoring files: ", ignore_files)
         archive.glob('**/*', { cwd: process.cwd(), ignore: ignore_files }, { prefix: "project/" })
 
@@ -107,7 +107,8 @@ function archive_batch(lt_config, batch) {
         if (lt_config["run_settings"]["cypress_config_file"] && fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
             let rawdata = fs.readFileSync(lt_config["run_settings"]["cypress_config_file"]);
             archive.append(rawdata, { name: constants.CYPRESS_CONFIG_NAME });
-
+        } else if ((!lt_config["run_settings"]["cypress_config_file"])) {
+            archive.append("{}", { name: constants.CYPRESS_CONFIG_NAME });
         }
 
         let lt_config_string = JSON.stringify(lt_config, null, 4);
@@ -116,8 +117,8 @@ function archive_batch(lt_config, batch) {
     })
 }
 
-module.exports={
-delete_archive:delete_archive,
-archive_project:archive_project,
-archive_batch:archive_batch
+module.exports = {
+    delete_archive: delete_archive,
+    archive_project: archive_project,
+    archive_batch: archive_batch
 }
