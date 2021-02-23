@@ -5,6 +5,8 @@ const constants = require("./utils/constants.js")
 const batcher = require("./utils/batch/batcher.js")
 const fs = require("fs")
 const batch_runner = require("./utils/batch/batch_runner.js")
+var lambdaTunnel = require('@lambdatest/node-tunnel');
+
 module.exports = function (args) {
     if (!("lambdatest-config-file" in args)) {
         console.log("Checking Lambda Config in current directory")
@@ -31,7 +33,32 @@ module.exports = function (args) {
             //validate the config options
             validate(lt_config).then(function () {
                 batcher.make_batches(lt_config).then(function (batches) {
-                    batch_runner.run_batches(lt_config, batches, env)
+                    if (lt_config["tunnel_settings"]["tunnel"]) {
+                        var tunnelInstance = new lambdaTunnel();
+                        var tunnelArguments = {
+                            user: lt_config["lambdatest_auth"]["username"],
+                            key: lt_config["lambdatest_auth"]["access_key"],
+                            tunnelName: lt_config["tunnel_settings"]["tunnelName"],
+                            v: true,
+                            env: env
+                        };
+
+                        tunnelInstance
+                            .start(tunnelArguments)
+                            .then(status => {
+                                batch_runner.run_batches(lt_config, batches, env).then(function () {
+                                    tunnelInstance.stop()
+                                }).catch(function (error) {
+                                    console.log(error)
+                                    tunnelInstance.stop()
+                                })
+                            }).catch(error => {
+                                console.log(error);
+                            });
+
+                    } else {
+                        batch_runner.run_batches(lt_config, batches, env)
+                    }
                 }).catch(function (err) {
                     console.log(err)
                 })
