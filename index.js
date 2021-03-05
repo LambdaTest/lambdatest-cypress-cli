@@ -72,7 +72,6 @@ const argv = require('yargs')
     })
   },
     function (argv) {
-      console.log("In run command")
       require("./commands/run")(argv);
 
     }

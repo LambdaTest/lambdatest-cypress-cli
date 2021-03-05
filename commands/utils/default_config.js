@@ -20,12 +20,12 @@ module.exports={
         }
     ],
     "run_settings": {
-        "cypress_config_file": "/path/to/<cypress config file>.json",
+        "cypress_config_file": "cypress.json",
         "build_name": "build-name",
         "parallels": 1,
         "specs":"./*.spec.js",
         "ignore_files":"",
-        "cypress_version":"5"
+        "npm_dependencies": {"cypress": "6.1.0"},
         },
     "tunnel_settings": {
         "tunnel": false,
