@@ -14,10 +14,7 @@ var batchCounter = 0
 var totalBatches = 0
 function run_single_batch(connection, batch, lt_config, env){
     console.log("Executing batch %d at Lambdatest", (parseInt(batchCounter) + 1))
-    // console.log("ltconfig received " + JSON.stringify(lt_config))
 
-    console.log("USERNAME " + lt_config["lambdatest_auth"]["username"])
-    console.log("ACCESS KEY " + lt_config["lambdatest_auth"]["access_key"])
     lt_config["test_suite"] = batch
     archive.archive_batch(lt_config, batch, env).then(async function (file_obj) {
         fs.readFile(file_obj["name"], '', function(err, data) {
@@ -53,11 +50,8 @@ async function run(lt_config, batches, env, i = 0) {
                 }
                 //add project link in lt config
                 lt_config["run_settings"]["project_url"] = resp["value"]["message"]
-                console.log("Project Uploaded")
-                console.log("Executing batches")
 
                 endPointUrl = constants[env].INTEGRATION_BASE_URL + constants.RUN_WS_URL
-                console.log("endPointUrl :  "+ endPointUrl)
                 // all this needs to be done inside a websocket event loop
                 const connection = new WebSocket(endPointUrl)
 
@@ -71,7 +65,7 @@ async function run(lt_config, batches, env, i = 0) {
                     return
                 }
                 connection.onclose = (event) => {
-                    console.log("connection close called")
+                    archive.delete_archive(project_file)
                     resolve("done")
                 }
                 connection.onmessage = (e) => {
@@ -79,18 +73,13 @@ async function run(lt_config, batches, env, i = 0) {
                     // if message received says that the batch is successfully executed, send next batch
                     receivedMessage = e.data
                     var jObject = JSON.parse(e.data); 
-                    console.log("Status code received from Server: " + jObject.statusCode)
-                    console.log("BATCH COUNTER : "+batchCounter)
-                    console.log("BATCH TOTAL : "+totalBatches)
                     if (jObject.statusCode == "200"){
                         console.log("Batch %d Completed. Build URL: ", batchCounter, jObject.dashboardURL)
                         if (batchCounter < totalBatches){
-                            console.log("Calling to run batch number : %s"+ (parseInt(batchCounter) + 1))
                             run_single_batch(connection, batches[batchCounter], lt_config, env )
                         }else{
                             // all batches have run, hence close connection
-                            console.log("ALl batches run")
-                            console.log("closing ws connection")
+                            console.log("All batches ran")
                             connection.close()
                         }
                         
@@ -133,16 +122,13 @@ async function run(lt_config, batches, env, i = 0) {
                 // resolve("done")
             }).catch(function (err) {
                 console.log(err)
-                // archive.delete_archive(project_file)
+                archive.delete_archive(project_file)
                 reject(err)
             })
-            console.log("RAN")
         }).catch(function (err) {
             console.log(err)
             reject(err)
         })
-        console.log("ARCHIVE completed")
-
     })
 
 }

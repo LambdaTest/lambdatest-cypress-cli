@@ -41,7 +41,6 @@ function login(lt_config, env = "prod") {
 }
 
 function upload_project(lt_config, file_name, env = "prod") {
-    console.log("uploda ")
     return new Promise(function (resolve, reject) {
 
         login(lt_config, env).then(function (responseDataLogin) {
