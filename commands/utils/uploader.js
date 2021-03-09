@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { url } = require('inspector');
 const request = require("request")
 const constants = require("./constants.js")
 
@@ -12,7 +13,7 @@ function login(lt_config, env = "prod") {
                 "token": lt_config["lambdatest_auth"]["access_key"]
             }),
         }
-
+        console.log("url %s", options["url"])
         let responseData = null;
         request.post(options, function (err, resp, body) {
             if (err) {
@@ -40,6 +41,7 @@ function login(lt_config, env = "prod") {
 }
 
 function upload_project(lt_config, file_name, env = "prod") {
+    console.log("uploda ")
     return new Promise(function (resolve, reject) {
 
         login(lt_config, env).then(function (responseDataLogin) {

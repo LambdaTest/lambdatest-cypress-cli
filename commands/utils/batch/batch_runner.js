@@ -37,7 +37,6 @@ function run_single_batch(connection, batch, lt_config, env){
 }
 
 async function run(lt_config, batches, env, i = 0) {
-
     totalBatches = batches.length
     console.log("Total number of batches " + totalBatches)
     return new Promise(function (resolve, reject) {
@@ -63,7 +62,6 @@ async function run(lt_config, batches, env, i = 0) {
                 const connection = new WebSocket(endPointUrl)
 
                 connection.onopen = () => {
-                    console.log("CALLING SINGLE BATCH RUN")
                     run_single_batch(connection, batches[batchCounter], lt_config, env )
                     
                 }
@@ -74,6 +72,7 @@ async function run(lt_config, batches, env, i = 0) {
                 }
                 connection.onclose = (event) => {
                     console.log("connection close called")
+                    resolve("done")
                 }
                 connection.onmessage = (e) => {
                     
@@ -137,10 +136,12 @@ async function run(lt_config, batches, env, i = 0) {
                 // archive.delete_archive(project_file)
                 reject(err)
             })
+            console.log("RAN")
         }).catch(function (err) {
             console.log(err)
             reject(err)
         })
+        console.log("ARCHIVE completed")
 
     })
 

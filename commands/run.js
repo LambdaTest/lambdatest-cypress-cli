@@ -46,16 +46,20 @@ module.exports = function (args) {
                         tunnelInstance
                             .start(tunnelArguments)
                             .then(status => {
+                                console.log("CALLING run_batches")
                                 batch_runner.run_batches(lt_config, batches, env).then(function () {
+                                    console.log("stopping tunnel")
                                     tunnelInstance.stop()
                                 }).catch(function (error) {
+                                    console.log("stopping tunnel failed")
                                     console.log(error)
                                     tunnelInstance.stop()
                                 })
+                                console.log("no exception caught in then function of run batches")
                             }).catch(error => {
+                                console.log("run batches failed")
                                 console.log(error);
                             });
-
                     } else {
                         batch_runner.run_batches(lt_config, batches, env)
                     }
