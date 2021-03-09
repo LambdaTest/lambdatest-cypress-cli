@@ -17,9 +17,10 @@ module.exports = {
 
     },
     stage: {
-        INTEGRATION_BASE_URL: "https://stage-api.lambdatest.com/liis",
-        BUILD_BASE_URL: "https://stage-api.lambdatest.com/automation/api/v1/builds/",
-        BUILD_STOP_URL:"https://stage-api.lambdatest.com/api/v1/test/stop?buildId="
+        // INTEGRATION_BASE_URL: "https://stage-api.lambdatest.com/liis",
+        INTEGRATION_BASE_URL: "https://stage-lisa.lambdatest.com/liis",
+        BUILD_BASE_URL: "https://stage-lisa.lambdatest.com/automation/api/v1/builds/",
+        BUILD_STOP_URL:"https://stage-lisa.lambdatest.com/api/v1/test/stop?buildId="
 
     },
     beta: {
