@@ -13,7 +13,6 @@ function login(lt_config, env = "prod") {
                 "token": lt_config["lambdatest_auth"]["access_key"]
             }),
         }
-        console.log("url %s", options["url"])
         let responseData = null;
         request.post(options, function (err, resp, body) {
             if (err) {
