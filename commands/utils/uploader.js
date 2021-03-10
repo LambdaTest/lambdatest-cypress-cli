@@ -13,7 +13,6 @@ function login(lt_config, env = "prod") {
                 "token": lt_config["lambdatest_auth"]["access_key"]
             }),
         }
-        console.log("url %s", options["url"])
         let responseData = null;
         request.post(options, function (err, resp, body) {
             if (err) {
@@ -56,7 +55,6 @@ function upload_project(lt_config, file_name, env = "prod") {
                 },
                 timeout:"600000"
             }
-
             let responseData = null;
             request.post(options, function (err, resp, body) {
                 if (err) {
@@ -81,6 +79,7 @@ function upload_project(lt_config, file_name, env = "prod") {
                 }
             });
         }).catch(function (err) {
+            console.log("upload projec")
             reject("Not Authorized")
         })
     }).catch(function (err) {
