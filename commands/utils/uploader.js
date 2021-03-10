@@ -55,7 +55,6 @@ function upload_project(lt_config, file_name, env = "prod") {
                 },
                 timeout:"600000"
             }
-
             let responseData = null;
             request.post(options, function (err, resp, body) {
                 if (err) {
@@ -80,6 +79,7 @@ function upload_project(lt_config, file_name, env = "prod") {
                 }
             });
         }).catch(function (err) {
+            console.log("upload projec")
             reject("Not Authorized")
         })
     }).catch(function (err) {
