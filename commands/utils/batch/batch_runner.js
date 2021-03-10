@@ -95,6 +95,7 @@ async function run(lt_config, batches, env, i = 0) {
                         connection.close()
 
                     }
+                    archive.delete_archive("test.zip")
                 
                 }
 

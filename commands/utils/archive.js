@@ -8,7 +8,6 @@ const process = require("process")
 function delete_archive(file_name) {
     try {
         fs.unlinkSync(file_name)
-        console.log("%s File Deleted", file_name)
     } catch (err) {
         console.error(err)
     }
@@ -49,7 +48,7 @@ function archive_project(ignore_files = []) {
 
         // pipe archive data to the file
         archive.pipe(output);
-        ignore_files = ['cypress.json','node_modules', 'node_modules/**/*', 'test.zip', 'project.zip', 'mochawesome-report', 'cypress/screenshots', 'cypress/videos', 'cypress/results'].concat(ignore_files)
+        ignore_files = ['node_modules', 'node_modules/**/*', 'test.zip', 'project.zip', 'mochawesome-report', 'cypress/screenshots', 'cypress/videos', 'cypress/results'].concat(ignore_files)
         console.log("Ignoring files: ", ignore_files)
         archive.glob('**/*', { cwd: process.cwd(), ignore: ignore_files }, { prefix: "project/" })
 
