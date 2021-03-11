@@ -29,7 +29,6 @@ function run_single_batch(connection, batch, lt_config, env){
         });
         
     })
-    // archive.delete_archive(file_obj['name'])
     batchCounter += 1
 }
 
@@ -83,7 +82,6 @@ async function run(lt_config, batches, env, i = 0) {
                             connection.close()
                         }
                         
-                        
                     }else if(jObject.statusCode == 400){
                         console.log("Something is wrong with the way you are running test. Reason: "+ jObject.errMsg)
                         console.log("closing ws connection")
@@ -95,7 +93,6 @@ async function run(lt_config, batches, env, i = 0) {
                         connection.close()
 
                     }
-                    archive.delete_archive("test.zip")
                 
                 }
 
