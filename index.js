@@ -23,7 +23,7 @@ const argv = require('yargs')
       type: 'string'
     }).option('env', {
       alias: 'env',
-      describe: 'environment variables',
+      describe: 'environment',
       type: 'string'
     }).option('bn', {
       alias: 'build-name',
@@ -34,22 +34,49 @@ const argv = require('yargs')
       describe: 'build tags',
       type: 'string'
     }).option('p', {
-      alias: 'parellels',
+      alias: 'parallels',
       describe: 'no of parellel sessions',
       type: 'string'
-    }).option('env', {
-      alias: 'env',
-      describe: 'environment',
+    }).option('envs', {
+      alias: 'envs',
+      describe: 'environment variables',
+      type: 'string'
+    }).option('tun', {
+      alias: 'tunnel',
+      describe: 'tunnel',
+      type: 'string'
+    }).option('tname', {
+      alias: 'tunnelName',
+      describe: 'tunnel name',
+      type: 'string'
+    }).option('cef', {
+      alias: 'cypress-env-file',
+      describe: 'cypress environment file',
+      type: 'string'
+    }).option('brs', {
+      alias: 'browsers',
+      describe: 'browsers to run test format: platform:browser:version',
+      type: 'string'
+    }).option('bi', {
+      alias: 'build-identifier',
+      describe: 'Build Identifier / Build Counter',
+      type: 'string'
+    }).option('if', {
+      alias: 'ignore_files',
+      describe: 'Files to ignore in the project zip',
+      type: 'string'
+    }).option('cv', {
+      alias: 'cypress_version',
+      describe: 'Cypress Version',
       type: 'string'
     })
   },
     function (argv) {
-      console.log("In run command")
       require("./commands/run")(argv);
 
     }
-  ).command('build-info', 'info about the build', 
-    function(yargs) {
+  ).command('build-info', 'info about the build',
+    function (yargs) {
       return yargs.option('id', {
         alias: 'build-id',
         describe: 'Build Identifier',
@@ -69,9 +96,34 @@ const argv = require('yargs')
         type: 'string'
       })
     }
-  ,
+    ,
     function (argv) {
       require("./commands/build_info")(argv);
+    }
+  ).command('build-stop', 'stop all tests in the build',
+    function (yargs) {
+      return yargs.option('id', {
+        alias: 'build-id',
+        describe: 'Build Identifier',
+        type: 'string',
+        demandOption: true
+      }).option('user', {
+        alias: 'user',
+        describe: 'username',
+        type: 'string'
+      }).option('access_key', {
+        alias: 'access_key',
+        describe: 'Access Key',
+        type: 'string'
+      }).option('env', {
+        alias: 'env',
+        describe: 'environment',
+        type: 'string'
+      })
+    }
+    ,
+    function (argv) {
+      require("./commands/build_stop")(argv);
     }
   )
   .help()
