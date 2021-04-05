@@ -34,6 +34,10 @@ module.exports = validate_config = function (lt_config) {
                 reject("Error!! Cypress Config File does not exist")
             }
         }
+        npm_deps = lt_config["run_settings"]["npm_dependencies"]
+        if (!("cypress" in npm_deps)){
+            reject("Error!! Please provide required cypress version in npm_dependencies of lambatest-config.json file")
+        }
         resolve("Validated the Config")
     })
 }
