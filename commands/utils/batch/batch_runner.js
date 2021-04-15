@@ -5,32 +5,49 @@ const constants = require('../constants.js')
 const uploader = require("../uploader.js")
 const process = require("process")
 const archive = require("../archive.js")
-const { url } = require('inspector')
 const WebSocket = require('ws')
 const { type } = require('os')
+const request = require("request")
 
 
 var batchCounter = 0
 var totalBatches = 0
-function run_single_batch(connection, batch, lt_config, env){
-    console.log("Executing batch %d at Lambdatest", (parseInt(batchCounter) + 1))
 
-    lt_config["test_suite"] = batch
-    archive.archive_batch(lt_config, batch, env).then(async function (file_obj) {
-        fs.readFile(file_obj["name"], '', function(err, data) {
-            if (err) throw err;
-            // console.log(data);
-            var x = JSON.stringify({
-                'file_data': data,
-                'username': lt_config["lambdatest_auth"]["username"],
-                'access_key': lt_config["lambdatest_auth"]["access_key"]
-            })
-            connection.send(x)
-        });
-        
+function run_test(payload, env = "prod") {
+
+    return new Promise(function (resolve, reject) {
+
+        let options = {
+            url: constants[env].INTEGRATION_BASE_URL + constants.RUN_URL,
+            body: payload
+        }
+
+            let responseData = null;
+            request.post(options, function (err, resp, body) {
+                if (err) {
+                    reject(err);
+                } else {
+                    try {
+                        responseData = JSON.parse(body);
+                    } catch (e) {
+                        console.log("Error in JSON response", body)
+                        responseData = null
+                    }
+                    if (resp.statusCode != 200) {
+                        if (responseData && responseData["error"]) {
+                            reject(responseData["error"]);
+                        } else {
+                            reject( responseData);
+                        }
+                    } else {
+                        console.log(`Uploaded tests successfully `);
+                        resolve(responseData);
+                    }
+                }
+            });
+       
     })
-    batchCounter += 1
-}
+};
 
 async function run(lt_config, batches, env, i = 0) {
     totalBatches = batches.length
@@ -40,7 +57,7 @@ async function run(lt_config, batches, env, i = 0) {
         archive.archive_project(lt_config["run_settings"]["ignore_files"]).then(function (file_obj) {
             project_file = file_obj["name"]
             //upload the project and get the project link
-            uploader.upload_project(lt_config, file_obj["name"], env).then(async function (resp) {
+            uploader.upload_zip(lt_config, file_obj["name"],"project", env).then(async function (resp) {
 
                 // TODO: remove hard check for undefined. handle it using nested promise rejection
                 if (resp == undefined){
@@ -48,76 +65,27 @@ async function run(lt_config, batches, env, i = 0) {
                     return
                 }
                 //add project link in lt config
-                lt_config["run_settings"]["project_url"] = resp["value"]["message"]
+                lt_config["run_settings"]["project_url"] = resp["value"]["message"].split("?")[0]
+                lt_config["test_suite"] = batches[0]
+                archive.archive_batch(lt_config, batches[0], env).then(async function (file_obj) {
+                    uploader.upload_zip(lt_config, file_obj["name"],"tests", env).then(async function (resp) {
+                        var payload = JSON.stringify({
+                            'payload':{
+                                'test_file': resp["value"]["message"].split("?")[0]
+                            },
+                            'username': lt_config["lambdatest_auth"]["username"],
+                            'access_key': lt_config["lambdatest_auth"]["access_key"],
+                            "type":"cypress"
+                        })
+                        run_test(payload,env).then(function(){
 
-                endPointUrl = constants[env].INTEGRATION_BASE_URL + constants.RUN_WS_URL
-                // all this needs to be done inside a websocket event loop
-                const connection = new WebSocket(endPointUrl)
-
-                connection.onopen = () => {
-                    run_single_batch(connection, batches[batchCounter], lt_config, env )
-                    
-                }
-
-                connection.onerror = (error) => {
-                    console.log(`WebSocket error: ${error}`)
-                    return
-                }
-                connection.onclose = (event) => {
-                    archive.delete_archive(project_file)
-                    resolve("done")
-                }
-                connection.onmessage = (e) => {
-                    
-                    // if message received says that the batch is successfully executed, send next batch
-                    receivedMessage = e.data
-                    var jObject = JSON.parse(e.data); 
-                    if (jObject.statusCode == "200"){
-                        console.log("Batch %d Completed. Build URL: ", batchCounter, jObject.dashboardURL)
-                        if (batchCounter < totalBatches){
-                            run_single_batch(connection, batches[batchCounter], lt_config, env )
-                        }else{
-                            // all batches have run, hence close connection
-                            console.log("All batches ran")
-                            connection.close()
-                        }
+                        })
                         
-                    }else if(jObject.statusCode == 400){
-                        console.log("Something is wrong with the way you are running test. Reason: "+ jObject.errMsg)
-                        console.log("closing ws connection")
-                        connection.close()
-
-                    }else if (jObject.statusCode == 500){
-                        console.log("Something went wrong on the server side. Please report")
-                        console.log("closing ws connection")
-                        connection.close()
-
-                    }
+                    })
+                    
+                    
+                })
                 
-                }
-
-                // for (i in batches) {
-                //     console.log("Executing batch %d at Lambdatest", (parseInt(i) + 1))
-                //     lt_config["test_suite"] = batches[i]
-                //     await archive.archive_batch(lt_config, batches[i], env).then(async function (file_obj) {
-                //         console.log("Archived %d batch", (parseInt(i) + 1))
-                //         await uploader.upload_file(lt_config, file_obj["name"], env).then(function (resp) {
-                //             resp_json = JSON.parse(resp["value"]["message"])
-                //             console.log("Dashboard Url: %s", resp_json["dashboard_url"])
-                //             console.log("Total %d:", resp_json["total"])
-                //             console.log("Errors: %d", resp_json["errors"])
-                //             console.log("Run %d:", resp_json["total"] - resp_json["errors"])
-                //             // archive.delete_archive(file_obj['name'])
-                //         }).catch(function (err) {
-                //             console.log(err)
-                //             // archive.ls(file_obj["name"])
-                //         })
-                //     })
-
-                // }
-                // archive.delete_archive(project_file)
-                // console.log("going to resolve promise")
-                // resolve("done")
             }).catch(function (err) {
                 console.log(err)
                 archive.delete_archive(project_file)

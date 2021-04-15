@@ -3,7 +3,7 @@ module.exports = {
     LOGIN_URL: "/cy/login",
     RUN_URL: "/cy/run",
     RUN_WS_URL: "/cy/run/ws",
-    PROJECT_UPLOAD_URL:"/cy/upload",
+    PROJECT_UPLOAD_URL:"/url",
     LT_CONFIG_NAME: "lambdatest-config.json",
     CYPRESS_CONFIG_NAME:"cypress.json",
     DEFAULT_TEST_PATH: ".",
