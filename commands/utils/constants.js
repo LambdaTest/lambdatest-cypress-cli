@@ -5,7 +5,7 @@ module.exports = {
     RUN_WS_URL: "/cy/run/ws",
     PROJECT_UPLOAD_URL:"/url",
     LT_CONFIG_NAME: "lambdatest-config.json",
-    CYPRESS_CONFIG_NAME:"cypress.json",
+    CYPRESS_CONFIG_NAME:"cypress-config.json",
     DEFAULT_TEST_PATH: ".",
     LAMBDA_CONFIG: "./lambdatest-config.json",
     SUPPORTED_CYPRESS_VERSIONS:["5","6"],

@@ -40,6 +40,14 @@ function get_signed_url(lt_config, prefix,env = "prod") {
 
 function upload_zip(lt_config, file_name,prefix="project", env = "prod") {
     return new Promise(function (resolve, reject) {
+        const stats = fs.statSync(file_name);
+        let fileSizeInBytes = stats.size;
+        //Convert the file size to megabytes (optional)
+        let fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
+        if (fileSizeInMegabytes>200){
+            reject("File Size exceed 200 MB limit")
+            return
+        }
         get_signed_url(lt_config,prefix, env).then(function (responseDataURL) {
             let options = {
                 url: responseDataURL["value"]["message"],

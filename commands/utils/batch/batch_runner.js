@@ -79,8 +79,12 @@ async function run(lt_config, batches, env, i = 0) {
                         })
                         run_test(payload,env).then(function(){
 
+                        }).catch(function(err){
+                            console.log("Error occured while creating tests",err)
                         })
                         
+                    }).catch(function(err){
+                        console.log("Error occured while uploading files ",err)
                     })
                     
                     
