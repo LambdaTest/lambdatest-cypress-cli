@@ -1,109 +1,128 @@
-const path = require('path')
-const fs = require('fs')
-const archiver = require('archiver')
-const constants = require('../constants.js')
-const uploader = require("../uploader.js")
-const process = require("process")
-const archive = require("../archive.js")
-const WebSocket = require('ws')
-const { type } = require('os')
-const request = require("request")
+const path = require("path");
+const fs = require("fs");
+const archiver = require("archiver");
+const constants = require("../constants.js");
+const uploader = require("../uploader.js");
+const process = require("process");
+const archive = require("../archive.js");
+const WebSocket = require("ws");
+const { type } = require("os");
+const request = require("request");
+const { del } = require("request");
+const { delete_archive } = require("../archive.js");
 
-
-var batchCounter = 0
-var totalBatches = 0
+var batchCounter = 0;
+var totalBatches = 0;
 
 function run_test(payload, env = "prod") {
+  return new Promise(function (resolve, reject) {
+    let options = {
+      url: constants[env].INTEGRATION_BASE_URL + constants.RUN_URL,
+      body: payload,
+    };
 
-    return new Promise(function (resolve, reject) {
-
-        let options = {
-            url: constants[env].INTEGRATION_BASE_URL + constants.RUN_URL,
-            body: payload
+    let responseData = null;
+    request.post(options, function (err, resp, body) {
+      if (err) {
+        reject(err);
+      } else {
+        try {
+          responseData = JSON.parse(body);
+        } catch (e) {
+          console.log("Error in JSON response", body);
+          responseData = null;
         }
-
-            let responseData = null;
-            request.post(options, function (err, resp, body) {
-                if (err) {
-                    reject(err);
-                } else {
-                    try {
-                        responseData = JSON.parse(body);
-                    } catch (e) {
-                        console.log("Error in JSON response", body)
-                        responseData = null
-                    }
-                    if (resp.statusCode != 200) {
-                        if (responseData && responseData["error"]) {
-                            reject(responseData["error"]);
-                        } else {
-                            reject( responseData);
-                        }
-                    } else {
-                        console.log(`Uploaded tests successfully `);
-                        resolve(responseData);
-                    }
-                }
-            });
-       
-    })
-};
+        if (resp.statusCode != 200) {
+          if (responseData && responseData["error"]) {
+            reject(responseData["error"]);
+          } else {
+            reject(responseData);
+          }
+        } else {
+          console.log(`Uploaded tests successfully `);
+          resolve(responseData);
+        }
+      }
+    });
+  });
+}
 
 async function run(lt_config, batches, env, i = 0) {
-    totalBatches = batches.length
-    console.log("Total number of batches " + totalBatches)
-    return new Promise(function (resolve, reject) {
-        //archive the project i.e the current working directory
-        archive.archive_project(lt_config["run_settings"]["ignore_files"]).then(function (file_obj) {
-            project_file = file_obj["name"]
-            //upload the project and get the project link
-            uploader.upload_zip(lt_config, file_obj["name"],"project", env).then(async function (resp) {
-
-                // TODO: remove hard check for undefined. handle it using nested promise rejection
-                if (resp == undefined){
-                    console.log("Either your creds are invalid or something is wrong with the configs provided")
-                    return
-                }
-                //add project link in lt config
-                lt_config["run_settings"]["project_url"] = resp["value"]["message"].split("?")[0]
-                lt_config["test_suite"] = batches[0]
-                archive.archive_batch(lt_config, batches[0], env).then(async function (file_obj) {
-                    uploader.upload_zip(lt_config, file_obj["name"],"tests", env).then(async function (resp) {
-                        var payload = JSON.stringify({
-                            'payload':{
-                                'test_file': resp["value"]["message"].split("?")[0]
-                            },
-                            'username': lt_config["lambdatest_auth"]["username"],
-                            'access_key': lt_config["lambdatest_auth"]["access_key"],
-                            "type":"cypress"
-                        })
-                        run_test(payload,env).then(function(){
-
-                        }).catch(function(err){
-                            console.log("Error occured while creating tests",err)
-                        })
-                        
-                    }).catch(function(err){
-                        console.log("Error occured while uploading files ",err)
-                    })
-                    
-                    
-                })
-                
-            }).catch(function (err) {
-                console.log(err)
-                archive.delete_archive(project_file)
-                reject(err)
-            })
-        }).catch(function (err) {
-            console.log(err)
-            reject(err)
-        })
-    })
-
+  totalBatches = batches.length;
+  console.log("Total number of batches " + totalBatches);
+  return new Promise(function (resolve, reject) {
+    //archive the project i.e the current working directory
+    archive
+      .archive_project(lt_config["run_settings"]["ignore_files"])
+      .then(function (file_obj) {
+        project_file = file_obj["name"];
+        //upload the project and get the project link
+        uploader
+          .upload_zip(lt_config, file_obj["name"], "project", env)
+          .then(async function (resp) {
+            // TODO: remove hard check for undefined. handle it using nested promise rejection
+            if (resp == undefined) {
+              console.log(
+                "Either your creds are invalid or something is wrong with the configs provided"
+              );
+              return;
+            }
+            //add project link in lt config
+            project_url = resp["value"]["message"].split("?")[0].split("/");
+            console.log("Project url is ", project_url);
+            project_url = project_url[project_url.length - 1];
+            lt_config["run_settings"]["project_url"] = project_url;
+            lt_config["test_suite"] = batches[0];
+            archive
+              .archive_batch(lt_config, batches[0], env)
+              .then(async function (file_obj) {
+                uploader
+                  .upload_zip(lt_config, file_obj["name"], "tests", env)
+                  .then(async function (resp) {
+                    var payload = JSON.stringify({
+                      payload: {
+                        test_file: resp["value"]["message"].split("?")[0],
+                      },
+                      username: lt_config["lambdatest_auth"]["username"],
+                      access_key: lt_config["lambdatest_auth"]["access_key"],
+                      type: "cypress",
+                    });
+                    run_test(payload, env)
+                      .then(function () {
+                        delete_archive(project_file);
+                        delete_archive(file_obj["name"]);
+                        resolve()
+                      })
+                      .catch(function (err) {
+                        console.log("Error occured while creating tests", err);
+                        reject(err);
+                      });
+                  })
+                  .catch(function (err) {
+                    delete_archive(file_obj["name"]);
+                    console.log("Error occured while uploading files ", err);
+                    reject(err);
+                  });
+              })
+              .catch(function (err) {
+                console.log("Not able to archive the batch of test files", err);
+                reject(err);
+              });
+          })
+          .catch(function (err) {
+            console.log(err);
+            archive.delete_archive(project_file);
+            reject(err);
+          });
+      })
+      .catch(function (err) {
+        console.log("No able to archive the project");
+        console.log(err);
+        reject(err);
+      });
+  });
 }
-
 
 module.exports = {
-    run_batches: run
-}
+  run_batches: run,
+};
