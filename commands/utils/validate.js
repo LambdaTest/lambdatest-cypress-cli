@@ -1,39 +1,115 @@
-const fs = require("fs")
-const constants=require("./constants.js")
+const fs = require("fs");
+const constants = require("./constants.js");
 module.exports = validate_config = function (lt_config) {
-    return new Promise(function (resolve, reject) {
-        //validate auth keys are present
-        if (!("lambdatest_auth" in lt_config) || !("username" in lt_config["lambdatest_auth"]) || !("access_key" in lt_config["lambdatest_auth"])) {
-            reject("Error!!!  Incompatible Config. Auth not present")
-        }
+  return new Promise(function (resolve, reject) {
+    //validate auth keys are present
+    if (
+      !("lambdatest_auth" in lt_config) ||
+      !("username" in lt_config["lambdatest_auth"]) ||
+      !("access_key" in lt_config["lambdatest_auth"])
+    ) {
+      reject("Error!!!  Incompatible Config. Auth not present");
+    }
 
-        if (lt_config["lambdatest_auth"]["username"] == "<Your LambdaTest username>" || lt_config["lambdatest_auth"]["access_key"] == "<Your LambdaTest access key>") {
-            reject("Error!!!  Auth details not correct")
-        }
-        //Validate spec file
-        if (!("specs" in lt_config["run_settings"])) {
-            reject("Error!! please provide specs key")
-        } else if (lt_config["run_settings"]["specs"].length == 0) {
-            reject("Error!! Please provide specs, specs list can not be empty")
-        }
-        //validate if browsers are not empty
-        if (!("browsers" in lt_config)) {
-            reject("Error!! please provide browsers")
-        } else if (lt_config["browsers"].length == 0) {
-            reject("Error!! please provide browsers, browsers list can not be empty")
-        }
-        //validate parellel session
-        let parallels = lt_config["run_settings"]["parallels"]
-        if (parallels == undefined || parallels == null || isNaN(parallels) || (Number(parallels) && Number(parallels) % 1 !== 0) || parseInt(parallels, 10) <= 0 || parallels === "Here goes the number of parallels you want to run") {
-            reject("Error!! Parallels value not correct")
-        }
+    if (
+      lt_config["lambdatest_auth"]["username"] ==
+        "<Your LambdaTest username>" ||
+      lt_config["lambdatest_auth"]["access_key"] ==
+        "<Your LambdaTest access key>"
+    ) {
+      reject("Error!!!  Auth details not correct");
+    }
+    //Validate spec file
+    if (!("specs" in lt_config["run_settings"])) {
+      reject("Error!! please provide specs key");
+    } else if (lt_config["run_settings"]["specs"].length == 0) {
+      reject("Error!! Please provide specs, specs list can not be empty");
+    }
+    //validate if browsers are not empty
+    if (!("browsers" in lt_config)) {
+      reject("Error!! please provide browsers");
+    } else if (lt_config["browsers"].length == 0) {
+      reject("Error!! please provide browsers, browsers list can not be empty");
+    }
+    //validate parellel session
+    let parallels = lt_config["run_settings"]["parallels"];
+    if (
+      parallels == undefined ||
+      parallels == null ||
+      isNaN(parallels) ||
+      (Number(parallels) && Number(parallels) % 1 !== 0) ||
+      parseInt(parallels, 10) <= 0 ||
+      parallels === "Here goes the number of parallels you want to run"
+    ) {
+      reject("Error!! Parallels value not correct");
+    }
 
-        //validate if cypress config file is passed and exists
-        if (lt_config["run_settings"]["cypress_config_file"] && lt_config["run_settings"]["cypress_config_file"] != "") {
-            if (!fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
-                reject("Error!! Cypress Config File does not exist")
+    //validate if cypress config file is passed and exists
+    if (
+      lt_config["run_settings"]["cypress_config_file"] &&
+      lt_config["run_settings"]["cypress_config_file"] != ""
+    ) {
+      if (!fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
+        reject("Error!! Cypress Config File does not exist");
+      } else {
+        let rawdata = fs.readFileSync(
+          lt_config["run_settings"]["cypress_config_file"]
+        );
+        try {
+          let cypress_config = JSON.parse(rawdata);
+        } catch {
+          console.log(
+            "Cypress.json is not parsed, please provide a valid json"
+          );
+          reject("Error!! Cypress Config File does not has correct json");
+        }
+      }
+    }
+
+    //Validate if package.json is having the cypress dependency
+    if (!fs.existsSync("package.json")) {
+      reject(
+        "Error!! Package.json file does not exist in the root on the project"
+      );
+    } else {
+      let rawdata = fs.readFileSync("package.json");
+      try {
+        let package = JSON.parse(rawdata);
+        let cypress_flag = false;
+        if (package.hasOwnProperty("dependencies")) {
+          for (const [key, value] of Object.entries(package["dependencies"])) {
+            if (key == "cypress") {
+              cypress_flag = true;
+              break;
             }
+          }
         }
-        resolve("Validated the Config")
-    })
-}
+        if (
+          cypress_flag == false &&
+          package.hasOwnProperty("devDependencies")
+        ) {
+          for (const [key, value] of Object.entries(
+            package["devDependencies"]
+          )) {
+            console.log(key, value);
+            if (key == "cypress") {
+              cypress_flag = true;
+              break;
+            }
+          }
+        }
+        if (cypress_flag == false) {
+          reject("Error!!Cypress dependency is not present in package.json");
+        }
+      } catch (e) {
+        console.log(
+          "Package.json is not parsed, please provide a valid json",
+          e
+        );
+        reject("Error!! Package.json File does not has correct json");
+      }
+    }
+
+    resolve("Validated the Config");
+  });
+};
