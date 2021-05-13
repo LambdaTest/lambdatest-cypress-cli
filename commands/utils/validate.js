@@ -78,7 +78,6 @@ module.exports = validate_config = function (lt_config) {
         let cypress_flag = false;
         if (package.hasOwnProperty("dependencies")) {
           for (const [key, value] of Object.entries(package["dependencies"])) {
-            console.log(key, value);
             if (key == "cypress") {
               cypress_flag = true;
               break;

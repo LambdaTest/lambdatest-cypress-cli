@@ -39,7 +39,7 @@ function run_test(payload, env = "prod") {
             reject(responseData);
           }
         } else {
-          console.log(`Uploaded tests successfully `);
+          console.log(`Uploaded tests successfully Please check the dashboard`);
           resolve(responseData);
         }
       }
@@ -69,7 +69,6 @@ async function run(lt_config, batches, env, i = 0) {
             }
             //add project link in lt config
             project_url = resp["value"]["message"].split("?")[0].split("/");
-            console.log("Project url is ", project_url);
             project_url = project_url[project_url.length - 1];
             lt_config["run_settings"]["project_url"] = project_url;
             lt_config["test_suite"] = batches[0];
