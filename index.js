@@ -69,6 +69,10 @@ const argv = require('yargs')
       alias: 'cypress_version',
       describe: 'Cypress Version',
       type: 'string'
+    }).option('sync', {
+      alias: 'sync',
+      describe: 'Sync Build',
+      type: 'string'
     })
   },
     function (argv) {

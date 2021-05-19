@@ -10,7 +10,7 @@ const { type } = require("os");
 const request = require("request");
 const { del } = require("request");
 const { delete_archive } = require("../archive.js");
-
+const poller=require("../poller/poller.js")
 var batchCounter = 0;
 var totalBatches = 0;
 
@@ -39,8 +39,14 @@ function run_test(payload, env = "prod") {
             reject(responseData);
           }
         } else {
-          console.log(`Uploaded tests successfully Please check the dashboard`);
-          resolve(responseData);
+          build_id=responseData['value']['message'].split("=")[responseData['value']['message'].split("=").length-1]
+          if (parseInt(build_id)==0){
+            reject("Some Error occured on Lambdatest Server")
+          }else{
+            console.log(`Uploaded tests successfully `,responseData['value']['message']);
+            resolve(build_id);
+          }
+          
         }
       }
     });
@@ -87,25 +93,32 @@ async function run(lt_config, batches, env, i = 0) {
                       type: "cypress",
                     });
                     run_test(payload, env)
-                      .then(function () {
+                      .then(function (build_id) {
                         delete_archive(project_file);
                         delete_archive(file_obj["name"]);
-                        resolve()
+                        
+                        if(lt_config["run_settings"]["sync"]==true || lt_config["tunnel_settings"]["tunnel"]==true){
+                            //call poller here on the basis of args
+                            poller.poll_build(lt_config,build_id,env).then(function(){
+                              resolve()
+                            })
+
+                        }else{
+                          resolve()
+                        }
+                        
                       })
                       .catch(function (err) {
                         console.log("Error occured while creating tests", err);
-                        reject(err);
                       });
                   })
                   .catch(function (err) {
                     delete_archive(file_obj["name"]);
                     console.log("Error occured while uploading files ", err);
-                    reject(err);
                   });
               })
               .catch(function (err) {
                 console.log("Not able to archive the batch of test files", err);
-                reject(err);
               });
           })
           .catch(function (err) {
