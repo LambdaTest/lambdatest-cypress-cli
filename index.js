@@ -73,6 +73,10 @@ const argv = require('yargs')
       alias: 'sync',
       describe: 'Sync Build',
       type: 'string'
+    }).option('autostart', {
+      alias: 'tat',
+      describe: 'Tunnel Auto Start',
+      type: 'string'
     })
   },
     function (argv) {
