@@ -2,10 +2,10 @@ const constants = require("../constants");
 const request = require("request");
 //const poller=require("./poller.js")
 
-function get_completed_build_info(lt_config, build_id, env) {
+function get_completed_build_info(lt_config, session_id, env) {
   return new Promise(function (resolve, reject) {
     request(
-      constants[env].SESSION_URL + build_id,
+      constants[env].SESSION_URL + session_id,
       {
         auth: {
           username: lt_config["lambdatest_auth"]["username"],
@@ -29,10 +29,10 @@ function get_completed_build_info(lt_config, build_id, env) {
   });
 }
 
-function get_build_info(lt_config, build_id, env, update_status, callback) {
+function get_build_info(lt_config, session_id, env, update_status, callback) {
   
   request(
-    constants[env].SESSION_URL + build_id + constants.BUILD_END_STATES,
+    constants[env].SESSION_URL + session_id + constants.BUILD_END_STATES,
     {
       auth: {
         username: lt_config["lambdatest_auth"]["username"],
@@ -54,6 +54,7 @@ function get_build_info(lt_config, build_id, env, update_status, callback) {
           update_status(false);
           return callback(null, JSON.parse(body));
         }
+        //console.log(resp)
         return setTimeout(callback, 5000, null);
       } else {
         update_status(false);

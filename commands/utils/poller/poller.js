@@ -3,7 +3,7 @@ const async = require("async");
 const build_stats = require("./build_stats.js");
 var build_result = true;
 
-function poll_build(lt_config, build_id, env) {
+function poll_build(lt_config, session_id, env) {
   return new Promise(function (resolve, reject) {
     async.whilst(
       function test(callback) {
@@ -12,7 +12,7 @@ function poll_build(lt_config, build_id, env) {
       function iter(callback) {
         poller.get_build_info(
           lt_config,
-          build_id,
+          session_id,
           env,
           update_status,
           callback
@@ -21,7 +21,7 @@ function poll_build(lt_config, build_id, env) {
       function (err, result) {
         if (err == null) {
           build_stats
-            .get_completed_build_info(lt_config, build_id, env)
+            .get_completed_build_info(lt_config, session_id, env)
             .then(function (build_info) {
               stats = {};
               for (i = 0; i < build_info["data"].length; i++) {
