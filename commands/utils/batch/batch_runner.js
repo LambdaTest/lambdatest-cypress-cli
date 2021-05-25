@@ -42,7 +42,10 @@ function run_test(payload, env = "prod") {
           build_id =
             responseData["value"]["message"].split("=")[
               responseData["value"]["message"].split("=").length - 1
-            ];
+            ].split("&")[0];
+          session_id=responseData["value"]["message"].split("=")[
+            responseData["value"]["message"].split("=").length - 1
+          ].split("&")[1];
           if (parseInt(build_id) == 0) {
             reject("Some Error occured on Lambdatest Server");
           } else {
@@ -50,7 +53,7 @@ function run_test(payload, env = "prod") {
               `Uploaded tests successfully `,
               responseData["value"]["message"]
             );
-            resolve(build_id);
+            resolve(session_id);
           }
         }
       }
@@ -98,7 +101,7 @@ async function run(lt_config, batches, env, i = 0) {
                       type: "cypress",
                     });
                     run_test(payload, env)
-                      .then(function (build_id) {
+                      .then(function (session_id) {
                         delete_archive(project_file);
                         delete_archive(file_obj["name"]);
 
@@ -108,7 +111,7 @@ async function run(lt_config, batches, env, i = 0) {
                         ) {
                           console.log("Waiting for build to finish...");
                           poller
-                            .poll_build(lt_config, build_id, env)
+                            .poll_build(lt_config, session_id, env)
                             .then(function () {
                               resolve();
                             })
