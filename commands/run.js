@@ -33,7 +33,7 @@ module.exports = function (args) {
             //validate the config options
             validate(lt_config).then(function () {
                 batcher.make_batches(lt_config).then(function (batches) {
-                    if (lt_config["tunnel_settings"]["tunnel"]) {
+                    if (lt_config["tunnel_settings"]["tunnel"] && lt_config["tunnel_settings"]["autostart"]) {
                         var tunnelInstance = new lambdaTunnel();
                         var tunnelArguments = {
                             user: lt_config["lambdatest_auth"]["username"],

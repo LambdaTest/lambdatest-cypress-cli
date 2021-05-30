@@ -66,30 +66,7 @@ function make_batches(lt_config) {
     return new Promise(function (resolve, reject) {
         get_all_tests(lt_config).then(function (test_suite) {
             parallels = lt_config["run_settings"]["parallels"]
-            if (parallels == 0) {
-                resolve([test_suite])
-            } else {
-                let batches = []
-                let batch_size = parallels
-                for (t in test_suite) {
-                    if (batch_size == parallels) {
-                        batch = []
-                        batch.push(test_suite[t])
-                        batch_size--
-                    } else {
-                        batch.push(test_suite[t])
-                        batch_size--
-                    }
-                    if (batch_size == 0) {
-                        batches.push(batch)
-                        batch_size = parallels
-                    }
-                }
-                if (batch_size > 0 && batch_size < parallels) {
-                    batches.push(batch)
-                }
-                resolve(batches)
-            }
+            resolve([test_suite])
         }).then(function (err) {
             console.log(err)
         }).catch(function (err) {

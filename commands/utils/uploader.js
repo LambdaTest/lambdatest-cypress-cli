@@ -1,16 +1,15 @@
 const fs = require('fs');
-const { url } = require('inspector');
 const request = require("request")
 const constants = require("./constants.js")
 
-
-function login(lt_config, env = "prod") {
+function get_signed_url(lt_config, prefix,env = "prod") {
     return new Promise(function (resolve, reject) {
         let options = {
-            url: constants[env].INTEGRATION_BASE_URL + constants.LOGIN_URL,
+            url: constants[env].INTEGRATION_BASE_URL + constants.PROJECT_UPLOAD_URL,
             body: JSON.stringify({
                 "Username": lt_config["lambdatest_auth"]["username"],
-                "token": lt_config["lambdatest_auth"]["access_key"]
+                "token": lt_config["lambdatest_auth"]["access_key"],
+                "prefix":prefix
             }),
         }
         let responseData = null;
@@ -39,33 +38,34 @@ function login(lt_config, env = "prod") {
     })
 }
 
-function upload_project(lt_config, file_name, env = "prod") {
+function upload_zip(lt_config, file_name,prefix="project", env = "prod") {
     return new Promise(function (resolve, reject) {
-
-        login(lt_config, env).then(function (responseDataLogin) {
-            console.log("Login Status:-",responseDataLogin)
+        const stats = fs.statSync(file_name);
+        let fileSizeInBytes = stats.size;
+        //Convert the file size to megabytes (optional)
+        let fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
+        if (fileSizeInMegabytes>200){
+            reject("File Size exceed 200 MB limit")
+            return
+        }
+        get_signed_url(lt_config,prefix, env).then(function (responseDataURL) {
             let options = {
-                url: constants[env].INTEGRATION_BASE_URL + constants.PROJECT_UPLOAD_URL,
+                url: responseDataURL["value"]["message"],
                 formData: {
-                    "project.zip": fs.createReadStream(file_name),
-                    filetype: 'zip',
-                    filename: "project.zip",
-                    Username: lt_config["lambdatest_auth"]["username"],
-                    token: lt_config["lambdatest_auth"]["access_key"],
+                    name:file_name,
+                    filename:file_name
                 },
-                timeout:"600000"
+                headers: {
+                    'Content-Type': 'application/zip'
+                  }
             }
+           options["formData"][file_name]=fs.readFileSync(file_name)
             let responseData = null;
-            request.post(options, function (err, resp, body) {
+            request.put(options, function (err, resp, body) {
                 if (err) {
+                    console.log("error occured while uploading project",err)
                     reject(err);
-                } else {
-                    try {
-                        responseData = JSON.parse(body);
-                    } catch (e) {
-                        console.log("Error in JSON response", body)
-                        responseData = null
-                    }
+                } else {       
                     if (resp.statusCode != 200) {
                         if (responseData && responseData["error"]) {
                             reject(responseData["error"]);
@@ -73,23 +73,21 @@ function upload_project(lt_config, file_name, env = "prod") {
                             reject("error", responseData);
                         }
                     } else {
-                        console.log(`Uploaded tests successfully`);
-                        resolve(responseData);
+                        console.log(`Uploaded `+prefix+` file successfully`);
+                        resolve(responseDataURL);
                     }
                 }
             });
         }).catch(function (err) {
-            console.log("upload projec")
-            reject("Not Authorized")
+            reject("Failed to upload",err)
         })
     }).catch(function (err) {
-        console.log("Not Authorized")
-        // reject("Not Authorized")
+        console.log("Failed to Upload",err)
     })
 }
 
 
 
 module.exports={
-    upload_project:upload_project
+    upload_zip:upload_zip
 }
