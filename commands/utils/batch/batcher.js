@@ -2,6 +2,17 @@ const glob = require('glob')
 const fs = require('fs')
 const path = require('path')
 
+function slash(path) {
+	const isExtendedLengthPath = /^\\\\\?\\/.test(path);
+	const hasNonAscii = /[^\u0000-\u0080]+/.test(path); // eslint-disable-line no-control-regex
+
+	if (isExtendedLengthPath || hasNonAscii) {
+		return path;
+	}
+
+	return path.replace(/\\/g, '/');
+}
+
 function get_required_sessions(browsers) {
     let combinations = []
     for (b in browsers) {
@@ -41,7 +52,7 @@ function get_all_tests(lt_config) {
         get_spec_files(lt_config["run_settings"]["specs"]).then(function (specs) {
             let tests = []
             for (let i in specs) {
-                let relativePath = path.relative(process.cwd(), specs[i]);
+                let relativePath = slash(path.relative(process.cwd(), specs[i]));
                 for (let j in browsers) {
                     tests.push({
                         "spec_file": specs[i],
