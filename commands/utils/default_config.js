@@ -25,7 +25,7 @@ module.exports={
         "parallels": 1,
         "specs":"./*.spec.js",
         "ignore_files":"",
-        "npm_dependencies": {"cypress": "6.1.0"},
+        "feature_file_suppport": false,
         },
     "tunnel_settings": {
         "tunnel": false,
