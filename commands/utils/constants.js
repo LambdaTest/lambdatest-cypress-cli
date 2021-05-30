@@ -12,7 +12,7 @@ module.exports = {
     BUILD_END_STATES:"&status=running,queued,created,initiated,pqueued",
     
     prod: {
-        INTEGRATION_BASE_URL: "https://lisa.lambdatest.com/liis",
+        INTEGRATION_BASE_URL: "https://api.lambdatest.com/liis",
         BUILD_BASE_URL: "https://api.lambdatest.com/automation/api/v1/builds/",
         BUILD_STOP_URL:"https://beta-api.lambdatest.com/api/v1/test/stop?buildId=",
         SESSION_URL:"https://api.lambdatest.com/automation/api/v1/sessions?session_id="
