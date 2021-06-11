@@ -20,12 +20,10 @@ module.exports = {
 
     },
     stage: {
-        //INTEGRATION_BASE_URL: "https://stage-api.lambdatest.com/liis",
-        INTEGRATION_BASE_URL:"https://api.dev-test-japneet-pmcfvlv.lambdatest.io/liis",
-        //INTEGRATION_BASE_URL: "http://127.0.0.1:4449/liis",
-        BUILD_BASE_URL: "https://api.dev-test-japneet-pmcfvlv.lambdatest.io/automation/api/v1/builds/",
+        INTEGRATION_BASE_URL: "https://stage-api.lambdatest.com/liis",
+        BUILD_BASE_URL: "https://stage-api.lambdatest.com/automation/api/v1/builds/",
         BUILD_STOP_URL:"https://stage-api.lambdatest.com/api/v1/test/stop?buildId=",
-        SESSION_URL:"https://api.dev-test-japneet-pmcfvlv.lambdatest.io/automation/api/v1/sessions?limit=200&session_id="
+        SESSION_URL:"https://stage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id="
 
     },
     beta: {
