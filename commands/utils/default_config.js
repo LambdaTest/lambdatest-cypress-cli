@@ -26,6 +26,7 @@ module.exports={
         "specs":"./*.spec.js",
         "ignore_files":"",
         "feature_file_suppport": false,
+        "network": false,
         },
     "tunnel_settings": {
         "tunnel": false,
