@@ -17,7 +17,7 @@
     "lambdatest-cypress": "./index.js"
   },
   "dependencies": {
-    "@lambdatest/node-tunnel": "^3.0.0",
+    "@lambdatest/node-tunnel": "^3.0.1",
     "archiver": "^5.1.0",
     "glob": "^7.1.6",
     "request": "^2.88.2",
