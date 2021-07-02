@@ -227,6 +227,14 @@ function sync_args_from_cmd(args) {
     } else {
       lt_config["tunnel_settings"]["autostart"] = true;
     }
+    if ("network" in args) {
+      lt_config["run_settings"]["network"] = true
+        ? args["network"] == "true"
+        : false;
+    } else {
+      lt_config["run_settings"]["network"] = false;
+    }
+    console.log(lt_config["run_settings"]["network"]);
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||

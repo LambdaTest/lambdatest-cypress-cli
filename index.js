@@ -77,6 +77,10 @@ const argv = require('yargs')
       alias: 'tat',
       describe: 'Tunnel Auto Start',
       type: 'string'
+    }).option('net', {
+      alias: 'network',
+      describe: 'Capture Network logs',
+      type: 'string'
     })
   },
     function (argv) {
