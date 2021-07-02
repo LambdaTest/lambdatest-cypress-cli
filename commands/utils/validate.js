@@ -109,7 +109,12 @@ module.exports = validate_config = function (lt_config) {
         reject("Error!! Package.json File does not has correct json");
       }
     }
-
+    //validate if network field contains expected value
+    if ("network" in lt_config["run_settings"]) {
+      if (!([true, false].includes(lt_config["run_settings"]["network"]))){
+        reject("Error!! boolean value is expected in network key");
+      }
+    }
     resolve("Validated the Config");
   });
 };
