@@ -115,7 +115,7 @@ module.exports = validate_config = function (lt_config) {
     ){
       for(var i=0;i<lt_config["run_settings"]["ignore_files"].length;i++){
         if (lt_config["run_settings"]["ignore_files"][i]=="package.json"){
-          reject("package.json is added to ignore_files in run settings")
+          reject("package.json is added to ignore_files in run settings, Please remove package.json from ignore_files parameter in lambdatest-config.json file")
           break
         }
       }
