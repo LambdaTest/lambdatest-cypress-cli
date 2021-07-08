@@ -109,7 +109,17 @@ module.exports = validate_config = function (lt_config) {
         reject("Error!! Package.json File does not has correct json");
       }
     }
-
+    if (
+      lt_config["run_settings"]["ignore_files"] &&
+      lt_config["run_settings"]["ignore_files"].length > 0
+    ){
+      for(var i=0;i<lt_config["run_settings"]["ignore_files"].length;i++){
+        if (lt_config["run_settings"]["ignore_files"][i]=="package.json"){
+          reject("package.json is added to ignore_files in run settings")
+          break
+        }
+      }
+    }
     resolve("Validated the Config");
   });
 };
