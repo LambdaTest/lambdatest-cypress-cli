@@ -49,10 +49,6 @@ const argv = require('yargs')
       alias: 'tunnelName',
       describe: 'tunnel name',
       type: 'string'
-    }).option('cef', {
-      alias: 'cypress-env-file',
-      describe: 'cypress environment file',
-      type: 'string'
     }).option('brs', {
       alias: 'browsers',
       describe: 'browsers to run test format: platform:browser:version',
@@ -64,10 +60,6 @@ const argv = require('yargs')
     }).option('if', {
       alias: 'ignore_files',
       describe: 'Files to ignore in the project zip',
-      type: 'string'
-    }).option('cv', {
-      alias: 'cypress_version',
-      describe: 'Cypress Version',
       type: 'string'
     }).option('sync', {
       alias: 'sync',
