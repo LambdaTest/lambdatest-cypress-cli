@@ -1,6 +1,6 @@
 {
   "name": "lambdatest-cypress-cli",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "The lambdatest-cypress-cli is LambdaTest's command-line interface (CLI) aimed to help you run your Cypress tests on LambdaTest platform.",
   "homepage": "https://github.com/LambdaTest/lambdatest-cypress-cli",
   "author": "LambdaTest <keys@lambdatest.com>",
