@@ -129,7 +129,32 @@ const argv = require('yargs')
     function (argv) {
       require("./commands/build_stop")(argv);
     }
-  )
-  .help()
-  .argv
+  ).command('report-generate', 'generate report for a build',
+  function (yargs) {
+    return yargs.option('id', {
+      alias: 'build-id',
+      describe: 'Build Identifier',
+      type: 'string',
+      demandOption: true
+    }).option('user', {
+      alias: 'user',
+      describe: 'username',
+      type: 'string'
+    }).option('access_key', {
+      alias: 'access_key',
+      describe: 'Access Key',
+      type: 'string'
+    }).option('env', {
+      alias: 'env',
+      describe: 'environment',
+      type: 'string'
+    })
+  }
+  ,
+  function (argv) {
+    require("./commands/report_generate")(argv);
+  }
+)
+.help()
+.argv
 
