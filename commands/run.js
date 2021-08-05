@@ -63,7 +63,7 @@ module.exports = function (args) {
                           user: lt_config["lambdatest_auth"]["username"],
                           key: lt_config["lambdatest_auth"]["access_key"],
                           tunnelName:
-                            lt_config["tunnel_settings"]["tunnelName"],
+                            lt_config["tunnel_settings"]["tunnel_name"],
                           v: true,
                           env: env,
                         };
@@ -84,7 +84,9 @@ module.exports = function (args) {
                               });
                           })
                           .catch((error) => {
-                            console.log(error);
+                            console.log(
+                              "Error occured while starting tunnel, check tunnel logs for more info on Error"
+                            );
                           });
                       } else {
                         batch_runner.run_batches(lt_config, batches, env);

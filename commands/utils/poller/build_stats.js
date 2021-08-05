@@ -30,7 +30,6 @@ function get_completed_build_info(lt_config, session_id, env) {
 }
 
 function get_build_info(lt_config, session_id, env, update_status, callback) {
-  
   request(
     constants[env].SESSION_URL + session_id + constants.BUILD_END_STATES,
     {
@@ -43,6 +42,7 @@ function get_build_info(lt_config, session_id, env, update_status, callback) {
       if (err) {
         //reject(err);
         update_status(false);
+        console.log(err);
         return callback("Error occured while checking build status");
       }
       if (res.statusCode == "401") {
