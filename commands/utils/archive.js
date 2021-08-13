@@ -109,6 +109,11 @@ function archive_batch(lt_config, batch) {
         } else if ((!lt_config["run_settings"]["cypress_config_file"])) {
             archive.append("{}", { name: constants.CYPRESS_CONFIG_NAME });
         }
+        if (lt_config["run_settings"]["reporter_config_file"] && fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
+            // console.log("reporter config file ", path.basename(lt_config["run_settings"]["reporter_config_file"]));
+            let rawdata = fs.readFileSync(lt_config["run_settings"]["reporter_config_file"]);
+            archive.append(rawdata, { name: path.basename(lt_config["run_settings"]["reporter_config_file"]) });
+        }
 
         let lt_config_string = JSON.stringify(lt_config, null, 4);
         archive.append(lt_config_string, { name: constants.LT_CONFIG_NAME });

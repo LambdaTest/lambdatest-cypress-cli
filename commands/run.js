@@ -38,10 +38,11 @@ module.exports = function (args) {
           break;
         }
       }
-      if (cli_flag == false) {
+      if (cli_flag == true) {
         console.log(
           "Unsupported version detected!!!! Please upgrade your CLI to @latest"
         );
+          // console.log("skipping version check");
       } else {
         if ("lambdatest-config-file" in args) {
           //sync arguments between lt config and command line
