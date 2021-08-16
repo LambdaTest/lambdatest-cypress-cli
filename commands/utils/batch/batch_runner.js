@@ -100,7 +100,6 @@ async function run(lt_config, batches, env, i = 0) {
                       access_key: lt_config["lambdatest_auth"]["access_key"],
                       type: "cypress",
                     });
-                    console.log("payload - ", payload);
                     run_test(payload, env)
                       .then(function (session_id) {
                         delete_archive(project_file);
