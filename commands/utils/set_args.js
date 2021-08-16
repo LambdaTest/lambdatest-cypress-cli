@@ -175,16 +175,16 @@ function sync_args_from_cmd(args) {
       lt_config["tunnel_settings"]["tunnel"] = false;
     }
 
-    if ("tunnelName" in args) {
+    if ("tunnel_name" in args) {
       if (!("tunnel_settings" in lt_config)) {
         lt_config["tunnel_settings"] = {};
       }
-      lt_config["tunnel_settings"]["tunnelName"] = args["tunnelName"];
+      lt_config["tunnel_settings"]["tunnel_name"] = args["tunnel_name"];
     } else if (!("tunnel_settings" in lt_config)) {
       lt_config["tunnel_settings"] = {};
-      lt_config["tunnel_settings"]["tunnelName"] = "";
-    } else if (!("tunnelName" in lt_config["tunnel_settings"])) {
-      lt_config["tunnel_settings"]["tunnelName"] = "";
+      lt_config["tunnel_settings"]["tunnel_name"] = "";
+    } else if (!("tunnel_name" in lt_config["tunnel_settings"])) {
+      lt_config["tunnel_settings"]["tunnel_name"] = "";
     }
 
     //add browsers from cli
