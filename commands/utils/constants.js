@@ -19,13 +19,13 @@ module.exports = {
       "https://api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
   },
   stage: {
-    INTEGRATION_BASE_URL: "https://stage-api.lambdatest.com/liis",
+    INTEGRATION_BASE_URL: "https://api.japneet.dev.lambdatest.io/liis",
     BUILD_BASE_URL:
-      "https://stage-api.lambdatest.com/automation/api/v1/builds/",
+      "https://api.japneet.dev.lambdatest.io/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://stage-api.lambdatest.com/api/v1/test/stop?buildId=",
+      "https://api.japneet.dev.lambdatest.io/api/v1/test/stop?buildId=",
     SESSION_URL:
-      "https://stage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
+      "https://api.japneet.dev.lambdatest.io/automation/api/v1/sessions?limit=200&session_id=",
   },
   beta: {
     INTEGRATION_BASE_URL: "https://beta-api.lambdatest.com/liis",
