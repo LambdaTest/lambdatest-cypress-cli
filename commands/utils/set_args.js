@@ -235,6 +235,16 @@ function sync_args_from_cmd(args) {
     } else if (!lt_config["run_settings"]["network"]) {
       lt_config["run_settings"]["network"] = false;
     }
+
+    if ("headless" in args) {
+      console.log("headlesss in args - value", args["headless"]);
+      lt_config["run_settings"]["headless"] = args["headless"]
+    } else if (!lt_config["run_settings"]["headless"]) {
+      console.log("headless not present in lt config")
+      lt_config["run_settings"]["headless"] = false;
+    }
+
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||

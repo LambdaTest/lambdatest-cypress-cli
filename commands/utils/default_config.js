@@ -23,6 +23,7 @@ module.exports = {
     ignore_files: "",
     feature_file_suppport: false,
     network: false,
+    headless: false,
     reporter_config_file: ""
   },
   tunnel_settings: {
