@@ -87,6 +87,11 @@ const argv = require("yargs")
           describe: "Tunnel Auto Start",
           type: "string",
         })
+        .option("headless", {
+          alias: "headless",
+          describe: "Run in headless mode",
+          type: "boolean",
+        })
         .option("net", {
           alias: "network",
           describe: "Capture Network logs",
