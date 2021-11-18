@@ -258,7 +258,6 @@ function sync_args_from_cmd(args) {
     }
 
     if ("headless" in args) {
-      console.log("headlesss in args - value", args["headless"]);
       lt_config["run_settings"]["headless"] = args["headless"];
     } else if (!lt_config["run_settings"]["headless"]) {
       lt_config["run_settings"]["headless"] = false;
