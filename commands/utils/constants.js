@@ -10,7 +10,7 @@ module.exports = {
   LAMBDA_CONFIG: "./lambdatest-config.json",
   SUPPORTED_CYPRESS_VERSIONS: ["5", "6"],
   BUILD_END_STATES: "&status=running,queued,created,initiated,pqueued",
-
+  CYPRESS_ENV_FILE_PATH: "cypress.env.json",
   prod: {
     INTEGRATION_BASE_URL: "https://api.lambdatest.com/liis",
     BUILD_BASE_URL: "https://api.lambdatest.com/automation/api/v1/builds/",
