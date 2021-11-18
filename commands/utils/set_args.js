@@ -3,6 +3,13 @@ const fs = require("fs");
 const path = require("path");
 const process = require("process");
 
+function write_file(file_path, content) {
+  fs.writeFileSync(file_path, content, function (err) {
+    if (err) throw err;
+    console.log("File Saved at ", file_path);
+  });
+}
+
 function sync_args_from_cmd(args) {
   return new Promise(function (resolve, reject) {
     let rawdata = fs.readFileSync(args["lambdatest-config-file"]);
@@ -107,10 +114,19 @@ function sync_args_from_cmd(args) {
       }
       lt_config["run_settings"]["envs"] = envs;
     }
-    if ("cypress-env-file" in args) {
+    if (
+      "cypress-env-file" in args ||
+      lt_config["run_settings"]["cypress-env-file"]
+    ) {
       let env_json;
-      if (fs.existsSync(args["cypress-env-file"])) {
-        let raw_env = fs.readFileSync(args["cypress-env-file"]);
+      let file_path;
+      if ("cypress-env-file" in args) {
+        file_path = args["cypress-env-file"];
+      } else {
+        file_path = lt_config["run_settings"]["cypress-env-file"];
+      }
+      if (fs.existsSync(file_path)) {
+        let raw_env = fs.readFileSync(file_path);
         env_json = JSON.parse(raw_env);
 
         if (lt_config["run_settings"]["envs"]) {
@@ -124,6 +140,11 @@ function sync_args_from_cmd(args) {
       } else {
         reject("Cypress-env-file file not found but passed in command line");
       }
+      let content = JSON.stringify(lt_config["run_settings"]["envs"], null, 3);
+      write_file(constants.CYPRESS_ENV_FILE_PATH, content);
+    } else if (lt_config["run_settings"]["envs"]) {
+      let content = JSON.stringify(lt_config["run_settings"]["envs"], null, 3);
+      write_file(constants.CYPRESS_ENV_FILE_PATH, content);
     }
     //set the build name on the basis of build identifier
     if ("build-name" in args) {
@@ -227,7 +248,7 @@ function sync_args_from_cmd(args) {
     } else {
       lt_config["tunnel_settings"]["autostart"] = true;
     }
-   
+
     if ("network" in args) {
       lt_config["run_settings"]["network"] = true
         ? args["network"] == "true"
@@ -238,12 +259,10 @@ function sync_args_from_cmd(args) {
 
     if ("headless" in args) {
       console.log("headlesss in args - value", args["headless"]);
-      lt_config["run_settings"]["headless"] = args["headless"]
+      lt_config["run_settings"]["headless"] = args["headless"];
     } else if (!lt_config["run_settings"]["headless"]) {
-      console.log("headless not present in lt config")
       lt_config["run_settings"]["headless"] = false;
     }
-
 
     //get specs from current directory if specs are not passed in config or cli
     if (
