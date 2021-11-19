@@ -39,13 +39,16 @@ function run_test(payload, env = "prod") {
             reject(responseData);
           }
         } else {
-          build_id =
-            responseData["value"]["message"].split("=")[
-              responseData["value"]["message"].split("=").length - 1
-            ].split("&")[0];
-          session_id=responseData["value"]["message"].split("=")[
-            responseData["value"]["message"].split("=").length - 1
-          ].split("&")[1];
+          build_id = responseData["value"]["message"]
+            .split("=")
+            [responseData["value"]["message"].split("=").length - 1].split(
+              "&"
+            )[0];
+          session_id = responseData["value"]["message"]
+            .split("=")
+            [responseData["value"]["message"].split("=").length - 1].split(
+              "&"
+            )[1];
           if (parseInt(build_id) == 0) {
             reject("Some Error occured on Lambdatest Server");
           } else {
