@@ -140,11 +140,6 @@ function sync_args_from_cmd(args) {
       } else {
         reject("Cypress-env-file file not found but passed in command line");
       }
-      let content = JSON.stringify(lt_config["run_settings"]["envs"], null, 3);
-      write_file(constants.CYPRESS_ENV_FILE_PATH, content);
-    } else if (lt_config["run_settings"]["envs"]) {
-      let content = JSON.stringify(lt_config["run_settings"]["envs"], null, 3);
-      write_file(constants.CYPRESS_ENV_FILE_PATH, content);
     }
     //set the build name on the basis of build identifier
     if ("build-name" in args) {

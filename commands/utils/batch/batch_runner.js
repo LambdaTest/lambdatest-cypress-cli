@@ -70,7 +70,7 @@ async function run(lt_config, batches, env, i = 0) {
   return new Promise(function (resolve, reject) {
     //archive the project i.e the current working directory
     archive
-      .archive_project(lt_config["run_settings"]["ignore_files"])
+      .archive_project(lt_config)
       .then(function (file_obj) {
         project_file = file_obj["name"];
         //upload the project and get the project link
