@@ -235,7 +235,13 @@ function sync_args_from_cmd(args) {
     }
     if ("sync" in args) {
       lt_config["run_settings"]["sync"] = true ? args["sync"] == "true" : false;
+      if ("exit-on-failure" in args) {
+        lt_config["run_settings"]["exit-on-failure"] = true;
+      } else {
+        lt_config["run_settings"]["exit-on-failure"] = false;
+      }
     }
+
     if ("autostart" in args) {
       lt_config["tunnel_settings"]["autostart"] = true
         ? args["autostart"] == "true"

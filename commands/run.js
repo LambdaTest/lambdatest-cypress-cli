@@ -73,9 +73,14 @@ module.exports = function (args) {
                           .then((status) => {
                             batch_runner
                               .run_batches(lt_config, batches, env)
-                              .then(function () {
+                              .then(function (exit_code) {
                                 console.log("stopping tunnel");
                                 tunnelInstance.stop();
+                                if (
+                                  lt_config["run_settings"]["exit-on-failure"]
+                                ) {
+                                  process.exit(exit_code);
+                                }
                               })
                               .catch(function (error) {
                                 console.log("stopping tunnel failed");
@@ -89,7 +94,18 @@ module.exports = function (args) {
                             );
                           });
                       } else {
-                        batch_runner.run_batches(lt_config, batches, env);
+                        batch_runner
+                          .run_batches(lt_config, batches, env)
+                          .then(function (exit_code) {
+                            if (lt_config["run_settings"]["exit-on-failure"]) {
+                              process.exit(exit_code);
+                            }
+                          })
+                          .catch(function (error) {
+                            if (lt_config["run_settings"]["exit-on-failure"]) {
+                              process.exit(1);
+                            }
+                          });
                       }
                     })
                     .catch(function (err) {
