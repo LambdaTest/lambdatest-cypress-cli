@@ -30,11 +30,18 @@ function poll_build(lt_config, session_id, env) {
                 } else [(stats[build_info["data"][i]["status_ind"]] = 1)];
               }
               console.log(stats);
-              resolve();
+              if (
+                Object.keys(stats).length == 1 &&
+                Object.keys(stats).includes("completed")
+              ) {
+                resolve(0);
+              } else {
+                resolve(1);
+              }
             });
         } else {
           console.log(err);
-          resolve();
+          resolve(1);
         }
       }
     );
