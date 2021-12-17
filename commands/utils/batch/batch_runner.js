@@ -115,14 +115,14 @@ async function run(lt_config, batches, env, i = 0) {
                           console.log("Waiting for build to finish...");
                           poller
                             .poll_build(lt_config, session_id, env)
-                            .then(function () {
-                              resolve();
+                            .then(function (exit_code) {
+                              resolve(exit_code);
                             })
                             .catch(function (err) {
                               console.log();
                             });
                         } else {
-                          resolve();
+                          resolve(0);
                         }
                       })
                       .catch(function (err) {

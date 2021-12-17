@@ -98,6 +98,11 @@ const argv = require("yargs")
             describe: "Capture Network logs",
             type: "string",
           })
+          .option("eof", {
+            alias: "exit-on-failure",
+            describe: "Exit With Code 1 on failure",
+            type: "string",
+          })
       );
     },
     function (argv) {
