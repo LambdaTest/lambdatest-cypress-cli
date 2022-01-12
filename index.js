@@ -29,7 +29,7 @@ const argv = require("yargs")
             type: "string",
           })
           .option("env", {
-            alias: "env",
+            alias: "environment",
             describe: "environment",
             type: "string",
           })
@@ -49,7 +49,7 @@ const argv = require("yargs")
             type: "string",
           })
           .option("envs", {
-            alias: "envs",
+            alias: "env-variables",
             describe: "environment variables",
             type: "string",
           })
@@ -79,7 +79,7 @@ const argv = require("yargs")
             type: "string",
           })
           .option("sync", {
-            alias: "sync",
+            alias: "sync-mode",
             describe: "Sync Build",
             type: "string",
           })
@@ -89,7 +89,7 @@ const argv = require("yargs")
             type: "string",
           })
           .option("headless", {
-            alias: "headless",
+            alias: "headless-mode",
             describe: "Run in headless mode",
             type: "boolean",
           })
@@ -121,17 +121,17 @@ const argv = require("yargs")
           demandOption: true,
         })
         .option("user", {
-          alias: "user",
+          alias: "username",
           describe: "username",
           type: "string",
         })
-        .option("access_key", {
-          alias: "access_key",
+        .option("ak", {
+          alias: "access-key",
           describe: "Access Key",
           type: "string",
         })
         .option("env", {
-          alias: "env",
+          alias: "environment",
           describe: "environment",
           type: "string",
         });
