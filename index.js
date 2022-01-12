@@ -126,7 +126,7 @@ const argv = require("yargs")
           type: "string",
         })
         .option("ak", {
-          alias: "access-key",
+          alias: "access_key",
           describe: "Access Key",
           type: "string",
         })
