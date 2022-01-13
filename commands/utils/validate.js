@@ -137,7 +137,11 @@ module.exports = validate_config = function (lt_config) {
       }
     }
 
-    if ("downloads" in lt_config["run_settings"]) {
+    if (
+      "downloads" in lt_config["run_settings"] &&
+      lt_config["run_settings"]["downloads"] != ""
+    ) {
+      console.log(lt_config["run_settings"]);
       let download_folders = lt_config["run_settings"]["downloads"].split(",");
       for (folder in download_folders) {
         if (folder[0] != ".") {
