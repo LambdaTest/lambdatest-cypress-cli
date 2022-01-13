@@ -49,10 +49,7 @@ function sync_args_from_cmd(args) {
         "<Your LambdaTest access key>"
     ) {
       if (process.env.LT_ACCESS_KEY) {
-        console.log(
-          "setting access key from environment",
-          process.env.LT_ACCESS_KEY
-        );
+        console.log("setting access key from environment");
         lt_config["lambdatest_auth"]["access_key"] = process.env.LT_ACCESS_KEY;
       }
     } else if (
@@ -63,10 +60,7 @@ function sync_args_from_cmd(args) {
       if (!lt_config["lambdatest_auth"]) {
         lt_config["lambdatest_auth"] = {};
       }
-      console.log(
-        "Setting access key from environment",
-        process.env.LT_ACCESS_KEY
-      );
+      console.log("Setting access key from environment");
       lt_config["lambdatest_auth"]["access_key"] = process.env.LT_ACCESS_KEY;
     }
 

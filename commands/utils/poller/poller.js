@@ -23,12 +23,21 @@ function poll_build(lt_config, session_id, env) {
           build_stats
             .get_completed_build_info(lt_config, session_id, env)
             .then(function (build_info) {
-              stats = {};
+              let stats = {};
+              let status = [];
               for (i = 0; i < build_info["data"].length; i++) {
+                status.push({
+                  Spec: build_info["data"][i]["name"],
+                  Status: build_info["data"][i]["status_ind"],
+                  Platform: build_info["data"][i]["platform"],
+                  Browser: build_info["data"][i]["browser"],
+                  Version: build_info["data"][i]["version"],
+                });
                 if (stats.hasOwnProperty(build_info["data"][i]["status_ind"])) {
                   stats[build_info["data"][i]["status_ind"]] += 1;
                 } else [(stats[build_info["data"][i]["status_ind"]] = 1)];
               }
+              console.table(status);
               console.log(stats);
               if (
                 Object.keys(stats).length == 1 &&
