@@ -7,12 +7,12 @@ module.exports = {
     {
       browser: "Chrome",
       platform: "Windows 10",
-      versions: ["86.0"],
+      versions: ["latest-1"],
     },
     {
       browser: "Firefox",
       platform: "Windows 10",
-      versions: ["82.0"],
+      versions: ["latest-1"],
     },
   ],
   run_settings: {
@@ -24,7 +24,7 @@ module.exports = {
     feature_file_suppport: false,
     network: false,
     headless: false,
-    reporter_config_file: ""
+    reporter_config_file: "",
   },
   tunnel_settings: {
     tunnel: false,
