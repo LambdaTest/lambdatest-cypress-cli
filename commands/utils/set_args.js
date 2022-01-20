@@ -258,6 +258,10 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["headless"] = false;
     }
 
+    //check for download folders
+    if (!("downloads" in lt_config["run_settings"])) {
+      lt_config["run_settings"]["downloads"] = "";
+    }
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
