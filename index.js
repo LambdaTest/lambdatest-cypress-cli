@@ -169,4 +169,35 @@ const argv = require("yargs")
       require("./commands/build_stop")(argv);
     }
   )
+  .command(
+    "generate-report",
+    "generate session report",
+    function (yargs) {
+      return yargs
+        .option("user", {
+          alias: "username",
+          describe: "Lambdatest Username of User",
+          type: "string",
+          demandOption: true,
+        })
+        .option("ak", {
+          alias: "access_key",
+          describe: "Lambdatest Access Key of User",
+          type: "string",
+        })
+        .option("sid", {
+          alias: "session_id",
+          describe: "Session Id",
+          type: "string",
+        })
+        .option("env", {
+          alias: "environment",
+          describe: "testing environment",
+          type: "string",
+        });
+    },
+    function (argv) {
+      require("./commands/generate_reports")(argv);
+    }
+  )
   .help().argv;
