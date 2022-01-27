@@ -143,7 +143,8 @@ module.exports = validate_config = function (lt_config) {
     ) {
       let download_folders = lt_config["run_settings"]["downloads"].split(",");
       for (folder in download_folders) {
-        if (folder[0] != ".") {
+        console.log(download_folders[folder]);
+        if (download_folders[folder][0] != ".") {
           reject("Error!! dowloads folder path is not relative ", folder);
         }
       }
