@@ -5,6 +5,7 @@ const build_stats = require("./utils/poller/build_stats.js");
 const { access } = require("fs");
 var fs = require("fs");
 const StreamZip = require("node-stream-zip");
+const path = require("path");
 
 function download_artefact(username, access_key, env, test_id, file_path) {
   return new Promise(function (resolve, reject) {
@@ -15,7 +16,7 @@ function download_artefact(username, access_key, env, test_id, file_path) {
     }
     let old_path = file_path;
     //Create an empty file
-    file_path += "/artefacts.zip";
+    file_path = path.join(file_path, "artefacts.zip");
     const stream = fs.createWriteStream(file_path);
     stream.end();
     request(
@@ -122,7 +123,11 @@ function generate_report(args) {
           reject("Session not found");
           return;
         }
-        let directory = "./lambdatest-artefacts/" + args["session_id"];
+        let directory = path.join(
+          ".",
+          "lambdatest-artefacts",
+          args["session_id"]
+        );
         //Reject if there are no tests in sessions
         if (build_info["data"].length == 0) {
           reject("No tests in this session");
@@ -138,15 +143,12 @@ function generate_report(args) {
             access_key,
             env,
             build_info["data"][i]["test_id"],
-            directory +
-              "/" +
-              build_info["data"][i]["browser"] +
-              "-" +
-              build_info["data"][i]["version"] +
-              "-" +
-              build_info["data"][i]["platform"] +
-              "/" +
+            path.join(
+              directory,
+              build_info["data"][i]["browser"],
+              build_info["data"][i]["version"],
               build_info["data"][i]["test_id"]
+            )
           )
             .then(function (resp) {
               //Files downloaded
