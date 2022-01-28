@@ -20,6 +20,7 @@
     "@lambdatest/node-tunnel": "^3.0.0",
     "archiver": "^5.1.0",
     "glob": "^7.1.6",
+    "node-stream-zip": "^1.15.0",
     "request": "^2.88.2",
     "ws": "^7.4.3",
     "yargs": "^16.1.0"
