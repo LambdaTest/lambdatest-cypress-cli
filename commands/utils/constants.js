@@ -20,7 +20,7 @@ module.exports = {
     REPORT_URL:
       "https://api.lambdatest.com/automation/api/v1/cypress/report/artefacts/test/",
   },
-  stage: {
+  beta: {
     INTEGRATION_BASE_URL: "https://api.cypress-v3.dev.lambdatest.io/liis",
     BUILD_BASE_URL:
       "https://api.cypress-v3.dev.lambdatest.io/automation/api/v1/builds/",
@@ -31,7 +31,7 @@ module.exports = {
     REPORT_URL:
       "https://api.cypress-v3.dev.lambdatest.io/automation/api/v1/cypress/artefacts/test/",
   },
-  beta: {
+  stage: {
     INTEGRATION_BASE_URL: "https://stage-api.lambdatest.com/liis",
     BUILD_BASE_URL:
       "https://stage-api.lambdatest.com/automation/api/v1/builds/",
