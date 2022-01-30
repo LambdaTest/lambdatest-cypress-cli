@@ -17,6 +17,19 @@ module.exports = {
     BUILD_STOP_URL: "https://beta-api.lambdatest.com/api/v1/test/stop?buildId=",
     SESSION_URL:
       "https://api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
+    REPORT_URL:
+      "https://api.lambdatest.com/automation/api/v1/cypress/report/artefacts/test/",
+  },
+  beta: {
+    INTEGRATION_BASE_URL: "https://api.cypress-v3.dev.lambdatest.io/liis",
+    BUILD_BASE_URL:
+      "https://api.cypress-v3.dev.lambdatest.io/automation/api/v1/builds/",
+    BUILD_STOP_URL:
+      "https://api.cypress-v3.dev.lambdatest.io/api/v1/test/stop?buildId=",
+    SESSION_URL:
+      "https://api.cypress-v3.dev.lambdatest.io/automation/api/v1/sessions?limit=200&session_id=",
+    REPORT_URL:
+      "https://api.cypress-v3.dev.lambdatest.io/automation/api/v1/cypress/artefacts/test/",
   },
   stage: {
     INTEGRATION_BASE_URL: "https://stage-api.lambdatest.com/liis",
@@ -26,12 +39,7 @@ module.exports = {
       "https://stage-api.lambdatest.com/api/v1/test/stop?buildId=",
     SESSION_URL:
       "https://stage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
-  },
-  beta: {
-    INTEGRATION_BASE_URL: "https://beta-api.lambdatest.com/liis",
-    BUILD_BASE_URL: "https://api.lambdatest.com/automation/api/v1/builds/",
-    BUILD_STOP_URL: "https://beta-api.lambdatest.com/api/v1/test/stop?buildId=",
-    SESSION_URL:
-      "https://api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
+    REPORT_URL:
+      "https://stage-api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
   },
 };
