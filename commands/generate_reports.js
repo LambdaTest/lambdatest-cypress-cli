@@ -27,6 +27,7 @@ function download_artefact(username, access_key, env, test_id, file_path) {
           password: access_key,
         },
         gzip: true,
+        timeout: 120000,
       },
       (err, res, body) => {
         if (err) {
@@ -45,6 +46,7 @@ function download_artefact(username, access_key, env, test_id, file_path) {
             zip.on("ready", () => {
               zip.extract(null, old_path, (err, count) => {
                 zip.close();
+                fs.unlinkSync(file_path);
                 resolve(
                   err
                     ? "Extract error for " + test_id
@@ -53,10 +55,9 @@ function download_artefact(username, access_key, env, test_id, file_path) {
               });
             });
           } else {
+            fs.unlinkSync(file_path);
             reject("Could not download artefacts for test id " + test_id);
           }
-          //delete the zip file
-          fs.unlinkSync(file_path);
         })
     );
   });
