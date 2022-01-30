@@ -66,7 +66,7 @@ function run_test(payload, env = "prod") {
 
 async function run(lt_config, batches, env, i = 0) {
   totalBatches = batches.length;
-  console.log("Total number of batches " + totalBatches);
+  //console.log("Total number of batches " + totalBatches);
   return new Promise(function (resolve, reject) {
     //archive the project i.e the current working directory
     archive
