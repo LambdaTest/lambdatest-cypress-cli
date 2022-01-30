@@ -11,7 +11,6 @@ function download_artefact(username, access_key, env, test_id, file_path) {
   return new Promise(function (resolve, reject) {
     let response_code;
     if (!fs.existsSync(file_path)) {
-      console.log("Creating paths");
       fs.mkdirSync(file_path, { recursive: true });
     }
     let old_path = file_path;
