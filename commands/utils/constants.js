@@ -18,7 +18,7 @@ module.exports = {
     SESSION_URL:
       "https://api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
-      "https://api.lambdatest.com/automation/api/v1/cypress/report/artefacts/test/",
+      "https://api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
   },
   beta: {
     INTEGRATION_BASE_URL: "https://api.cypress-v3.dev.lambdatest.io/liis",
