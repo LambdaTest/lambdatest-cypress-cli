@@ -34,7 +34,7 @@ jobs:
           echo "CHECKING on NPM REPO, whether new version starts reflecting there or not:";
           npm view lambdatest-cypress-cli versions --json
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Send custom JSON data to Slack workflow
         id: slack
         uses: slackapi/slack-github-action@v1.17.0
