@@ -25,6 +25,9 @@ module.exports = {
     network: false,
     headless: false,
     reporter_config_file: "",
+    npm_dependencies: {
+      cypress: "9.0.0",
+    },
   },
   tunnel_settings: {
     tunnel: false,
