@@ -38,7 +38,8 @@ function archive_project(lt_config) {
 
     archive.on("error", function (err) {
       console.log("ERROR", err);
-      throw err;
+      reject(err);
+      //throw err;
     });
 
     // pipe archive data to the file
@@ -68,9 +69,52 @@ function archive_project(lt_config) {
     console.log("Ignoring files: ", ignore_files);
     archive.glob(
       "**/*",
-      { cwd: process.cwd(), ignore: ignore_files },
+      { cwd: process.cwd(), ignore: ignore_files, dot: true },
       { prefix: "project/" }
     );
+    if (
+      lt_config["run_settings"]["dep_tokens"] &&
+      lt_config["run_settings"]["dep_tokens"].length > 0
+    ) {
+      if (fs.existsSync(".npmrc")) {
+        let raw_data = fs.readFileSync(".npmrc", "utf8");
+        let replace_map = {};
+        for (
+          let i = 0;
+          i < lt_config["run_settings"]["dep_tokens"].length;
+          i++
+        ) {
+          if (process.env[lt_config["run_settings"]["dep_tokens"][i]]) {
+            //Used for creating regular expression by escaping the $ and {}
+            replace_map[
+              "\\$\\{" + lt_config["run_settings"]["dep_tokens"][i] + "\\}"
+            ] = process.env[lt_config["run_settings"]["dep_tokens"][i]];
+            //User for String replacement
+            replace_map[
+              "${" + lt_config["run_settings"]["dep_tokens"][i] + "}"
+            ] = process.env[lt_config["run_settings"]["dep_tokens"][i]];
+          } else {
+            reject("Dep Tokens are not in environment");
+            return;
+          }
+        }
+        var re = new RegExp(Object.keys(replace_map).join("|"), "gi");
+        raw_data = raw_data.replace(re, function (matched) {
+          return replace_map[matched];
+        });
+        archive.append(
+          raw_data,
+          {
+            name: "project/.npmrc",
+            cwd: process.cwd(),
+            ignore: ignore_files,
+          },
+          { prefix: "project/" }
+        );
+      } else {
+        reject("Dep Tokens are passed but .npmrc does not exist");
+      }
+    }
 
     archive.finalize();
   });
