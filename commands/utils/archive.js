@@ -77,8 +77,8 @@ function archive_project(lt_config) {
       let rawdata = fs.readFileSync("package.json");
 
       let package = JSON.parse(rawdata);
-      package["dependencies"] = lt_config["run_settings"]["npm_dependencies"];
-      package["devDependencies"] = {};
+      package.dependencies = lt_config["run_settings"]["npm_dependencies"];
+      package.devDependencies = {};
       archive.append(
         JSON.stringify(package, null, 4),
         {
