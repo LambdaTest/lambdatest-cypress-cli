@@ -72,6 +72,23 @@ function archive_project(lt_config) {
       { cwd: process.cwd(), ignore: ignore_files, dot: true },
       { prefix: "project/" }
     );
+    //OverRide NPM Dependencies
+    if (lt_config.run_settings.npm_dependencies) {
+      console.log("Overriding NPM Dependencies");
+      let rawdata = fs.readFileSync("package.json");
+
+      let package = JSON.parse(rawdata);
+      package.dependencies = lt_config.run_settings.npm_dependencies;
+      package.devDependencies = {};
+      archive.append(
+        JSON.stringify(package, null, 4),
+        {
+          name: "project/package.json",
+          cwd: process.cwd(),
+          ignore: ignore_files,
+        },
+        { prefix: "project/" }
+      );
     if (
       lt_config.run_settings.dep_tokens &&
       lt_config.run_settings.dep_tokens.length > 0
@@ -109,6 +126,7 @@ function archive_project(lt_config) {
       } else {
         reject("Dep Tokens are passed but .npmrc does not exist");
       }
+
     }
 
     archive.finalize();
