@@ -73,26 +73,21 @@ function archive_project(lt_config) {
       { prefix: "project/" }
     );
     if (
-      lt_config["run_settings"]["dep_tokens"] &&
-      lt_config["run_settings"]["dep_tokens"].length > 0
+      lt_config.run_settings.dep_tokens &&
+      lt_config.run_settings.dep_tokens.length > 0
     ) {
       if (fs.existsSync(".npmrc")) {
         let raw_data = fs.readFileSync(".npmrc", "utf8");
         let replace_map = {};
-        for (
-          let i = 0;
-          i < lt_config["run_settings"]["dep_tokens"].length;
-          i++
-        ) {
-          if (process.env[lt_config["run_settings"]["dep_tokens"][i]]) {
+        for (let i = 0; i < lt_config.run_settings.dep_tokens.length; i++) {
+          if (process.env[lt_config.run_settings.dep_tokens[i]]) {
             //Used for creating regular expression by escaping the $ and {}
             replace_map[
-              "\\$\\{" + lt_config["run_settings"]["dep_tokens"][i] + "\\}"
-            ] = process.env[lt_config["run_settings"]["dep_tokens"][i]];
+              "\\$\\{" + lt_config.run_settings.dep_tokens[i] + "\\}"
+            ] = process.env[lt_config.run_settings.dep_tokens[i]];
             //User for String replacement
-            replace_map[
-              "${" + lt_config["run_settings"]["dep_tokens"][i] + "}"
-            ] = process.env[lt_config["run_settings"]["dep_tokens"][i]];
+            replace_map["${" + lt_config.run_settings.dep_tokens[i] + "}"] =
+              process.env[lt_config.run_settings.dep_tokens[i]];
           } else {
             reject("Dep Tokens are not in environment");
             return;
