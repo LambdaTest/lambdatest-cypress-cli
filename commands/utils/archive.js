@@ -72,12 +72,12 @@ function archive_project(lt_config) {
       { prefix: "project/" }
     );
     //OverRide NPM Dependencies
-    if (lt_config["run_settings"]["npm_dependencies"]) {
+    if (lt_config.run_settings.npm_dependencies) {
       console.log("Overriding NPM Dependencies");
       let rawdata = fs.readFileSync("package.json");
 
       let package = JSON.parse(rawdata);
-      package.dependencies = lt_config["run_settings"]["npm_dependencies"];
+      package.dependencies = lt_config.run_settings.npm_dependencies;
       package.devDependencies = {};
       archive.append(
         JSON.stringify(package, null, 4),

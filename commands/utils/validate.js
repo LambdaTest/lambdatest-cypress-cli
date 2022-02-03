@@ -79,7 +79,7 @@ module.exports = validate_config = function (lt_config) {
       try {
         let package = JSON.parse(rawdata);
         //Override npm_dependencies
-        if (lt_config["run_settings"]["npm_dependencies"]) {
+        if (lt_config.run_settings.npm_dependencies) {
           package.dependencies = lt_config["run_settings"]["npm_dependencies"];
           package.devDependencies = {};
         }
