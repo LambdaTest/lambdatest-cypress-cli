@@ -89,6 +89,7 @@ function archive_project(lt_config) {
         },
         { prefix: "project/" }
       );
+    }
     if (
       lt_config.run_settings.dep_tokens &&
       lt_config.run_settings.dep_tokens.length > 0
@@ -126,7 +127,6 @@ function archive_project(lt_config) {
       } else {
         reject("Dep Tokens are passed but .npmrc does not exist");
       }
-
     }
 
     archive.finalize();
