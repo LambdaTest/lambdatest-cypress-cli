@@ -78,6 +78,11 @@ module.exports = validate_config = function (lt_config) {
       let rawdata = fs.readFileSync("package.json");
       try {
         let package = JSON.parse(rawdata);
+        //Override npm_dependencies
+        if (lt_config.run_settings.npm_dependencies) {
+          package.dependencies = lt_config.run_settings.npm_dependencies;
+          package.devDependencies = {};
+        }
         let cypress_flag = false;
         if (package.hasOwnProperty("dependencies")) {
           for (const [key, value] of Object.entries(package["dependencies"])) {

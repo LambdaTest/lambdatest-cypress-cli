@@ -52,6 +52,12 @@ function run_test(payload, env = "prod") {
           if (parseInt(build_id) == 0) {
             reject("Some Error occured on Lambdatest Server");
           } else {
+            //Write session_id to a file
+            data = { build_id: build_id, session_id: session_id };
+            fs.writeFileSync(
+              "lambdatest_run.json",
+              JSON.stringify(data, null, 3)
+            );
             console.log(
               `Uploaded tests successfully `,
               responseData["value"]["message"]
