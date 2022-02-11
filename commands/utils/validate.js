@@ -106,7 +106,11 @@ module.exports = validate_config = function (lt_config) {
             }
           }
         }
-        if (cypress_flag == false) {
+        if (cypress_flag == false && lt_config.run_settings.npm_dependencies) {
+          reject(
+            "Error!!Cypress dependency is not present in npm_dependencies"
+          );
+        } else if (cypress_flag == false) {
           reject("Error!!Cypress dependency is not present in package.json");
         }
       } catch (e) {
