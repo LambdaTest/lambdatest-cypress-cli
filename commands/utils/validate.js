@@ -106,6 +106,19 @@ module.exports = validate_config = function (lt_config) {
             }
           }
         }
+        if (
+          lt_config.run_settings.cypress_version &&
+          lt_config.run_settings.cypress_version != ""
+        ) {
+          cypress_flag = true;
+        } else if (
+          lt_config.run_settings.cypress_version &&
+          lt_config.run_settings.cypress_version == ""
+        ) {
+          reject(
+            "Error!! cypress_version can not be blank, either provide a value or remove the key"
+          );
+        }
         if (cypress_flag == false && lt_config.run_settings.npm_dependencies) {
           reject(
             "Error!!Cypress dependency is not present in npm_dependencies"
