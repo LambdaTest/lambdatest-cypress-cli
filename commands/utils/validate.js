@@ -171,6 +171,13 @@ module.exports = validate_config = function (lt_config) {
         }
       }
     }
+    if ("smart_ui" in lt_config.run_settings) {
+      if (!("project" in lt_config.run_settings.smart_ui)) {
+        reject("Smart UI project name is missing");
+      } else if (lt_config.run_settings.smart_ui.project == "") {
+        reject("Smart UI porject name can not be blank");
+      }
+    }
     resolve("Validated the Config");
   });
 };
