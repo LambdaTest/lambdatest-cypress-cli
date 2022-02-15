@@ -3,6 +3,7 @@ const fs = require("fs");
 const archiver = require("archiver");
 const constants = require("./constants.js");
 const process = require("process");
+const semver = require("semver");
 
 function delete_archive(file_name) {
   try {
@@ -72,24 +73,58 @@ function archive_project(lt_config) {
       { cwd: process.cwd(), ignore: ignore_files, dot: false },
       { prefix: "project/" }
     );
+    let raw_package_data = fs.readFileSync("package.json");
+    let package = JSON.parse(raw_package_data);
     //OverRide NPM Dependencies
-    if (lt_config.run_settings.npm_dependencies) {
+    if (
+      lt_config.run_settings.npm_dependencies &&
+      !lt_config.run_settings.cypress_version
+    ) {
       console.log("Overriding NPM Dependencies");
-      let rawdata = fs.readFileSync("package.json");
-
-      let package = JSON.parse(rawdata);
       package.dependencies = lt_config.run_settings.npm_dependencies;
       package.devDependencies = {};
-      archive.append(
-        JSON.stringify(package, null, 4),
-        {
-          name: "project/package.json",
-          cwd: process.cwd(),
-          ignore: ignore_files,
-        },
-        { prefix: "project/" }
-      );
+      package.dependencies.cypress = semver.coerce(
+        package.dependencies.cypress
+      ).version;
+    } else if (
+      lt_config.run_settings.npm_dependencies &&
+      lt_config.run_settings.cypress_version
+    ) {
+      console.log("Overriding NPM Dependencies");
+      package.dependencies = lt_config.run_settings.npm_dependencies;
+      package.devDependencies = {};
+      console.log("Overriding Cypress Version");
+      package.dependencies.cypress = semver.coerce(
+        lt_config.run_settings.cypress_version
+      ).version;
+    } else if (
+      !lt_config.run_settings.npm_dependencies &&
+      lt_config.run_settings.cypress_version
+    ) {
+      console.log("Overriding Cypress Version");
+      package.dependencies.cypress = semver.coerce(
+        lt_config.run_settings.cypress_version
+      ).version;
+    } else {
+      if (package.dependencies.hasOwnProperty("cypress")) {
+        package.dependencies.cypress = semver.coerce(
+          package.dependencies.cypress
+        ).version;
+      } else {
+        package.devDependencies.cypress = semver.coerce(
+          package.devDependencies.cypress
+        ).version;
+      }
     }
+    archive.append(
+      JSON.stringify(package, null, 4),
+      {
+        name: "project/package.json",
+        cwd: process.cwd(),
+        ignore: ignore_files,
+      },
+      { prefix: "project/" }
+    );
     if (fs.existsSync(".npmrc")) {
       let raw_data = fs.readFileSync(".npmrc", "utf8");
       if (
