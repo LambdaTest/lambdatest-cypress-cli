@@ -103,10 +103,13 @@ function archive_project(lt_config) {
     ) {
       console.log("Overriding Cypress Version");
       if (package.dependencies.hasOwnProperty("cypress")) {
-        package.dependencies.cypress = semver.coerce(cypress_version).version;
+        package.dependencies.cypress = semver.coerce(
+          lt_config.run_settings.cypress_version
+        ).version;
       } else {
-        package.devDependencies.cypress =
-          semver.coerce(cypress_version).version;
+        package.devDependencies.cypress = semver.coerce(
+          lt_config.run_settings.cypress_version
+        ).version;
       }
     } else {
       if (package.dependencies.hasOwnProperty("cypress")) {
