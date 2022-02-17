@@ -154,8 +154,29 @@ module.exports = validate_config = function (lt_config) {
       for (folder in download_folders) {
         console.log(download_folders[folder]);
         if (download_folders[folder][0] != ".") {
-          reject("Error!! dowloads folder path is not relative ", folder);
+          reject("Error!! dowloads folder path is not relative " + folder);
         }
+      }
+    }
+
+    if (lt_config["run_settings"]["cypress_settings"] != "") {
+      let settings = lt_config["run_settings"]["cypress_settings"].split(";");
+      //let setting_names = [];
+      let settings_flag = true;
+      let setting_param = "";
+      for (let i = 0; i < settings.length; i++) {
+        if (
+          constants.BLACKLISTED_SETTINGS.includes(settings[i].split(" ")[0])
+        ) {
+          settings_flag = false;
+          setting_param = settings[i].split(" ")[0];
+          break;
+        }
+      }
+      if (settings_flag == false) {
+        reject(
+          "Error!! Following cypress param is not allowed " + setting_param
+        );
       }
     }
     resolve("Validated the Config");
