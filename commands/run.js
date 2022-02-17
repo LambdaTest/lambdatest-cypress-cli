@@ -10,8 +10,9 @@ var lambdaTunnel = require("@lambdatest/node-tunnel");
 const { exec, execSync } = require("child_process");
 
 module.exports = function (args) {
-  let cli_version = execSync("lambdatest-cypress --version");
-  cli_version = cli_version.toString().trim();
+  //let cli_version = execSync("lambdatest-cypress --version");
+  //cli_version = cli_version.toString().trim();
+  let cli_version = "";
   if (!("lambdatest-config-file" in args)) {
     console.log("Checking Lambda Config in current directory");
     if (fs.existsSync(constants.LAMBDA_CONFIG)) {
@@ -38,6 +39,7 @@ module.exports = function (args) {
           break;
         }
       }
+      cli_flag = true;
       if (cli_flag == false) {
         console.log(
           "Unsupported version detected!!!! Please upgrade your CLI to @latest"
