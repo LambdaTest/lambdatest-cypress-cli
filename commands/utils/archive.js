@@ -56,6 +56,8 @@ function archive_project(lt_config) {
       "cypress/videos/**/*",
       "cypress/results/**/*",
       "lambdatest-artefacts/**/*",
+      "*.lock",
+      "package-lock.json",
     ].concat(lt_config["run_settings"]["ignore_files"]);
     //If we have some env variables passed through cli or config file we will ignore the original file and create a new one using
     //the parameter appended in config file through code
