@@ -1,6 +1,6 @@
 const fs = require("fs");
 const constants = require("./constants.js");
-module.exports = validate_config = function (lt_config) {
+module.exports = validate_config = function (lt_config, validation_configs) {
   return new Promise(function (resolve, reject) {
     //validate auth keys are present
     if (
@@ -166,7 +166,9 @@ module.exports = validate_config = function (lt_config) {
       let setting_param = "";
       for (let i = 0; i < settings.length; i++) {
         if (
-          constants.BLACKLISTED_SETTINGS.includes(settings[i].split(" ")[0])
+          validation_configs.blacklistCommands.includes(
+            settings[i].split(" ")[0]
+          )
         ) {
           settings_flag = false;
           setting_param = settings[i].split(" ")[0];

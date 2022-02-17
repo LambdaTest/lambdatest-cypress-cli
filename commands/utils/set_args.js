@@ -262,6 +262,13 @@ function sync_args_from_cmd(args) {
     if (!("downloads" in lt_config["run_settings"])) {
       lt_config["run_settings"]["downloads"] = "";
     }
+    //Check for cypress settings
+    if ("cypress_settings" in args) {
+      lt_config["run_settings"]["cypress_settings"] = args["cypress_settings"];
+    } else if (!lt_config["run_settings"]["cypress_settings"]) {
+      lt_config["run_settings"]["cypress_settings"] = "";
+    }
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||

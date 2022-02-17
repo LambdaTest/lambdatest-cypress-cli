@@ -101,6 +101,11 @@ const argv = require("yargs")
           alias: "exit-on-failure",
           describe: "Exit With Code 1 on failure",
           type: "string",
+        })
+        .option("cy", {
+          alias: "cypress_settings",
+          describe: "Pass Cypress Settings",
+          type: "string",
         });
     },
     function (argv) {
