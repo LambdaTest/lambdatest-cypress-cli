@@ -106,6 +106,20 @@ module.exports = validate_config = function (lt_config) {
             }
           }
         }
+        if (
+          lt_config.run_settings.hasOwnProperty("cypress_version") &&
+          lt_config.run_settings.cypress_version != ""
+        ) {
+          cypress_flag = true;
+        } else if (
+          lt_config.run_settings.hasOwnProperty("cypress_version") &&
+          lt_config.run_settings.cypress_version == ""
+        ) {
+          cypress_flag = false;
+          reject(
+            "Error!! cypress_version can not be blank, either provide a value or remove the key"
+          );
+        }
         if (cypress_flag == false && lt_config.run_settings.npm_dependencies) {
           reject(
             "Error!!Cypress dependency is not present in npm_dependencies"
@@ -156,6 +170,13 @@ module.exports = validate_config = function (lt_config) {
         if (download_folders[folder][0] != ".") {
           reject("Error!! dowloads folder path is not relative ", folder);
         }
+      }
+    }
+    if ("smart_ui" in lt_config.run_settings) {
+      if (!("project" in lt_config.run_settings.smart_ui)) {
+        reject("Smart UI project name is missing");
+      } else if (lt_config.run_settings.smart_ui.project == "") {
+        reject("Smart UI porject name can not be blank");
       }
     }
     resolve("Validated the Config");
