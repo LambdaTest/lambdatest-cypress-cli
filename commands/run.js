@@ -49,7 +49,7 @@ module.exports = function (args) {
             .sync_args_from_cmd(args)
             .then(function (lt_config) {
               //validate the config options
-              validate(lt_config)
+              validate(lt_config, resp)
                 .then(function () {
                   batcher
                     .make_batches(lt_config)
