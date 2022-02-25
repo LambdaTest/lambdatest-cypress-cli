@@ -174,14 +174,19 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     }
 
     if (lt_config["run_settings"]["cypress_settings"] != "") {
+      for (let i = 0; i < validation_configs.blacklistCommands.length; i++) {
+        validation_configs.blacklistCommands[i] = new RegExp(
+          validation_configs.blacklistCommands[i]
+        );
+      }
       let settings = lt_config["run_settings"]["cypress_settings"].split(";");
       //let setting_names = [];
       let settings_flag = true;
       let setting_param = "";
       for (let i = 0; i < settings.length; i++) {
         if (
-          validation_configs.blacklistCommands.includes(
-            settings[i].split(" ")[0]
+          validation_configs.blacklistCommands.some((rx) =>
+            rx.test(settings[i].split(" ")[0])
           )
         ) {
           settings_flag = false;
@@ -201,7 +206,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
         reject("Smart UI project name is missing");
       } else if (lt_config.run_settings.smart_ui.project == "") {
         reject("Smart UI porject name can not be blank");
-
       }
     }
     resolve("Validated the Config");
