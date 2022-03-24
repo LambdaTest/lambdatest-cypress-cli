@@ -268,6 +268,12 @@ function sync_args_from_cmd(args) {
     } else if (!lt_config["run_settings"]["cypress_settings"]) {
       lt_config["run_settings"]["cypress_settings"] = "";
     }
+    //Check for geo location
+    if ("geo_location" in args) {
+      lt_config["run_settings"]["geo_location"] = args["geo_location"];
+    } else if (!lt_config["run_settings"]["geo_location"]) {
+      lt_config["run_settings"]["geo_location"] = "";
+    }
 
     //get specs from current directory if specs are not passed in config or cli
     if (
