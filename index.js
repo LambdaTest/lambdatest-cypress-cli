@@ -106,6 +106,11 @@ const argv = require("yargs")
           alias: "cypress_settings",
           describe: "Pass Cypress Settings",
           type: "string",
+        })
+        .option("geo", {
+          alias: "geo_location",
+          describe: "Pass Geo Country Code",
+          type: "string",
         });
     },
     function (argv) {
