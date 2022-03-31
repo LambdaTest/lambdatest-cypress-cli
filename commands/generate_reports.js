@@ -99,7 +99,7 @@ function generate_report(args) {
     //set working enviornment
     var env = "prod";
     if ("env" in args) {
-      if (["stage", "prod", "beta"].includes(args["env"])) {
+      if (constants.ENVS.includes(args["env"])) {
         env = args["env"];
       } else {
         console.log(
