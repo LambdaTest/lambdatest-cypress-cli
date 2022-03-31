@@ -20,11 +20,11 @@ module.exports = function (args) {
   }
   var env = "prod";
   if ("env" in args) {
-    if (["stage", "prod", "beta"].includes(args["env"])) {
+    if (constants.ENVS.includes(args["env"])) {
       env = args["env"];
     } else {
       console.log(
-        "Environment can be stage, beta or prod, setting Env to prod"
+        "Environment can be stage, beta, preprod or prod, setting Env to prod"
       );
     }
   }
