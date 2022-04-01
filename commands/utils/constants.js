@@ -11,6 +11,7 @@ module.exports = {
   SUPPORTED_CYPRESS_VERSIONS: ["5", "6"],
   BUILD_END_STATES: "&status=running,queued,created,initiated,pqueued",
   CYPRESS_ENV_FILE_PATH: "cypress.env.json",
+  ENVS: ["stage", "beta", "prod", "preprod"],
   prod: {
     INTEGRATION_BASE_URL: "https://api.lambdatest.com/liis",
     BUILD_BASE_URL: "https://api.lambdatest.com/automation/api/v1/builds/",
@@ -41,5 +42,16 @@ module.exports = {
       "https://stage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
       "https://stage-api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
+  },
+  preprod: {
+    INTEGRATION_BASE_URL: "https://preprod-api.lambdatest.com/liis",
+    BUILD_BASE_URL:
+      "https://preprod-api.lambdatest.com/automation/api/v1/builds/",
+    BUILD_STOP_URL:
+      "https://preprod-api.lambdatest.com/api/v1/test/stop?buildId=",
+    SESSION_URL:
+      "https://preprod-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
+    REPORT_URL:
+      "https://preprod-api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
   },
 };
