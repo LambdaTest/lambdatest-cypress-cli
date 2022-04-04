@@ -208,6 +208,34 @@ module.exports = validate_config = function (lt_config, validation_configs) {
         reject("Smart UI porject name can not be blank");
       }
     }
+    //validate if reporter json file is passed and exists
+    if (
+      lt_config["run_settings"]["reporter_config_file"] &&
+      lt_config["run_settings"]["reporter_config_file"] != ""
+    ) {
+      if (!fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
+        reject(
+          "Error!! Reporter Json File does not exist, either remove the key reporter_config_file or pass a valid path"
+        );
+      } else {
+        let rawdata = fs.readFileSync(
+          lt_config["run_settings"]["reporter_config_file"]
+        );
+        try {
+          let reporter_config = JSON.parse(rawdata);
+          if (Object.keys(reporter_config).length == 0) {
+            reject(
+              "Error!! Reporter JSON File has no keys, either remove Key reporter_config_file from lambdatest config or pass some options"
+            );
+          }
+        } catch {
+          console.log(
+            "reporter_config_file is not parsed, please provide a valid json in Reporter Config"
+          );
+          reject("Error!! Reporter JSON File does not has correct json");
+        }
+      }
+    }
     resolve("Validated the Config");
   });
 };

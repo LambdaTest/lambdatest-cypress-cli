@@ -41,7 +41,8 @@ function poll_build(lt_config, session_id, env) {
               console.log(stats);
               if (
                 Object.keys(stats).length == 1 &&
-                Object.keys(stats).includes("completed")
+                (Object.keys(stats).includes("completed") ||
+                  Object.keys(stats).includes("passed"))
               ) {
                 resolve(0);
               } else {
