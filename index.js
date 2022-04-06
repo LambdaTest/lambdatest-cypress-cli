@@ -111,6 +111,11 @@ const argv = require("yargs")
           alias: "geo_location",
           describe: "Pass Geo Country Code",
           type: "string",
+        })
+        .option("sof", {
+          alias: "stop_on_failure",
+          describe: "Stop other tests if any test in session gets errored out",
+          type: "bool",
         });
     },
     function (argv) {
