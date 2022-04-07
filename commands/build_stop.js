@@ -1,8 +1,8 @@
 const request = require("request");
 const constants = require("./utils/constants.js");
 const process = require("process");
-
-function stop_build(args) {
+const fs = require("fs");
+function stop_session(args) {
   return new Promise(function (resolve, reject) {
     var username = "";
     var access_key = "";
@@ -25,13 +25,34 @@ function stop_build(args) {
     } else {
       reject("Access Key not provided");
     }
-
-    if (
-      !("buildId" in args) ||
-      args["buildid"] == "" ||
-      args["buildid"] == undefined
-    ) {
-      reject("Please provide a build ID");
+    if ("stop_last_session" in args) {
+      const file_path = "lambdatest_run.json";
+      if (fs.existsSync(file_path)) {
+        let lambda_run = fs.readFileSync(file_path);
+        try {
+          let lambda_run_obj = JSON.parse(lambda_run);
+          if (!("session_id" in lambda_run_obj)) {
+            throw new Error("session_id is missing from the file");
+          }
+          args.session_id = lambda_run_obj.session_id;
+        } catch (e) {
+          reject(
+            "Error!! lambdatest_run.json file is tampered Err: " + e.message
+          );
+        }
+      } else {
+        reject(
+          "Error!! Last session details not found, lambdatest_run.json file not present!!"
+        );
+      }
+    } else {
+      if (
+        !("session_id" in args) ||
+        args["session_id"] == "" ||
+        args["session_id"] == undefined
+      ) {
+        reject("Error!! Please provide a Session ID");
+      }
     }
     var env = "prod";
     if ("env" in args) {
@@ -45,7 +66,7 @@ function stop_build(args) {
     }
 
     let options = {
-      url: constants[env].BUILD_STOP_URL + args.buildId,
+      url: constants[env].BUILD_STOP_URL + args.session_id,
       headers: {
         Authorization: "Token " + access_key,
         Username: username,
@@ -69,7 +90,13 @@ function stop_build(args) {
             reject("error", responseData);
           }
         } else {
-          resolve("Build Stopped successfully");
+          if (responseData.length == 0) {
+            resolve("No tests to stop in session " + args.session_id);
+          }
+          resolve(
+            "Session Stopped successfully, No. of tests stopped are: " +
+              responseData.length
+          );
         }
       }
     });
@@ -77,7 +104,7 @@ function stop_build(args) {
 }
 
 module.exports = function (args) {
-  stop_build(args)
+  stop_session(args)
     .then(function (resp) {
       console.log(resp);
     })

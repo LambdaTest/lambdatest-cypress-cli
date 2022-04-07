@@ -236,6 +236,13 @@ module.exports = validate_config = function (lt_config, validation_configs) {
         }
       }
     }
+
+    if (
+      lt_config.run_settings.stop_on_failure &&
+      typeof lt_config.run_settings.stop_on_failure != "bool"
+    ) {
+      reject("Type of stop_on_failure flag is not bool");
+    }
     resolve("Validated the Config");
   });
 };
