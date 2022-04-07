@@ -37,7 +37,7 @@ function stop_session(args) {
           args.session_id = lambda_run_obj.session_id;
         } catch (e) {
           reject(
-            "Error!! lambdatest_run.json file is tempered Err: " + e.message
+            "Error!! lambdatest_run.json file is tampered Err: " + e.message
           );
         }
       } else {
