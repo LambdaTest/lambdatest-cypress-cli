@@ -239,7 +239,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
 
     if (
       lt_config.run_settings.stop_on_failure &&
-      typeof lt_config.run_settings.stop_on_failure != "bool"
+      typeof lt_config.run_settings.stop_on_failure != "boolean"
     ) {
       reject("Type of stop_on_failure flag is not bool");
     }
