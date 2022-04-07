@@ -159,25 +159,29 @@ const argv = require("yargs")
     function (yargs) {
       return yargs
         .option("id", {
-          alias: "build-id",
-          describe: "Build Identifier",
+          alias: "session_id",
+          describe: "Session Identifier",
           type: "string",
-          demandOption: true,
         })
         .option("user", {
-          alias: "user",
+          alias: "username",
           describe: "username",
           type: "string",
         })
-        .option("access_key", {
+        .option("ak", {
           alias: "access_key",
           describe: "Access Key",
           type: "string",
         })
         .option("env", {
-          alias: "env",
+          alias: "environment",
           describe: "environment",
           type: "string",
+        })
+        .option("sls", {
+          alias: "stop_last_session",
+          describe: "stop last session",
+          type: "bool",
         });
     },
     function (argv) {
