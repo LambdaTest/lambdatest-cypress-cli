@@ -274,6 +274,12 @@ function sync_args_from_cmd(args) {
     } else if (!lt_config["run_settings"]["geo_location"]) {
       lt_config["run_settings"]["geo_location"] = "";
     }
+    //Check for stop on failure location
+    if ("stop_on_failure" in args) {
+      lt_config["run_settings"]["stop_on_failure"] = true;
+    } else if (!lt_config["run_settings"]["stop_on_failure"]) {
+      lt_config["run_settings"]["stop_on_failure"] = false;
+    }
 
     //get specs from current directory if specs are not passed in config or cli
     if (

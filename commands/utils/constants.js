@@ -10,12 +10,14 @@ module.exports = {
   LAMBDA_CONFIG: "./lambdatest-config.json",
   SUPPORTED_CYPRESS_VERSIONS: ["5", "6"],
   BUILD_END_STATES: "&status=running,queued,created,initiated,pqueued",
+  BUILD_ERROR_STATES: "&status=error,lambda error,failed",
   CYPRESS_ENV_FILE_PATH: "cypress.env.json",
   ENVS: ["stage", "beta", "prod", "preprod"],
   prod: {
     INTEGRATION_BASE_URL: "https://api.lambdatest.com/liis",
     BUILD_BASE_URL: "https://api.lambdatest.com/automation/api/v1/builds/",
-    BUILD_STOP_URL: "https://beta-api.lambdatest.com/api/v1/test/stop?buildId=",
+    BUILD_STOP_URL:
+      "https://beta-api.lambdatest.com/api/v1/test/stop?sessionId=",
     SESSION_URL:
       "https://api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
@@ -26,7 +28,7 @@ module.exports = {
     BUILD_BASE_URL:
       "https://api.cypress-v3.dev.lambdatest.io/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://api.cypress-v3.dev.lambdatest.io/api/v1/test/stop?buildId=",
+      "https://api.cypress-v3.dev.lambdatest.io/api/v1/test/stop?sessionId=",
     SESSION_URL:
       "https://api.cypress-v3.dev.lambdatest.io/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
@@ -37,7 +39,7 @@ module.exports = {
     BUILD_BASE_URL:
       "https://stage-api.lambdatest.com/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://stage-api.lambdatest.com/api/v1/test/stop?buildId=",
+      "https://stage-api.lambdatest.com/api/v1/test/stop?sessionId=",
     SESSION_URL:
       "https://stage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
@@ -48,7 +50,7 @@ module.exports = {
     BUILD_BASE_URL:
       "https://preprod-api.lambdatest.com/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://preprod-api.lambdatest.com/api/v1/test/stop?buildId=",
+      "https://preprod-api.lambdatest.com/api/v1/test/stop?sessionId=",
     SESSION_URL:
       "https://preprod-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
