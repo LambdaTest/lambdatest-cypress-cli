@@ -119,7 +119,7 @@ async function run(lt_config, batches, env, i = 0) {
                         process.on("SIGINT", async () => {
                           try {
                             console.log(
-                              "Control+c signal recieved.\nTrying to Terminating the processes"
+                              "Control+c signal received.\nTrying to Terminate the processes"
                             );
                             await builds.stop_cypress_session(
                               lt_config,
