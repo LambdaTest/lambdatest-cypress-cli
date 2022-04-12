@@ -9,7 +9,8 @@ module.exports = {
   DEFAULT_TEST_PATH: ".",
   LAMBDA_CONFIG: "./lambdatest-config.json",
   SUPPORTED_CYPRESS_VERSIONS: ["5", "6"],
-  BUILD_END_STATES: "&status=running,queued,created,initiated,pqueued",
+  BUILD_END_STATES:
+    "&status=running,queued,created,initiated,pqueued,error,lambda error,failed",
   BUILD_ERROR_STATES: "&status=error,lambda error,failed",
   CYPRESS_ENV_FILE_PATH: "cypress.env.json",
   ENVS: ["stage", "beta", "prod", "preprod"],
