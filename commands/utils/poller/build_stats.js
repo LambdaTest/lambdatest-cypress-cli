@@ -50,15 +50,39 @@ function get_build_info(lt_config, session_id, env, update_status, callback) {
         update_status(false);
         return callback("Unauthorized");
       } else if (res.statusCode == "200") {
-        resp = JSON.parse(body);
-        if (resp["Meta"]["result_set"]["count"] == 0) {
+        let statsNew = {
+          running: 0,
+          queued: 0,
+          created: 0,
+          initiated: 0,
+          pqueued: 0,
+          error: 0,
+          "lambda error": 0,
+          failed: 0,
+        };
+        let build_info = JSON.parse(body);
+        if (build_info.Meta.result_set.count > 0) {
+          for (i = 0; i < build_info["data"].length; i++) {
+            statsNew[build_info["data"][i]["status_ind"]] += 1;
+          }
+        }
+        if (
+          statsNew["running"] +
+            statsNew["queued"] +
+            statsNew["created"] +
+            statsNew["initiated"] +
+            statsNew["pqueued"] ==
+          0
+        ) {
           update_status(false);
           return callback(null, JSON.parse(body));
         }
         //Stop the tests if stop on failure is enabled and we get an errored/failed/lambda errored test
         if (lt_config.run_settings.stop_on_failure == true) {
-          let response = await get_error_state(lt_config, session_id, env);
-          if (response.count > 0) {
+          if (
+            statsNew["error"] + statsNew["lambda error"] + statsNew["failed"] >
+            0
+          ) {
             await builds.stop_cypress_session(lt_config, session_id, env);
           }
         }
@@ -71,39 +95,6 @@ function get_build_info(lt_config, session_id, env, update_status, callback) {
   );
 }
 
-function get_error_state(lt_config, session_id, env) {
-  return new Promise(function (resolve, reject) {
-    request(
-      constants[env].SESSION_URL + session_id + constants.BUILD_ERROR_STATES,
-      {
-        auth: {
-          username: lt_config["lambdatest_auth"]["username"],
-          password: lt_config["lambdatest_auth"]["access_key"],
-        },
-      },
-      (err, res, body) => {
-        let response = { err: null, res_code: null, count: 0 };
-        if (err) {
-          console.log(err);
-          response.err = err;
-          response.res_code = 500;
-          resolve(response);
-        }
-        response.res_code = res.statusCode;
-        if (res.statusCode == "401") {
-          response.err = "Unauthorized";
-          resolve(response);
-        } else if (res.statusCode == "200") {
-          resp = JSON.parse(body);
-          response.count = resp["Meta"]["result_set"]["count"];
-          resolve(response);
-        } else {
-          resolve(response);
-        }
-      }
-    );
-  });
-}
 module.exports = {
   get_build_info: get_build_info,
   get_completed_build_info: get_completed_build_info,

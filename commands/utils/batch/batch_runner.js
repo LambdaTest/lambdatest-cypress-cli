@@ -11,6 +11,8 @@ const request = require("request");
 const { del } = require("request");
 const { delete_archive } = require("../archive.js");
 const poller = require("../poller/poller.js");
+const builds = require("../poller/build");
+
 var batchCounter = 0;
 var totalBatches = 0;
 
@@ -113,7 +115,22 @@ async function run(lt_config, batches, env, i = 0) {
                       .then(function (session_id) {
                         delete_archive(project_file);
                         delete_archive(file_obj["name"]);
-
+                        //listen to control+c signal and stop tests
+                        process.on("SIGINT", async () => {
+                          try {
+                            console.log(
+                              "Control+c signal received.\nTrying to Terminate the processes"
+                            );
+                            await builds.stop_cypress_session(
+                              lt_config,
+                              session_id,
+                              env
+                            );
+                            resolve(0);
+                          } catch (e) {
+                            console.log("Could not exit process. Try Again!!!");
+                          }
+                        });
                         if (
                           lt_config["run_settings"]["sync"] == true ||
                           lt_config["tunnel_settings"]["tunnel"] == true
@@ -125,7 +142,10 @@ async function run(lt_config, batches, env, i = 0) {
                               resolve(exit_code);
                             })
                             .catch(function (err) {
-                              console.log();
+                              console.log(
+                                "Some error occured in getting build updates",
+                                err.message
+                              );
                             });
                         } else {
                           resolve(0);

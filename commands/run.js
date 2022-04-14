@@ -75,13 +75,25 @@ module.exports = function (args) {
                               .run_batches(lt_config, batches, env)
                               .then(function (exit_code) {
                                 console.log("stopping tunnel");
-                                tunnelInstance.stop().then(function (done) {
-                                  if (
-                                    lt_config["run_settings"]["exit-on-failure"]
-                                  ) {
+                                tunnelInstance
+                                  .stop()
+                                  .then(function (done) {
+                                    if (
+                                      lt_config["run_settings"][
+                                        "exit-on-failure"
+                                      ]
+                                    ) {
+                                      process.exit(exit_code);
+                                    }
+                                  })
+                                  .catch(function (error) {
+                                    //At times Tunnel instance could not be stopped and
+                                    //raised the error but this will stop tunnel automatically
+                                    //after some time
+                                    //Log error here for debugging
+                                    console.log("");
                                     process.exit(exit_code);
-                                  }
-                                });
+                                  });
                               })
                               .catch(function (error) {
                                 console.log(
