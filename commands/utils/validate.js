@@ -243,6 +243,27 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     ) {
       reject("Type of stop_on_failure flag is not bool");
     }
+
+    //Check for browsers and platforms
+    let browsers = validation_configs.supportedBrowserAlias;
+    let platforms = validation_configs.supportedPlatformAlias;
+    for (let i = 0; i < lt_config.browsers.length; i++) {
+      if (browsers.indexOf(lt_config.browsers[i].browser.toLowerCase()) == -1) {
+        reject(
+          "Browser not supported!!! Please pass from following list: " +
+            validation_configs.supportedBrowsers
+        );
+      }
+      if (
+        platforms.indexOf(lt_config.browsers[i].platform.toLowerCase()) == -1
+      ) {
+        reject(
+          "Platform not supported!!! Please pass from following list: " +
+            validation_configs.supportedPlatforms
+        );
+      }
+    }
+
     resolve("Validated the Config");
   });
 };
