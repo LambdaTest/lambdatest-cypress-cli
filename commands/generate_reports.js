@@ -93,25 +93,7 @@ function generate_report(args) {
       args["session_id"] == "" ||
       args["session_id"] == undefined
     ) {
-      const file_path = "lambdatest_run.json";
-      if (fs.existsSync(file_path)) {
-        let lambda_run = fs.readFileSync(file_path);
-        try {
-          let lambda_run_obj = JSON.parse(lambda_run);
-          if (!("session_id" in lambda_run_obj)) {
-            throw new Error("session_id is missing from the file");
-          }
-          args.session_id = lambda_run_obj.session_id;
-        } catch (e) {
-          reject(
-            "Error!! lambdatest_run.json file is tampered Err: " + e.message
-          );
-        }
-      } else {
-        reject(
-          "Error!! Last session details not found, lambdatest_run.json file not present!!"
-        );
-      }
+      reject("Please provide a Session ID");
     }
 
     //set working enviornment
