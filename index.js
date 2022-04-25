@@ -197,7 +197,6 @@ const argv = require("yargs")
           alias: "username",
           describe: "Lambdatest Username of User",
           type: "string",
-          demandOption: true,
         })
         .option("ak", {
           alias: "access_key",
