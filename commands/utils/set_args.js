@@ -280,7 +280,21 @@ function sync_args_from_cmd(args) {
     } else if (!lt_config["run_settings"]["stop_on_failure"]) {
       lt_config["run_settings"]["stop_on_failure"] = false;
     }
-
+    if (
+      lt_config.run_settings.project_name &&
+      !lt_config.run_settings.project_key
+    ) {
+      lt_config.run_settings.project_key = lt_config.run_settings.project_name;
+    }
+    if (
+      !lt_config.run_settings.project_name &&
+      lt_config.run_settings.project_key
+    ) {
+      lt_config.run_settings.project_name = lt_config.run_settings.project_key;
+    }
+    if (lt_config.run_settings.project_autocreate == undefined) {
+      lt_config.run_settings.project_autocreate = true;
+    }
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
