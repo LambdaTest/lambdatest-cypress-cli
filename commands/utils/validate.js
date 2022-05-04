@@ -244,6 +244,25 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       reject("Type of stop_on_failure flag is not bool");
     }
 
+    //Check for project capability
+    if (
+      lt_config.run_settings.project_name &&
+      lt_config.run_settings.project_key
+    ) {
+      if (lt_config.run_settings.project_name == "") {
+        reject("Project name can not blank");
+      }
+      if (lt_config.run_settings.project_name == "") {
+        reject("Project key can not blank");
+      }
+    }
+    if (
+      lt_config.run_settings.project_autocreate &&
+      typeof lt_config.run_settings.project_autocreate != "boolean"
+    ) {
+      reject("Type of project_autocreate capability is not bool");
+    }
+
     //Check for browsers and platforms
     let browsers = validation_configs.supportedBrowserAlias;
     let platforms = validation_configs.supportedPlatformAlias;
