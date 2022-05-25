@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@lambdatest/node-tunnel": "^3.0.0",
+    "async": "^3.2.3",
     "archiver": "^5.1.0",
     "glob": "^7.1.6",
     "node-stream-zip": "^1.15.0",
