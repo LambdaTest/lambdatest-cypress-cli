@@ -39,7 +39,7 @@ const argv = require("yargs")
         })
         .option("t", {
           alias: "tags",
-          describe: "build tags",
+          describe: "test tags",
           type: "string",
         })
         .option("p", {
@@ -116,6 +116,11 @@ const argv = require("yargs")
           alias: "stop_on_failure",
           describe: "Stop other tests if any test in session gets errored out",
           type: "bool",
+        })
+        .option("bt", {
+          alias: "build-tags",
+          describe: "build tags",
+          type: "string",
         });
     },
     function (argv) {
