@@ -262,39 +262,57 @@ function sync_args_from_cmd(args) {
     if (!("downloads" in lt_config["run_settings"])) {
       lt_config["run_settings"]["downloads"] = "";
     }
+
     //Check for cypress settings
     if ("cypress_settings" in args) {
       lt_config["run_settings"]["cypress_settings"] = args["cypress_settings"];
     } else if (!lt_config["run_settings"]["cypress_settings"]) {
       lt_config["run_settings"]["cypress_settings"] = "";
     }
+
     //Check for geo location
     if ("geo_location" in args) {
       lt_config["run_settings"]["geo_location"] = args["geo_location"];
     } else if (!lt_config["run_settings"]["geo_location"]) {
       lt_config["run_settings"]["geo_location"] = "";
     }
+
     //Check for stop on failure location
     if ("stop_on_failure" in args) {
       lt_config["run_settings"]["stop_on_failure"] = true;
     } else if (!lt_config["run_settings"]["stop_on_failure"]) {
       lt_config["run_settings"]["stop_on_failure"] = false;
     }
+
     if (
       lt_config.run_settings.project_name &&
       !lt_config.run_settings.project_key
     ) {
       lt_config.run_settings.project_key = lt_config.run_settings.project_name;
     }
+
     if (
       !lt_config.run_settings.project_name &&
       lt_config.run_settings.project_key
     ) {
       lt_config.run_settings.project_name = lt_config.run_settings.project_key;
     }
+
     if (lt_config.run_settings.project_autocreate == undefined) {
       lt_config.run_settings.project_autocreate = true;
     }
+
+    //set build tags  from args
+    if ("build-tags" in args) {
+      lt_config["run_settings"]["build_tags"] = args["build-tags"].split(",");
+    } else if (
+      lt_config["run_settings"]["build_tags"] != undefined &&
+      lt_config["run_settings"]["build_tags"] != ""
+    ) {
+      lt_config["run_settings"]["build_tags"] =
+        lt_config["run_settings"]["build_tags"].split(",");
+    }
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||

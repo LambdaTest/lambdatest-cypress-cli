@@ -283,6 +283,32 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
 
+    //Validate Build Tags
+    //1) less than 5
+    //2) each tag should be less than 50 characters
+    if (lt_config.run_settings.build_tags) {
+      if (lt_config.run_settings.build_tags.length > 5) {
+        reject("Build Tags can not be more than 5");
+      }
+      for (let i = 0; i < lt_config.run_settings.build_tags.length; i++) {
+        if (lt_config.run_settings.build_tags[i].length > 50) {
+          reject("Build Tags can not have over 50 characters");
+        }
+      }
+    }
+    //Validate Test Tags
+    //1) less than 6
+    //2) each tag should be less than 50 characters
+    if (lt_config.run_settings.tags) {
+      if (lt_config.run_settings.tags.length > 6) {
+        reject("Test Tags can not be more than 6");
+      }
+      for (let i = 0; i < lt_config.run_settings.tags.length; i++) {
+        if (lt_config.run_settings.tags[i].length > 50) {
+          reject("Test Tags can not have over 50 characters");
+        }
+      }
+    }
     resolve("Validated the Config");
   });
 };
