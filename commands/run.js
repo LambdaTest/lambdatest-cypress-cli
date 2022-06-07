@@ -24,8 +24,9 @@ module.exports = function (args) {
       env = args["env"];
     } else {
       console.log(
-        "Environment can be stage, beta, preprod or prod, setting Env to prod"
+        "Environment can be stage,stage_new, beta, preprod or prod, setting Env to prod"
       );
+      return;
     }
   }
   validate_cli
