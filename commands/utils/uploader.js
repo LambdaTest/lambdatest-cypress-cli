@@ -61,17 +61,17 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
           },
         };
         options["formData"][file_name] = fs.readFileSync(file_name);
-        let responseData = null;
         request.put(options, function (err, resp, body) {
           if (err) {
             console.log("error occured while uploading project", err);
             reject(err);
           } else {
             if (resp.statusCode != 200) {
-              if (responseData && responseData["error"]) {
-                reject(responseData["error"]);
+              if (resp && resp["error"]) {
+                reject(resp["error"]);
               } else {
-                reject("error", responseData);
+                console.log("Error occured in uploading", resp);
+                reject("error", resp);
               }
             } else {
               console.log(`Uploaded ` + prefix + ` file successfully`);
