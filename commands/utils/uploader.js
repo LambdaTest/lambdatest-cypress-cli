@@ -61,7 +61,6 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
           },
         };
         options["formData"][file_name] = fs.readFileSync(file_name);
-        let responseData = null;
         request.put(options, function (err, resp, body) {
           if (err) {
             console.log("error occured while uploading project", err);
