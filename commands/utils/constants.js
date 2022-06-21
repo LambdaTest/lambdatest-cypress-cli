@@ -56,6 +56,17 @@ module.exports = {
     REPORT_URL:
       "https://stage-api.lambdatesting.com/automation/api/v1/cypress/artefacts/test/",
   },
+  stage_new: {
+    INTEGRATION_BASE_URL: "https://prestage-api.lambdatest.com/liis",
+    BUILD_BASE_URL:
+      "https://prestage-api.lambdatest.com/automation/api/v1/builds/",
+    BUILD_STOP_URL:
+      "https://prestage-api.lambdatest.com/api/v1/test/stop?sessionId=",
+    SESSION_URL:
+      "https://prestage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
+    REPORT_URL:
+      "https://prestage-api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
+  },
   preprod: {
     INTEGRATION_BASE_URL: "https://preprod-api.lambdatest.com/liis",
     BUILD_BASE_URL:
