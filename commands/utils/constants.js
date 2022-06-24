@@ -46,17 +46,17 @@ module.exports = {
       "https://stage-api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
   },
   stage_new: {
-    INTEGRATION_BASE_URL: "https://stage-api.lambdatesting.com/liis",
+    INTEGRATION_BASE_URL: "https://api.lambdatestinternal.com/liis",
     BUILD_BASE_URL:
-      "https://stage-api.lambdatesting.com/automation/api/v1/builds/",
+      "https://api.lambdatestinternal.com/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://stage-api.lambdatesting.com/api/v1/test/stop?sessionId=",
+      "https://api.lambdatestinternal.com/api/v1/test/stop?sessionId=",
     SESSION_URL:
-      "https://stage-api.lambdatesting.com/automation/api/v1/sessions?limit=200&session_id=",
+      "https://api.lambdatestinternal.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
-      "https://stage-api.lambdatesting.com/automation/api/v1/cypress/artefacts/test/",
+      "https://api.lambdatestinternal.com/automation/api/v1/cypress/artefacts/test/",
   },
-  stage_new: {
+  stage_new1: {
     INTEGRATION_BASE_URL: "https://prestage-api.lambdatest.com/liis",
     BUILD_BASE_URL:
       "https://prestage-api.lambdatest.com/automation/api/v1/builds/",
