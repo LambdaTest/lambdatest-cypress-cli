@@ -78,10 +78,11 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
             reject(err);
           } else {
             if (resp.statusCode != 200) {
-              if (responseData && responseData["error"]) {
-                reject(responseData["error"]);
+              if (resp && resp["error"]) {
+                reject(resp["error"]);
               } else {
-                reject("error", responseData);
+                console.log("Error occured in uploading", resp);
+                reject("error", resp);
               }
             } else {
               console.log(`Uploaded ` + prefix + ` file successfully`);
