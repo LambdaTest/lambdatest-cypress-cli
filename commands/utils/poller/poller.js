@@ -48,6 +48,9 @@ function poll_build(lt_config, session_id, env) {
               } else {
                 resolve(1);
               }
+            })
+            .catch(function (err) {
+              console.log("Error", err);
             });
         } else {
           console.log(err);

@@ -166,7 +166,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     ) {
       let download_folders = lt_config["run_settings"]["downloads"].split(",");
       for (folder in download_folders) {
-        console.log(download_folders[folder]);
         if (download_folders[folder][0] != ".") {
           reject("Error!! dowloads folder path is not relative " + folder);
         }
@@ -307,6 +306,17 @@ module.exports = validate_config = function (lt_config, validation_configs) {
         if (lt_config.run_settings.tags[i].length > 50) {
           reject("Test Tags can not have over 50 characters");
         }
+      }
+    }
+
+    //validate if reject unauthorized field contains expected value
+    if ("reject_unauthorized" in lt_config["run_settings"]) {
+      if (
+        ![true, false].includes(
+          lt_config["run_settings"]["reject_unauthorized"]
+        )
+      ) {
+        reject("Error!! boolean value is expected in reject_unauthorized key");
       }
     }
     resolve("Validated the Config");

@@ -72,6 +72,21 @@ function stop_session(args) {
         Username: username,
       },
     };
+
+    if ("reject_unauthorized" in args) {
+      if (
+        args["reject_unauthorized"] != "false" &&
+        args["reject_unauthorized"] != "true"
+      ) {
+        console.log("reject_unauthorized has to boolean");
+        return;
+      } else {
+        if (args["reject_unauthorized"] == "false") {
+          options["rejectUnauthorized"] = false;
+          console.log("Setting rejectUnauthorized to false for web requests");
+        }
+      }
+    }
     request.put(options, function (err, resp, body) {
       if (err) {
         reject(err);
