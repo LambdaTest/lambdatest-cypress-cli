@@ -16,13 +16,15 @@ const builds = require("../poller/build");
 var batchCounter = 0;
 var totalBatches = 0;
 
-function run_test(payload, env = "prod") {
+function run_test(payload, env = "prod", rejectUnauthorized) {
   return new Promise(function (resolve, reject) {
     let options = {
       url: constants[env].INTEGRATION_BASE_URL + constants.RUN_URL,
       body: payload,
     };
-
+    if (rejectUnauthorized == false) {
+      options["rejectUnauthorized"] = false;
+    }
     let responseData = null;
     request.post(options, function (err, resp, body) {
       if (err) {
@@ -111,7 +113,12 @@ async function run(lt_config, batches, env, i = 0) {
                       access_key: lt_config["lambdatest_auth"]["access_key"],
                       type: "cypress",
                     });
-                    run_test(payload, env)
+
+                    run_test(
+                      payload,
+                      env,
+                      lt_config.run_settings.reject_unauthorized
+                    )
                       .then(function (session_id) {
                         delete_archive(project_file);
                         delete_archive(file_obj["name"]);

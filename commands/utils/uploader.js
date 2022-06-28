@@ -3,6 +3,7 @@ const request = require("request");
 const constants = require("./constants.js");
 
 function get_signed_url(lt_config, prefix, env = "prod") {
+  console.log("Getting project upload url");
   return new Promise(function (resolve, reject) {
     let options = {
       url: constants[env].INTEGRATION_BASE_URL + constants.PROJECT_UPLOAD_URL,
@@ -12,6 +13,10 @@ function get_signed_url(lt_config, prefix, env = "prod") {
         prefix: prefix,
       }),
     };
+
+    if (lt_config.run_settings.reject_unauthorized == false) {
+      options["rejectUnauthorized"] = false;
+    }
     let responseData = null;
     request.post(options, function (err, resp, body) {
       if (err) {
@@ -50,6 +55,7 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
     }
     get_signed_url(lt_config, prefix, env)
       .then(function (responseDataURL) {
+        console.log("Uploading the project");
         let options = {
           url: responseDataURL["value"]["message"],
           formData: {
@@ -61,6 +67,10 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
           },
         };
         options["formData"][file_name] = fs.readFileSync(file_name);
+
+        if (lt_config.run_settings.reject_unauthorized == false) {
+          options["rejectUnauthorized"] = false;
+        }
         let responseData = null;
         request.put(options, function (err, resp, body) {
           if (err) {
@@ -68,10 +78,11 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
             reject(err);
           } else {
             if (resp.statusCode != 200) {
-              if (responseData && responseData["error"]) {
-                reject(responseData["error"]);
+              if (resp && resp["error"]) {
+                reject(resp["error"]);
               } else {
-                reject("error", responseData);
+                console.log("Error occured in uploading", resp);
+                reject("error", resp);
               }
             } else {
               console.log(`Uploaded ` + prefix + ` file successfully`);
@@ -81,7 +92,7 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
         });
       })
       .catch(function (err) {
-        reject("Failed to upload", err);
+        reject(err);
       });
   }).catch(function (err) {
     console.log("Failed to Upload", err);

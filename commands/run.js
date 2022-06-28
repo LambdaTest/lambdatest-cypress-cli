@@ -24,12 +24,30 @@ module.exports = function (args) {
       env = args["env"];
     } else {
       console.log(
-        "Environment can be stage, beta, preprod or prod, setting Env to prod"
+        "Environment can be stage,stage_new, beta, preprod or prod, setting Env to prod"
       );
+      return;
+    }
+  }
+  let rejectUnauthorized = true;
+  if ("reject_unauthorized" in args) {
+    if (
+      args["reject_unauthorized"] != "false" &&
+      args["reject_unauthorized"] != "true"
+    ) {
+      console.log("reject_unauthorized has to boolean");
+      return;
+    } else {
+      if (args["reject_unauthorized"] == "false") {
+        rejectUnauthorized = false;
+        console.log("Setting rejectUnauthorized to false for web requests");
+      } else {
+        rejectUnauthorized = true;
+      }
     }
   }
   validate_cli
-    .validate_cli(env)
+    .validate_cli(env, rejectUnauthorized)
     .then(function (resp) {
       let cli_flag = false;
       for (let i = 0; i < resp["value"].length; i++) {

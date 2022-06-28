@@ -35,23 +35,36 @@ function get_build_info(args) {
         env = args["env"];
       } else {
         console.log(
-          "Environment can be stage, beta or prod, setting Env to prod"
+          "Environment can be stage,stage_new, beta or prod, setting Env to prod"
         );
       }
     }
-
-    request(
-      constants[env].BUILD_BASE_URL + args.buildId,
-      {
-        auth: {
-          username: username,
-          password: access_key,
-        },
+    let options = {
+      url: constants[env].BUILD_BASE_URL + args.buildId,
+      auth: {
+        username: username,
+        password: access_key,
       },
-      (err, res, body) => {
-        if (err) {
-          reject(err);
+    };
+    if ("reject_unauthorized" in args) {
+      if (
+        args["reject_unauthorized"] != "false" &&
+        args["reject_unauthorized"] != "true"
+      ) {
+        console.log("reject_unauthorized has to boolean");
+        return;
+      } else {
+        if (args["reject_unauthorized"] == "false") {
+          options["rejectUnauthorized"] = false;
+          console.log("Setting rejectUnauthorized to false for web requests");
         }
+      }
+    }
+
+    request.get(options, (err, res, body) => {
+      if (err) {
+        reject(err);
+      } else {
         if (res.statusCode == "401") {
           resolve("Unauthorized");
         } else if (JSON.parse(body).status == "success") {
@@ -60,7 +73,7 @@ function get_build_info(args) {
           resolve(JSON.parse(body).message);
         }
       }
-    );
+    });
   });
 }
 

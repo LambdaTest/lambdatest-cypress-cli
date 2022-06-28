@@ -312,7 +312,16 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["build_tags"] =
         lt_config["run_settings"]["build_tags"].split(",");
     }
-
+    //set reject unauthorised  from args
+    if ("reject_unauthorized" in args) {
+      if (args["reject_unauthorized"] == "false") {
+        lt_config["run_settings"]["reject_unauthorized"] = false;
+      } else {
+        lt_config["run_settings"]["reject_unauthorized"] = true;
+      }
+    } else {
+      lt_config["run_settings"]["reject_unauthorized"] = false;
+    }
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||

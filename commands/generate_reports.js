@@ -7,7 +7,14 @@ var fs = require("fs");
 const StreamZip = require("node-stream-zip");
 const path = require("path");
 
-function download_artefact(username, access_key, env, test_id, file_path) {
+function download_artefact(
+  username,
+  access_key,
+  env,
+  test_id,
+  file_path,
+  rejectUnauthorized
+) {
   return new Promise(function (resolve, reject) {
     let response_code;
     if (!fs.existsSync(file_path)) {
@@ -18,23 +25,26 @@ function download_artefact(username, access_key, env, test_id, file_path) {
     file_path = path.join(file_path, "artefacts.zip");
     const stream = fs.createWriteStream(file_path);
     stream.end();
-    request(
-      constants[env].REPORT_URL + test_id,
-      {
-        auth: {
-          username: username,
-          password: access_key,
-        },
-        gzip: true,
-        timeout: 120000,
+    let options = {
+      url: constants[env].REPORT_URL + test_id,
+      auth: {
+        username: username,
+        password: access_key,
       },
-      (err, res, body) => {
-        if (err) {
-          reject(err);
-        }
-        response_code = res.statusCode;
+      gzip: true,
+      timeout: 120000,
+    };
+    if (rejectUnauthorized == false) {
+      options["rejectUnauthorized"] = false;
+      console.log("Setting rejectUnauthorized to false for web requests");
+    }
+
+    request(options, (err, res, body) => {
+      if (err) {
+        reject(err);
       }
-    ).pipe(
+      response_code = res.statusCode;
+    }).pipe(
       fs
         .createWriteStream(file_path, {
           overwrite: true,
@@ -121,7 +131,7 @@ function generate_report(args) {
         env = args["env"];
       } else {
         console.log(
-          "Environment can be stage, beta or prod, setting Env to prod"
+          "Environment can be stage,stage_new, beta or prod, setting Env to prod"
         );
       }
     }
@@ -132,8 +142,25 @@ function generate_report(args) {
         username: username,
         access_key: access_key,
       },
+      run_settings: {
+        reject_unauthorized: true,
+      },
     };
 
+    if ("reject_unauthorized" in args) {
+      if (
+        args["reject_unauthorized"] != "false" &&
+        args["reject_unauthorized"] != "true"
+      ) {
+        console.log("reject_unauthorized has to boolean");
+        return;
+      } else {
+        if (args["reject_unauthorized"] == "false") {
+          build_payload["run_settings"]["reject_unauthorized"] = false;
+          console.log("Setting rejectUnauthorized to false for web requests");
+        }
+      }
+    }
     build_stats
       .get_completed_build_info(build_payload, args["session_id"], env)
       .then(function (build_info) {
@@ -166,7 +193,8 @@ function generate_report(args) {
               build_info["data"][i]["browser"],
               build_info["data"][i]["version"],
               build_info["data"][i]["test_id"]
-            )
+            ),
+            build_payload["run_settings"]["reject_unauthorized"]
           )
             .then(function (resp) {
               //Files downloaded

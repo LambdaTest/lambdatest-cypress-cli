@@ -117,6 +117,12 @@ const argv = require("yargs")
           describe: "Stop other tests if any test in session gets errored out",
           type: "bool",
         })
+        .option("ra", {
+          alias: "reject_unauthorized",
+          describe:
+            "Default rejects self signed certificates in external requests",
+          type: "bool",
+        })
         .option("bt", {
           alias: "build-tags",
           describe: "build tags",
@@ -147,6 +153,12 @@ const argv = require("yargs")
           alias: "access_key",
           describe: "Access Key",
           type: "string",
+        })
+        .option("ra", {
+          alias: "reject_unauthorized",
+          describe:
+            "Default rejects self signed certificates in external requests",
+          type: "bool",
         })
         .option("env", {
           alias: "environment",
@@ -183,6 +195,12 @@ const argv = require("yargs")
           describe: "environment",
           type: "string",
         })
+        .option("ra", {
+          alias: "reject_unauthorized",
+          describe:
+            "Default rejects self signed certificates in external requests",
+          type: "bool",
+        })
         .option("sls", {
           alias: "stop_last_session",
           describe: "stop last session",
@@ -212,6 +230,12 @@ const argv = require("yargs")
           alias: "session_id",
           describe: "Session Id",
           type: "string",
+        })
+        .option("ra", {
+          alias: "reject_unauthorized",
+          describe:
+            "Default rejects self signed certificates in external requests",
+          type: "bool",
         })
         .option("env", {
           alias: "environment",
