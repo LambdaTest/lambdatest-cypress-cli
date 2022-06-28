@@ -13,7 +13,7 @@ module.exports = {
     "&status=running,queued,created,initiated,pqueued,error,lambda error,failed",
   BUILD_ERROR_STATES: "&status=error,lambda error,failed",
   CYPRESS_ENV_FILE_PATH: "cypress.env.json",
-  ENVS: ["stage", "beta", "prod", "preprod"],
+  ENVS: ["stage", "beta", "prod", "preprod", "stage_new"],
   prod: {
     INTEGRATION_BASE_URL: "https://api.lambdatest.com/liis",
     BUILD_BASE_URL: "https://api.lambdatest.com/automation/api/v1/builds/",
@@ -44,6 +44,28 @@ module.exports = {
       "https://stage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
       "https://stage-api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
+  },
+  stage_new: {
+    INTEGRATION_BASE_URL: "https://api.lambdatestinternal.com/liis",
+    BUILD_BASE_URL:
+      "https://api.lambdatestinternal.com/automation/api/v1/builds/",
+    BUILD_STOP_URL:
+      "https://api.lambdatestinternal.com/api/v1/test/stop?sessionId=",
+    SESSION_URL:
+      "https://api.lambdatestinternal.com/automation/api/v1/sessions?limit=200&session_id=",
+    REPORT_URL:
+      "https://api.lambdatestinternal.com/automation/api/v1/cypress/artefacts/test/",
+  },
+  stage_new1: {
+    INTEGRATION_BASE_URL: "https://prestage-api.lambdatest.com/liis",
+    BUILD_BASE_URL:
+      "https://prestage-api.lambdatest.com/automation/api/v1/builds/",
+    BUILD_STOP_URL:
+      "https://prestage-api.lambdatest.com/api/v1/test/stop?sessionId=",
+    SESSION_URL:
+      "https://prestage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
+    REPORT_URL:
+      "https://prestage-api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
   },
   preprod: {
     INTEGRATION_BASE_URL: "https://preprod-api.lambdatest.com/liis",

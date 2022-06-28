@@ -131,7 +131,7 @@ function generate_report(args) {
         env = args["env"];
       } else {
         console.log(
-          "Environment can be stage, beta or prod, setting Env to prod"
+          "Environment can be stage,stage_new, beta or prod, setting Env to prod"
         );
       }
     }
