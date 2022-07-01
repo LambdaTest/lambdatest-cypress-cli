@@ -64,7 +64,11 @@ function run_test(payload, env = "prod", rejectUnauthorized) {
             );
             console.log(
               `Uploaded tests successfully `,
-              responseData["value"]["message"]
+              responseData["value"]["message"].substr(
+                0,
+                responseData["value"]["message"].length -
+                  (session_id.length + 1)
+              )
             );
             resolve(session_id);
           }
