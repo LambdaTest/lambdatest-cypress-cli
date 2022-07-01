@@ -33,7 +33,7 @@ function get_signed_url(lt_config, prefix, env = "prod") {
           if (responseData && responseData["error"]) {
             reject(responseData["error"]);
           } else {
-            reject("error", responseData);
+            reject(responseData);
           }
         } else {
           resolve(responseData);
