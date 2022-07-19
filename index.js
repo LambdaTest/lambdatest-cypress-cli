@@ -127,6 +127,11 @@ const argv = require("yargs")
           alias: "build-tags",
           describe: "build tags",
           type: "string",
+        })
+        .option("sys-envs", {
+          alias: "sys-env-variables",
+          describe: "system environment variables",
+          type: "string",
         });
     },
     function (argv) {
