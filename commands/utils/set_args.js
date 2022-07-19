@@ -322,6 +322,23 @@ function sync_args_from_cmd(args) {
     } else {
       lt_config["run_settings"]["reject_unauthorized"] = false;
     }
+
+    //Set the env variables
+    let sys_env_vars = undefined;
+    if ("sys-envs" in args) {
+      sys_env_vars = args["sys-envs"].split(",");
+    } else if (lt_config["run_settings"]["sys-envs"]) {
+      sys_env_vars = lt_config["run_settings"]["sys-envs"].split(",");
+    }
+
+    if (sys_env_vars) {
+      let envs = {};
+      for (env in sys_env_vars) {
+        envs[sys_env_vars[env].split("=")[0]] = sys_env_vars[env].split("=")[1];
+      }
+      lt_config["run_settings"]["sys-envs"] = envs;
+    }
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
