@@ -325,16 +325,37 @@ function sync_args_from_cmd(args) {
 
     //Set the env variables
     let sys_env_vars = undefined;
+    let sys_env = undefined;
     if ("sys-envs" in args) {
-      sys_env_vars = args["sys-envs"].split(",");
+      sys_env_vars = args["sys-envs"];
+      sys_env_vars = sys_env_vars.trim();
+      sys_env_vars = sys_env_vars.split(",");
     } else if (lt_config["run_settings"]["sys-envs"]) {
-      sys_env_vars = lt_config["run_settings"]["sys-envs"].split(",");
+
+      sys_env_vars = lt_config["run_settings"]["sys-envs"];
+      sys_env_vars = sys_env_vars.trim();
+      sys_env_vars = sys_env_vars.split(";");
     }
 
+
+    
     if (sys_env_vars) {
       let envs = {};
-      for (env in sys_env_vars) {
-        envs[sys_env_vars[env].split("=")[0]] = sys_env_vars[env].split("=")[1];
+      console.log(sys_env_vars);
+      let envItem;
+      let envKey;
+
+      for (index in sys_env_vars) {
+        envItem = sys_env_vars[index];
+        if (envItem){
+          // TODO: trim spaces from the key and value
+          envKey = envItem.split("=")[0];
+          if (envKey && ! constants.WHITELISTED_ENV_VARS.includes(envKey)){
+            reject(`usage of unwanted environment variable detected. Allowed variables are - ${constants.WHITELISTED_ENV_VARS}`);
+          }
+          envs[envKey] = envItem.split("=")[1];
+        }
+        
       }
       lt_config["run_settings"]["sys-envs"] = envs;
     }
