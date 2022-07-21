@@ -325,14 +325,13 @@ function sync_args_from_cmd(args) {
 
     //Set the env variables
     let sys_env_vars = undefined;
-    let sys_env = undefined;
     if ("sys-envs" in args) {
       sys_env_vars = args["sys-envs"];
       sys_env_vars = sys_env_vars.trim();
       sys_env_vars = sys_env_vars.split(",");
-    } else if (lt_config["run_settings"]["sys-envs"]) {
+    } else if (lt_config["run_settings"]["sys_envs"]) {
 
-      sys_env_vars = lt_config["run_settings"]["sys-envs"];
+      sys_env_vars = lt_config["run_settings"]["sys_envs"];
       sys_env_vars = sys_env_vars.trim();
       sys_env_vars = sys_env_vars.split(";");
     }
@@ -357,9 +356,10 @@ function sync_args_from_cmd(args) {
         }
         
       }
-      lt_config["run_settings"]["sys-envs"] = envs;
+      lt_config["run_settings"]["sys_envs"] = envs;
     }
 
+    console.log("lt_config - ", lt_config);
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||

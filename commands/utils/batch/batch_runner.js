@@ -182,7 +182,7 @@ async function run(lt_config, batches, env, i = 0) {
           });
       })
       .catch(function (err) {
-        console.log("No able to archive the project");
+        console.log("Unable to archive the project");
         console.log(err);
         reject(err);
       });
