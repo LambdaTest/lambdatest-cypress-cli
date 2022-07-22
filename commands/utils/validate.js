@@ -1,6 +1,7 @@
 const fs = require("fs");
 const constants = require("./constants.js");
 module.exports = validate_config = function (lt_config, validation_configs) {
+  console.log("validating config");
   return new Promise(function (resolve, reject) {
     //validate auth keys are present
     if (
@@ -318,6 +319,22 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       ) {
         reject("Error!! boolean value is expected in reject_unauthorized key");
       }
+    }
+
+    // validate system env variables to be set up
+    if ("sys_envs" in lt_config["run_settings"]) {
+      let sys_envs = lt_config["run_settings"]["sys_envs"];
+      let envValue;
+      Object.keys(sys_envs).forEach(function(envKey) {
+        envValue = sys_envs[envKey];
+        if (envKey && ! constants.WHITELISTED_ENV_VARS.includes(envKey)){
+          reject(`Usage of unwanted environment variable detected. Allowed variables are - ${constants.WHITELISTED_ENV_VARS}`);
+        }
+        if (envValue == undefined || envValue === ""){
+          reject("Value of environment variable cannot be left blank");
+        }
+      })
+    
     }
     resolve("Validated the Config");
   });

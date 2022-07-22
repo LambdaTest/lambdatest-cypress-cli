@@ -326,40 +326,29 @@ function sync_args_from_cmd(args) {
 
     //Set the env variables
     let sys_env_vars = undefined;
+    let envs = {};
     if ("sys-envs" in args) {
       sys_env_vars = args["sys-envs"];
     } else if (lt_config["run_settings"]["sys_envs"]) {
       sys_env_vars = lt_config["run_settings"]["sys_envs"];
     }
 
-
-    
-    if (sys_env_vars) {
+    if (sys_env_vars){
       sys_env_vars = sys_env_vars.trim();
       sys_env_vars = sys_env_vars.split(";");
-      let envs = {};
-
-      let envItem;
-      let envKey;
-
-      // perform validation
+      
       for (index in sys_env_vars) {
         envItem = sys_env_vars[index];
         if (envItem){
-          envKey = envItem.split("=")[0];
-          envKey=envKey.trim();
-          if (envKey && ! constants.WHITELISTED_ENV_VARS.includes(envKey)){
-            reject(`Usage of unwanted environment variable detected. Allowed variables are - ${constants.WHITELISTED_ENV_VARS}`);
-          }
-          envValue = envItem.split("=")[1];
-          if (envValue == undefined || envValue === ""){
-            reject("Value of environment variable cannot be left blank");
-          }
+          envKeyValue = envItem.split("=");
+          envKey = envKeyValue[0];
+          envValue = envKeyValue[1];
           envs[envKey] = envValue;
         }
       }
-      lt_config["run_settings"]["sys_envs"] = envs;
     }
+    lt_config["run_settings"]["sys_envs"] = envs;
+    
 
     //get specs from current directory if specs are not passed in config or cli
     if (
