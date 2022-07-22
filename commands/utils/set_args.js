@@ -2,6 +2,7 @@ const constants = require("./constants.js");
 const fs = require("fs");
 const path = require("path");
 const process = require("process");
+const { type } = require("os");
 
 function write_file(file_path, content) {
   fs.writeFileSync(file_path, content, function (err) {
@@ -322,6 +323,33 @@ function sync_args_from_cmd(args) {
     } else {
       lt_config["run_settings"]["reject_unauthorized"] = false;
     }
+
+    //Set the env variables
+    let sys_env_vars = undefined;
+    let envs = {};
+    if ("sys-envs" in args) {
+      sys_env_vars = args["sys-envs"];
+    } else if (lt_config["run_settings"]["sys_envs"]) {
+      sys_env_vars = lt_config["run_settings"]["sys_envs"];
+    }
+
+    if (sys_env_vars){
+      sys_env_vars = sys_env_vars.trim();
+      sys_env_vars = sys_env_vars.split(";");
+      
+      for (index in sys_env_vars) {
+        envItem = sys_env_vars[index];
+        if (envItem){
+          envKeyValue = envItem.split("=");
+          envKey = envKeyValue[0];
+          envValue = envKeyValue[1];
+          envs[envKey] = envValue;
+        }
+      }
+    }
+    lt_config["run_settings"]["sys_envs"] = envs;
+    
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
