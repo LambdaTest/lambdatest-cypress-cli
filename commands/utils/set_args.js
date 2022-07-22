@@ -2,6 +2,7 @@ const constants = require("./constants.js");
 const fs = require("fs");
 const path = require("path");
 const process = require("process");
+const { type } = require("os");
 
 function write_file(file_path, content) {
   fs.writeFileSync(file_path, content, function (err) {
@@ -327,39 +328,39 @@ function sync_args_from_cmd(args) {
     let sys_env_vars = undefined;
     if ("sys-envs" in args) {
       sys_env_vars = args["sys-envs"];
-      sys_env_vars = sys_env_vars.trim();
-      sys_env_vars = sys_env_vars.split(",");
     } else if (lt_config["run_settings"]["sys_envs"]) {
-
       sys_env_vars = lt_config["run_settings"]["sys_envs"];
-      sys_env_vars = sys_env_vars.trim();
-      sys_env_vars = sys_env_vars.split(";");
     }
 
 
     
     if (sys_env_vars) {
+      sys_env_vars = sys_env_vars.trim();
+      sys_env_vars = sys_env_vars.split(";");
       let envs = {};
-      console.log(sys_env_vars);
+
       let envItem;
       let envKey;
 
+      // perform validation
       for (index in sys_env_vars) {
         envItem = sys_env_vars[index];
         if (envItem){
-          // TODO: trim spaces from the key and value
           envKey = envItem.split("=")[0];
+          envKey=envKey.trim();
           if (envKey && ! constants.WHITELISTED_ENV_VARS.includes(envKey)){
-            reject(`usage of unwanted environment variable detected. Allowed variables are - ${constants.WHITELISTED_ENV_VARS}`);
+            reject(`Usage of unwanted environment variable detected. Allowed variables are - ${constants.WHITELISTED_ENV_VARS}`);
           }
-          envs[envKey] = envItem.split("=")[1];
+          envValue = envItem.split("=")[1];
+          if (envValue == undefined || envValue === ""){
+            reject("Value of environment variable cannot be left blank");
+          }
+          envs[envKey] = envValue;
         }
-        
       }
       lt_config["run_settings"]["sys_envs"] = envs;
     }
 
-    console.log("lt_config - ", lt_config);
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
