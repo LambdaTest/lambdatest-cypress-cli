@@ -84,7 +84,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
           for (const [key, value] of Object.entries(
             package["devDependencies"]
           )) {
-            console.log(key, value);
             if (key == "cypress") {
               cypress_flag = true;
               cypress_version = value;
@@ -222,14 +221,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
         reject("Smart UI porject name can not be blank");
       }
     }
-    //validate if reporter json file is passed and exists
-    // if (
-    //   lt_config["run_settings"]["reporter_config_file"] &&
-    //   lt_config["run_settings"]["reporter_config_file"] == ""
-    // ){
-
-    // }
-    // console.log("config ", lt_config["run_settings"]["reporter_config_file"]);
     if (
       lt_config["run_settings"]["reporter_config_file"] &&
       lt_config["run_settings"]["reporter_config_file"] != ""

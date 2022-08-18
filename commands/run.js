@@ -108,7 +108,7 @@ module.exports = function (args) {
                           .start(tunnelArguments)
                           .then((status) => {
                             batch_runner
-                              .run_batches(lt_config, batches, env, cypressVersion)
+                              .run_batches(lt_config, batches, env)
                               .then(function (exit_code) {
                                 console.log("stopping tunnel");
                                 tunnelInstance
@@ -150,7 +150,7 @@ module.exports = function (args) {
                           });
                       } else {
                         batch_runner
-                          .run_batches(lt_config, batches, env, cypressVersion)
+                          .run_batches(lt_config, batches, env)
                           .then(function (exit_code) {
                             if (lt_config["run_settings"]["exit-on-failure"]) {
                               process.exit(exit_code);

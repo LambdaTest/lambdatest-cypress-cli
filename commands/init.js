@@ -12,11 +12,6 @@ function create_file(file_path, content) {
 }
 
 function create_ltconfig_file(args) {
-    // console.log("args - ", args);
-    // console.log("args length - ", args._.length);
-    // console.log("EXITING");
-    // exit(1);
-
     let config = require('./utils/default_config.js')
     let content = JSON.stringify(config, null, 3);
     if (args._.length == 1) {
@@ -82,7 +77,7 @@ function create_base_reporter_config_file(args) {
 
 module.exports = function (args) {
     
-    // create_ltconfig_file(args);
+    create_ltconfig_file(args);
     create_base_reporter_config_file(args);
 
 };
