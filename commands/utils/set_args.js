@@ -221,6 +221,13 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["ignore_files"] =
         args["ignore_files"].split(",");
     }
+
+    // if reporter_config_file parameter, add it in lt config alongwith a warning on console
+    if (!lt_config["run_settings"]["reporter_config_file"]) {
+      lt_config["run_settings"]["reporter_config_file"] = constants.LT_BASE_REPORTER_CONFIG_FILE_NAME;
+    }
+    
+
     if ("cypress_version" in args) {
       lt_config["run_settings"]["cypress_version"] = args["cypress_version"];
     } else if (lt_config["run_settings"]["cypress_version"]) {
