@@ -78,7 +78,7 @@ function run_test(payload, env = "prod", rejectUnauthorized) {
   });
 }
 
-async function run(lt_config, batches, env, i = 0) {
+async function run(lt_config, batches, env, cypressVersion) {
   totalBatches = batches.length;
   //console.log("Total number of batches " + totalBatches);
   return new Promise(function (resolve, reject) {
@@ -116,8 +116,11 @@ async function run(lt_config, batches, env, i = 0) {
                       username: lt_config["lambdatest_auth"]["username"],
                       access_key: lt_config["lambdatest_auth"]["access_key"],
                       type: "cypress",
+                      cypressVersion: cypressVersion,
                     });
 
+                    // console.log("paylaod ", payload);
+                    // process.exit(1);
                     run_test(
                       payload,
                       env,
