@@ -22,12 +22,10 @@ module.exports = {
     parallels: 1,
     specs: "./*.spec.js",
     ignore_files: "",
-    feature_file_suppport: false,
     network: false,
     headless: false,
-    reporter_config_file: "",
     npm_dependencies: {
-      cypress: "9.0.0",
+      cypress: "10.0.0",
     },
   },
   tunnel_settings: {
