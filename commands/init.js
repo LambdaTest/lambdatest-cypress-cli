@@ -49,30 +49,6 @@ function create_base_reporter_config_file(args) {
     if (args._.length == 1) {
         create_file(constants.LT_BASE_REPORTER_CONFIG_FILE_NAME, content)
     }
-    // else if (args._.length > 1) {
-    //     //check if file or directory exists
-    //     if (fs.existsSync(args._[1])) {
-    //         let stats = fs.statSync(args._[1]);
-    //         if (stats.isFile()) {
-    //             make_file(args._[1], content)
-    //         }
-    //         else {
-    //             create_file(path.join(args._[1], constants.LT_CONFIG_NAME), content)
-    //         }
-    //     }
-    //     else {
-    //         filename = path.basename(args._[1])
-    //         var re = new RegExp(".+\\..+");
-    //         if (re.test(filename)) {
-    //             fs.mkdirSync(path.dirname(args._[1]), { recursive: true });
-    //             create_file(args._[1], content)
-    //         }
-    //         else {
-    //             fs.mkdirSync(args._[1], { recursive: true });
-    //             create_file(path.join(args._[1], constants.LT_CONFIG_NAME), content)
-    //         }
-    //     }
-    // }
 };
 
 module.exports = function (args) {

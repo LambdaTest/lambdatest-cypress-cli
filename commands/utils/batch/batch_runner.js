@@ -79,7 +79,6 @@ function run_test(payload, env = "prod", rejectUnauthorized) {
 }
 
 async function run(lt_config, batches, env) {
-  console.log("ltconfig ---- ", lt_config);
   totalBatches = batches.length;
   //console.log("Total number of batches " + totalBatches);
   return new Promise(function (resolve, reject) {
