@@ -84,7 +84,6 @@ module.exports = function (args) {
                   */
                   
                   if (!("cypress_version" in lt_config.run_settings)){
-                    console.log("user has not passed cypress version in run_SEttings");
                     lt_config.run_settings.cypress_version = cypressVersion;
                   }
                   batcher

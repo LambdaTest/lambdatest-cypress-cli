@@ -124,7 +124,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
 
     //validate if cypress config file is passed and exists
     
-    // coerce  cypress_version
     cypress_version = semver.coerce(cypress_version).version;
     // validate cypress.json only in case of cypress<10
     if (
@@ -240,7 +239,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
               "Error!! Reporter JSON File has no keys, either remove Key reporter_config_file from lambdatest config or pass some options"
             );
           }else if (reporter_config.reporterEnabled && reporter_config.reporterEnabled != ""){
-            console.log("reporter_config.reporterEnabled ", reporter_config.reporterEnabled);
             if (!reporter_config.reporterEnabled.includes("mochawesome")){
               reject("Error!! Please add mochawesome in reporterEnabled and add the related config");
             }
