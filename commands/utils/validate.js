@@ -240,12 +240,12 @@ module.exports = validate_config = function (lt_config, validation_configs) {
             );
           }else if (reporter_config.reporterEnabled && reporter_config.reporterEnabled != ""){
             if (!reporter_config.reporterEnabled.includes("mochawesome")){
-              reject("Error!! Please add mochawesome in reporterEnabled and add the related config");
+              console.log("Warning!! mochawesome reporter config not present. Command log may not be visible on dashboard");
             }
           }
         } catch {
           console.log(
-            "reporter_config_file can not parsed, please provide a valid json in Reporter Config"
+            "reporter_config_file could not be parsed, please provide a valid json in Reporter Config"
           );
           reject("Error!! Reporter JSON File does not have correct json");
         }
