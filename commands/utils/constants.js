@@ -6,6 +6,7 @@ module.exports = {
   CLI: "/cy/versions",
   LT_CONFIG_NAME: "lambdatest-config.json",
   LT_BASE_REPORTER_CONFIG_FILE_NAME: "base_reporter_config.json",
+  LT_BASE_CUSTOM_SUPPORT_FILE_NAME: "custom_support_file.js",
   CYPRESS_CONFIG_NAME: "cypress.json",
   DEFAULT_TEST_PATH: ".",
   LAMBDA_CONFIG: "./lambdatest-config.json",

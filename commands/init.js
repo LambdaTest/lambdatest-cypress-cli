@@ -51,9 +51,22 @@ function create_base_reporter_config_file(args) {
     }
 };
 
+function create_custom_support_file(args){
+    const pathToFile = path.join(__dirname, "default_custom_support_file.js");
+    // const pathToNewDestination = path.join(__dirname, constants.LT_BASE_CUSTOM_SUPPORT_FILE_NAME)
+    const pathToNewDestination = constants.LT_BASE_CUSTOM_SUPPORT_FILE_NAME;
+    fs.copyFile(pathToFile, pathToNewDestination, (err) => {
+        if (err) {
+          console.log("Error while copying custom support file", err);
+        }
+        else {
+            console.log("Successfully saved custom support file at - ", pathToNewDestination);
+        }
+      });
+}
+
 module.exports = function (args) {
-    
     create_ltconfig_file(args);
     create_base_reporter_config_file(args);
-
+    create_custom_support_file(args);
 };
