@@ -69,8 +69,6 @@ module.exports = function (args) {
               //validate the config options
               validate(lt_config, resp)
                 .then(function (cypressVersion) {
-                  console.log("cypressVersion requested - ", cypressVersion);
-
                   /*
                   update ltconfig to contain the cypress_version
                   case 1: user passed cypress_version in run_settings, this case will work as earlier

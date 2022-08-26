@@ -224,6 +224,7 @@ function sync_args_from_cmd(args) {
 
     // if reporter_config_file parameter, add it in lt config alongwith a warning on console
     if (!lt_config["run_settings"]["reporter_config_file"]) {
+      console.log("Warning !! Value of reporter_config_file parameter missing. Proceeding with default reporter config");
       lt_config["run_settings"]["reporter_config_file"] = constants.LT_BASE_REPORTER_CONFIG_FILE_NAME;
     }
     
