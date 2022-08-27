@@ -68,7 +68,22 @@ module.exports = function (args) {
             .then(function (lt_config) {
               //validate the config options
               validate(lt_config, resp)
-                .then(function () {
+                .then(function (cypressVersion) {
+                  /*
+                  update ltconfig to contain the cypress_version
+                  case 1: user passed cypress_version in run_settings, this case will work as earlier
+                  case 2: user hasn't passed cypress_version in run_settting, then also we will pass it, so that we can track this parameter in further services
+                  */
+
+
+                  /* TEST scenarios:
+                  - user passes cypress_version in run_settings with both cases- with semver/without semver
+                  - user doesnot pass cypress_version in run_settings
+                  */
+                  
+                  if (!("cypress_version" in lt_config.run_settings)){
+                    lt_config.run_settings.cypress_version = cypressVersion;
+                  }
                   batcher
                     .make_batches(lt_config)
                     .then(function (batches) {

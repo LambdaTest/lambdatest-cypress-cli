@@ -16,17 +16,16 @@ module.exports = {
     },
   ],
   run_settings: {
-    cypress_config_file: "cypress.json",
+    cypress_config_file: "cypress.config.js",
+    reporter_config_file: "base_reporter_config.json",
     build_name: "build-name",
     parallels: 1,
     specs: "./*.spec.js",
     ignore_files: "",
-    feature_file_suppport: false,
     network: false,
     headless: false,
-    reporter_config_file: "",
     npm_dependencies: {
-      cypress: "9.0.0",
+      cypress: "10.0.0",
     },
   },
   tunnel_settings: {

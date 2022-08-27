@@ -1,4 +1,7 @@
 const fs = require("fs");
+const semver = require("semver");
+const semverCompare = require('semver/functions/compare');
+
 const constants = require("./constants.js");
 module.exports = validate_config = function (lt_config, validation_configs) {
   console.log("validating config");
@@ -48,29 +51,9 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       reject("Error!! Parallels value not correct");
     }
 
-    //validate if cypress config file is passed and exists
-    if (
-      lt_config["run_settings"]["cypress_config_file"] &&
-      lt_config["run_settings"]["cypress_config_file"] != ""
-    ) {
-      if (!fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
-        reject("Error!! Cypress Config File does not exist");
-      } else {
-        let rawdata = fs.readFileSync(
-          lt_config["run_settings"]["cypress_config_file"]
-        );
-        try {
-          let cypress_config = JSON.parse(rawdata);
-        } catch {
-          console.log(
-            "Cypress.json is not parsed, please provide a valid json"
-          );
-          reject("Error!! Cypress Config File does not has correct json");
-        }
-      }
-    }
-
+    
     //Validate if package.json is having the cypress dependency
+    var cypress_version;
     if (!fs.existsSync("package.json")) {
       reject(
         "Error!! Package.json file does not exist in the root on the project"
@@ -89,6 +72,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
           for (const [key, value] of Object.entries(package["dependencies"])) {
             if (key == "cypress") {
               cypress_flag = true;
+              cypress_version = value;
               break;
             }
           }
@@ -100,9 +84,9 @@ module.exports = validate_config = function (lt_config, validation_configs) {
           for (const [key, value] of Object.entries(
             package["devDependencies"]
           )) {
-            console.log(key, value);
             if (key == "cypress") {
               cypress_flag = true;
+              cypress_version = value;
               break;
             }
           }
@@ -112,6 +96,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
           lt_config.run_settings.cypress_version != ""
         ) {
           cypress_flag = true;
+          cypress_version = lt_config.run_settings.cypress_version;
         } else if (
           lt_config.run_settings.hasOwnProperty("cypress_version") &&
           lt_config.run_settings.cypress_version == ""
@@ -133,9 +118,36 @@ module.exports = validate_config = function (lt_config, validation_configs) {
           "Package.json is not parsed, please provide a valid json",
           e
         );
-        reject("Error!! Package.json File does not has correct json");
+        reject("Error!! Package.json File does not have correct json");
       }
     }
+
+    //validate if cypress config file is passed and exists
+    
+    cypress_version = semver.coerce(cypress_version).version;
+    // validate cypress.json only in case of cypress<10
+    if (
+      semverCompare(cypress_version, "10.0.0") == -1 &&
+      lt_config["run_settings"]["cypress_config_file"] &&
+      lt_config["run_settings"]["cypress_config_file"] != ""
+    ) {
+      if (!fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
+        reject("Error!! Cypress Config File does not exist");
+      } else {
+        let rawdata = fs.readFileSync(
+          lt_config["run_settings"]["cypress_config_file"]
+        );
+        try {
+          let cypress_config = JSON.parse(rawdata);
+        } catch {
+          console.log(
+            "Cypress.json is not parsed, please provide a valid json"
+          );
+          reject("Error!! Cypress Config File does not has correct json");
+        }
+      }
+    }
+
 
     if (
       lt_config["run_settings"]["ignore_files"] &&
@@ -208,14 +220,13 @@ module.exports = validate_config = function (lt_config, validation_configs) {
         reject("Smart UI porject name can not be blank");
       }
     }
-    //validate if reporter json file is passed and exists
     if (
       lt_config["run_settings"]["reporter_config_file"] &&
       lt_config["run_settings"]["reporter_config_file"] != ""
     ) {
       if (!fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
         reject(
-          "Error!! Reporter Json File does not exist, either remove the key reporter_config_file or pass a valid path"
+          "Error!! Reporter Config File does not exist, Pass a valid path"
         );
       } else {
         let rawdata = fs.readFileSync(
@@ -227,14 +238,20 @@ module.exports = validate_config = function (lt_config, validation_configs) {
             reject(
               "Error!! Reporter JSON File has no keys, either remove Key reporter_config_file from lambdatest config or pass some options"
             );
+          }else if (reporter_config.reporterEnabled && reporter_config.reporterEnabled != ""){
+            if (!reporter_config.reporterEnabled.includes("mochawesome")){
+              console.log("Warning!! mochawesome reporter config not present. Command log may not be visible on dashboard");
+            }
           }
         } catch {
           console.log(
-            "reporter_config_file is not parsed, please provide a valid json in Reporter Config"
+            "reporter_config_file could not be parsed, please provide a valid json in Reporter Config"
           );
-          reject("Error!! Reporter JSON File does not has correct json");
+          reject("Error!! Reporter JSON File does not have correct json");
         }
       }
+    }else{
+      console.log("Warning !! Value of reporter_config_file parameter missing. Proceeding with default reporter config")
     }
 
     if (
@@ -336,6 +353,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       })
     
     }
-    resolve("Validated the Config");
+    resolve(cypress_version);
   });
 };
