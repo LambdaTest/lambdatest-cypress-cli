@@ -217,16 +217,21 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       if (!("project" in lt_config.run_settings.smart_ui)) {
         reject("Smart UI project name is missing");
       } else if (lt_config.run_settings.smart_ui.project == "") {
-        reject("Smart UI porject name can not be blank");
+        reject("Smart UI project name can not be blank");
       }
     }
     if (
       lt_config["run_settings"]["reporter_config_file"] &&
       lt_config["run_settings"]["reporter_config_file"] != ""
     ) {
+      // console.log("reporter_config_file present");
       if (!fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
-        reject(
-          "Error!! Reporter Config File does not exist, Pass a valid path"
+      
+
+        // case 1: cypress 9 user   -> 
+        // case 2: cypress >=10 user -> simply show warning that user may not get command logs section
+        console.log(
+          "Warning!! Reporter Config File does not exist, Commands section on dashboard may not get generated. Use lambdatest-cypress init command to generate."
         );
       } else {
         let rawdata = fs.readFileSync(
@@ -251,7 +256,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
         }
       }
     }else{
-      console.log("Warning !! Value of reporter_config_file parameter missing. Proceeding with default reporter config")
+      console.log("Warning!! Value of reporter_config_file parameter missing. Proceeding with default reporter config")
     }
 
     if (
