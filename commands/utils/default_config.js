@@ -20,7 +20,7 @@ module.exports = {
     reporter_config_file: "base_reporter_config.json",
     build_name: "build-name",
     parallels: 1,
-    specs: "./*.spec.js",
+    specs: "<path_of_cypress_spec_files>",
     ignore_files: "",
     network: false,
     headless: false,
