@@ -224,12 +224,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       lt_config["run_settings"]["reporter_config_file"] &&
       lt_config["run_settings"]["reporter_config_file"] != ""
     ) {
-      // console.log("reporter_config_file present");
       if (!fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
-      
-
-        // case 1: cypress 9 user   -> 
-        // case 2: cypress >=10 user -> simply show warning that user may not get command logs section
         console.log(
           "Warning!! Reporter Config File does not exist, Commands section on dashboard may not get generated. Use lambdatest-cypress init command to generate."
         );
