@@ -243,17 +243,6 @@ function archive_batch(lt_config, batch) {
             lt_config["run_settings"]["reporter_config_file"]
           ),
         });
-      } else {
-        // case 1: reporter_config_file param is missing
-        // case 2: reporter_config_file = ""
-        // case 3: reporter_config_file = <non existing file>
-        // this shouldn't reject, instead just show a warning
-
-
-        // This warning is not required, since we are already checking for the existence of file while validate()
-        // console.log(
-        //   "Warning!! Provided reporter config file not found. Please check the provided value of reporter_config_file in lambdatest-config.json"
-        // );
       }
     }
 
