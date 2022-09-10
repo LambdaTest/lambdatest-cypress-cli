@@ -233,7 +233,7 @@ function archive_batch(lt_config, batch) {
     } else if (!lt_config["run_settings"]["cypress_config_file"]) {
       archive.append("{}", { name: constants.CYPRESS_CONFIG_NAME });
     }
-    if (lt_config["run_settings"]["reporter_config_file"]) {
+    if (lt_config["run_settings"]["reporter_config_file"] && lt_config["run_settings"]["reporter_config_file"] !="") {
       if (fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
         let rawdata = fs.readFileSync(
           lt_config["run_settings"]["reporter_config_file"]
@@ -243,10 +243,6 @@ function archive_batch(lt_config, batch) {
             lt_config["run_settings"]["reporter_config_file"]
           ),
         });
-      } else {
-        reject(
-          "Provided reporter config file not found. Please check the provided the value of reporter_config_file in lambdatest-config.json"
-        );
       }
     }
 

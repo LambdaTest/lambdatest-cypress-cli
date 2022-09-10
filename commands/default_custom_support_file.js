@@ -1,6 +1,9 @@
 const addContext = require('mochawesome/addContext')
 
 // NOTE: import this file in cypress/support/e2e.js
+// import '../../custom_support_file';
+// require('../../custom_support_file');
+
 Cypress.on('test:after:run', (test, runnable) => {
     if (test.state === 'failed') {
       let item = runnable
@@ -20,9 +23,6 @@ Cypress.on('test:after:run', (test, runnable) => {
               .join(' -- ')           // this is how cypress joins the test title fragments
   
       const imageUrl = `${fullTestName} (failed).png`
-  
       addContext({ test }, imageUrl)
-      
-      
     }
   })
