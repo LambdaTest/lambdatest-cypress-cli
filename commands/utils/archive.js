@@ -104,7 +104,10 @@ function archive_project(lt_config) {
       lt_config.run_settings.cypress_version
     ) {
       console.log("Overriding Cypress Version");
-      if (package.dependencies.hasOwnProperty("cypress")) {
+      if (
+        package.hasOwnProperty("dependencies") &&
+        package.dependencies.hasOwnProperty("cypress")
+      ) {
         package.dependencies.cypress = semver.coerce(
           lt_config.run_settings.cypress_version
         ).version;
@@ -114,7 +117,10 @@ function archive_project(lt_config) {
         ).version;
       }
     } else {
-      if (package.dependencies.hasOwnProperty("cypress")) {
+      if (
+        package.hasOwnProperty("dependencies") &&
+        package.dependencies.hasOwnProperty("cypress")
+      ) {
         package.dependencies.cypress = semver.coerce(
           package.dependencies.cypress
         ).version;
@@ -233,7 +239,10 @@ function archive_batch(lt_config, batch) {
     } else if (!lt_config["run_settings"]["cypress_config_file"]) {
       archive.append("{}", { name: constants.CYPRESS_CONFIG_NAME });
     }
-    if (lt_config["run_settings"]["reporter_config_file"] && lt_config["run_settings"]["reporter_config_file"] !="") {
+    if (
+      lt_config["run_settings"]["reporter_config_file"] &&
+      lt_config["run_settings"]["reporter_config_file"] != ""
+    ) {
       if (fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
         let rawdata = fs.readFileSync(
           lt_config["run_settings"]["reporter_config_file"]
