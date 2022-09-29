@@ -224,10 +224,12 @@ function sync_args_from_cmd(args) {
 
     // if reporter_config_file parameter, add it in lt config alongwith a warning on console
     if (!lt_config["run_settings"]["reporter_config_file"]) {
-      console.log("Warning !! Value of reporter_config_file parameter missing. Proceeding with default reporter config");
-      lt_config["run_settings"]["reporter_config_file"] = constants.LT_BASE_REPORTER_CONFIG_FILE_NAME;
+      console.log(
+        "Warning !! Value of reporter_config_file parameter missing. Proceeding with default reporter config"
+      );
+      lt_config["run_settings"]["reporter_config_file"] =
+        constants.LT_BASE_REPORTER_CONFIG_FILE_NAME;
     }
-    
 
     if ("cypress_version" in args) {
       lt_config["run_settings"]["cypress_version"] = args["cypress_version"];
@@ -341,13 +343,13 @@ function sync_args_from_cmd(args) {
       sys_env_vars = lt_config["run_settings"]["sys_envs"];
     }
 
-    if (sys_env_vars){
+    if (sys_env_vars) {
       sys_env_vars = sys_env_vars.trim();
       sys_env_vars = sys_env_vars.split(";");
-      
+
       for (index in sys_env_vars) {
         envItem = sys_env_vars[index];
-        if (envItem){
+        if (envItem) {
           envKeyValue = envItem.split("=");
           envKey = envKeyValue[0];
           envValue = envKeyValue[1];
@@ -356,8 +358,17 @@ function sync_args_from_cmd(args) {
       }
     }
     lt_config["run_settings"]["sys_envs"] = envs;
-    
 
+    if ("exclude_specs" in lt_config["run_settings"]) {
+      lt_config["run_settings"]["exclude_specs"] =
+        lt_config["run_settings"]["exclude_specs"].split(",");
+    } else {
+      lt_config["run_settings"]["exclude_specs"] == [];
+    }
+    console.log(
+      "specs to exclude are ",
+      lt_config["run_settings"]["exclude_specs"]
+    );
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
