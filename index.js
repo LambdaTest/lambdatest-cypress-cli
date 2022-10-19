@@ -132,6 +132,16 @@ const argv = require("yargs")
           alias: "sys-env-variables",
           describe: "system environment variables",
           type: "string",
+        })
+        .option("npm-f", {
+          alias: "npm-force",
+          describe: "force npm install",
+          type: "bool",
+        })
+        .option("npm-lpd", {
+          alias: "legacy-peer-deps",
+          describe: "force npm install",
+          type: "bool",
         });
     },
     function (argv) {

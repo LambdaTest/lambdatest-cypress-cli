@@ -369,6 +369,13 @@ function sync_args_from_cmd(args) {
       "specs to exclude are ",
       lt_config["run_settings"]["exclude_specs"]
     );
+
+    if ("npm-f" in args) {
+      lt_config.run_settings.npmf = args["npm-f"];
+    }
+    if ("npm-lpd" in args) {
+      lt_config.run_settings.npmlpd = args["npm-lpd"];
+    }
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
