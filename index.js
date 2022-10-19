@@ -142,6 +142,10 @@ const argv = require("yargs")
           alias: "legacy-peer-deps",
           describe: "force npm install",
           type: "bool",
+        .option("vip", {
+          alias: "vi-project",
+          describe: "visual ui project name",
+          type: "string",
         });
     },
     function (argv) {
