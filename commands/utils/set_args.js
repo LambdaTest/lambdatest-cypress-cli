@@ -294,6 +294,15 @@ function sync_args_from_cmd(args) {
     } else if (!lt_config["run_settings"]["stop_on_failure"]) {
       lt_config["run_settings"]["stop_on_failure"] = false;
     }
+    //Override project name for visual ui
+    if ("vi-project" in args) {
+      if (lt_config.run_settings.smart_ui != undefined) {
+        lt_config.run_settings.smart_ui.project = args["vi-project"];
+      } else {
+        lt_config.run_settings.smart_ui = {};
+        lt_config.run_settings.smart_ui.project = args["vi-project"];
+      }
+    }
 
     if (
       lt_config.run_settings.project_name &&

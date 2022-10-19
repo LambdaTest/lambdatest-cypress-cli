@@ -132,6 +132,11 @@ const argv = require("yargs")
           alias: "sys-env-variables",
           describe: "system environment variables",
           type: "string",
+        })
+        .option("vip", {
+          alias: "vi-project",
+          describe: "visual ui project name",
+          type: "string",
         });
     },
     function (argv) {
