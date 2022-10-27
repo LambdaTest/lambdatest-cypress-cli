@@ -380,18 +380,10 @@ function sync_args_from_cmd(args) {
     );
 
     if ("npm-f" in args) {
-      if (args["npm-f"] == "true") {
-        lt_config.run_settings.npmf = true;
-      } else {
-        lt_config.run_settings.npmf = false;
-      }
+      lt_config.run_settings.npmf = args["npm-f"];
     }
     if ("npm-lpd" in args) {
-      if (args["npm-lpd"] == "true") {
-        lt_config.run_settings.npmlpd = true;
-      } else {
-        lt_config.run_settings.npmlpd = false;
-      }
+      lt_config.run_settings.npmlpd = args["npm-lpd"];
     }
     //get specs from current directory if specs are not passed in config or cli
     if (
