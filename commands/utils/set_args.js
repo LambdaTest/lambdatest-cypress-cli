@@ -294,6 +294,15 @@ function sync_args_from_cmd(args) {
     } else if (!lt_config["run_settings"]["stop_on_failure"]) {
       lt_config["run_settings"]["stop_on_failure"] = false;
     }
+    //Override project name for visual ui
+    if ("vi-project" in args) {
+      if (lt_config.run_settings.smart_ui != undefined) {
+        lt_config.run_settings.smart_ui.project = args["vi-project"];
+      } else {
+        lt_config.run_settings.smart_ui = {};
+        lt_config.run_settings.smart_ui.project = args["vi-project"];
+      }
+    }
 
     if (
       lt_config.run_settings.project_name &&
@@ -369,6 +378,21 @@ function sync_args_from_cmd(args) {
       "specs to exclude are ",
       lt_config["run_settings"]["exclude_specs"]
     );
+
+    if ("npm-f" in args) {
+      if (args["npm-f"] == "true") {
+        lt_config.run_settings.npmf = true;
+      } else {
+        lt_config.run_settings.npmf = false;
+      }
+    }
+    if ("npm-lpd" in args) {
+      if (args["npm-lpd"] == "true") {
+        lt_config.run_settings.npmlpd = true;
+      } else {
+        lt_config.run_settings.npmlpd = false;
+      }
+    }
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
