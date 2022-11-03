@@ -126,8 +126,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     // validate cypress.json only in case of cypress<10
     if (
       semverCompare(cypress_version, "10.0.0") == -1 &&
-      lt_config["run_settings"]["cypress_config_file"] &&
-      lt_config["run_settings"]["cypress_config_file"] != ""
+      lt_config["run_settings"]["cypress_config_file"]
     ) {
       if (!fs.existsSync(lt_config["run_settings"]["cypress_config_file"])) {
         reject("Error!! Cypress Config File does not exist");
@@ -146,8 +145,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     } else if (
       semverCompare(cypress_version, "10.0.0") >= 0 &&
-      lt_config["run_settings"]["cypress_config_file"] &&
-      lt_config["run_settings"]["cypress_config_file"] != ""
+      lt_config["run_settings"]["cypress_config_file"]
     ) {
       reject(
         'Error!! --ccf flag and cypress_config_file is not cupported with cypress>=10,use \n --cy="--config-file <file path>"'
