@@ -1,6 +1,6 @@
 const fs = require("fs");
 const semver = require("semver");
-const semverCompare = require('semver/functions/compare');
+const semverCompare = require("semver/functions/compare");
 
 const constants = require("./constants.js");
 module.exports = validate_config = function (lt_config, validation_configs) {
@@ -51,7 +51,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       reject("Error!! Parallels value not correct");
     }
 
-    
     //Validate if package.json is having the cypress dependency
     var cypress_version;
     if (!fs.existsSync("package.json")) {
@@ -123,7 +122,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     }
 
     //validate if cypress config file is passed and exists
-    
     cypress_version = semver.coerce(cypress_version).version;
     // validate cypress.json only in case of cypress<10
     if (
@@ -146,8 +144,15 @@ module.exports = validate_config = function (lt_config, validation_configs) {
           reject("Error!! Cypress Config File does not has correct json");
         }
       }
+    } else if (
+      semverCompare(cypress_version, "10.0.0") >= 0 &&
+      lt_config["run_settings"]["cypress_config_file"] &&
+      lt_config["run_settings"]["cypress_config_file"] != ""
+    ) {
+      reject(
+        'Error!! --ccf flag or cypress_config_file is not cupported with cypress>=10,use \n --cy="--config-file <file path>"'
+      );
     }
-
 
     if (
       lt_config["run_settings"]["ignore_files"] &&
@@ -238,9 +243,14 @@ module.exports = validate_config = function (lt_config, validation_configs) {
             reject(
               "Error!! Reporter JSON File has no keys, either remove Key reporter_config_file from lambdatest config or pass some options"
             );
-          }else if (reporter_config.reporterEnabled && reporter_config.reporterEnabled != ""){
-            if (!reporter_config.reporterEnabled.includes("mochawesome")){
-              console.log("Warning!! mochawesome reporter config not present. Command log may not be visible on dashboard");
+          } else if (
+            reporter_config.reporterEnabled &&
+            reporter_config.reporterEnabled != ""
+          ) {
+            if (!reporter_config.reporterEnabled.includes("mochawesome")) {
+              console.log(
+                "Warning!! mochawesome reporter config not present. Command log may not be visible on dashboard"
+              );
             }
           }
         } catch {
@@ -250,8 +260,10 @@ module.exports = validate_config = function (lt_config, validation_configs) {
           reject("Error!! Reporter JSON File does not have correct json");
         }
       }
-    }else{
-      console.log("Warning!! Value of reporter_config_file parameter missing. Proceeding with default reporter config")
+    } else {
+      console.log(
+        "Warning!! Value of reporter_config_file parameter missing. Proceeding with default reporter config"
+      );
     }
 
     if (
@@ -342,17 +354,19 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     if ("sys_envs" in lt_config["run_settings"]) {
       let sys_envs = lt_config["run_settings"]["sys_envs"];
       let envValue;
-      Object.keys(sys_envs).forEach(function(envKey) {
+      Object.keys(sys_envs).forEach(function (envKey) {
         envValue = sys_envs[envKey];
-        if (envKey && ! constants.WHITELISTED_ENV_VARS.includes(envKey)){
-          reject(`Usage of unwanted environment variable detected. Allowed variables are - ${constants.WHITELISTED_ENV_VARS}`);
+        if (envKey && !constants.WHITELISTED_ENV_VARS.includes(envKey)) {
+          reject(
+            `Usage of unwanted environment variable detected. Allowed variables are - ${constants.WHITELISTED_ENV_VARS}`
+          );
         }
-        if (envValue == undefined || envValue === ""){
+        if (envValue == undefined || envValue === "") {
           reject("Value of environment variable cannot be left blank");
         }
-      })
-    
+      });
     }
+
     resolve(cypress_version);
   });
 };
