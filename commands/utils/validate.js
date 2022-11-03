@@ -148,7 +148,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       lt_config["run_settings"]["cypress_config_file"]
     ) {
       reject(
-        'Error!! --ccf flag and cypress_config_file is not cupported with cypress>=10,use \n --cy="--config-file <file path>"'
+        'Error!! --ccf flag and cypress_config_file is not supported with cypress>=10,use \n --cy="--config-file <file path>"'
       );
     }
 

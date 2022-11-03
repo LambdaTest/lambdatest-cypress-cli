@@ -375,7 +375,7 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["exclude_specs"] == [];
     }
     console.log(
-      "specs to exclude are ",
+      "specs to exclude are",
       lt_config["run_settings"]["exclude_specs"]
     );
 
