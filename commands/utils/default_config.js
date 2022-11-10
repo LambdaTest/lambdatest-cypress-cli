@@ -16,6 +16,7 @@ module.exports = {
     },
   ],
   run_settings: {
+    cypress_config_file: "cypress.json",
     reporter_config_file: "base_reporter_config.json",
     build_name: "build-name",
     parallels: 1,
@@ -24,7 +25,7 @@ module.exports = {
     network: false,
     headless: false,
     npm_dependencies: {
-      cypress: "10.0.0",
+      cypress: "9.6.0",
     },
   },
   tunnel_settings: {
