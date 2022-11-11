@@ -17,6 +17,16 @@ const argv = require("yargs")
           describe: "path of the config file",
           type: "string",
         })
+        .option("user", {
+          alias: "username",
+          describe: "Lambdatest Username of User",
+          type: "string",
+        })
+        .option("ak", {
+          alias: "access_key",
+          describe: "Lambdatest Access Key of User",
+          type: "string",
+        })
         .option("lcf", {
           alias: "lambdatest-config-file",
           describe: "path of the lambdatest config file",
