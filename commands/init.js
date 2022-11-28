@@ -16,11 +16,10 @@ function create_ltconfig_file(args) {
     if("cv" in args){
         cv=args["cv"]
     }
-
     let config =parseInt(cv)>=10?require('./utils/default_config_10.js'):require('./utils/default_config_9.js')
     config.run_settings.npm_dependencies.cypress=cv.toString()
     let content = JSON.stringify(config, null, 3);
-    if ("config-file-name" in args["config-file-name"] !=""){
+    if ("config-file-name" in args && args["config-file-name"] !=""){
         //check if file or directory exists
         if (fs.existsSync(args["config-file-name"])) {
             let stats = fs.statSync(args["config-file-name"]);
