@@ -15,9 +15,8 @@ function create_ltconfig_file(args) {
     let cv=9.6
     if("cv" in args){
         cv=args["cv"]
-    }else{
-
     }
+    
     let config =parseInt(cv)>=10?require('./utils/default_config_10.js'):require('./utils/default_config_9.js')
     config.run_settings.npm_dependencies.cypress=cv.toString()
     let content = JSON.stringify(config, null, 3);
@@ -74,7 +73,6 @@ module.exports = function (args) {
     create_ltconfig_file(args);
     create_base_reporter_config_file(args);
     if ("cv" in args){
-        console.log("cv is ",args["cv"])
         if (parseInt(args["cv"])>=10){
             create_custom_support_file(args);
         }
