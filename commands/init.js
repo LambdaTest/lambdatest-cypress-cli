@@ -12,34 +12,38 @@ function create_file(file_path, content) {
 }
 
 function create_ltconfig_file(args) {
-    let config = require('./utils/default_config.js')
-    let content = JSON.stringify(config, null, 3);
-    if (args._.length == 1) {
-        create_file(constants.LT_CONFIG_NAME, content)
+    let cv=9.6
+    if("cv" in args){
+        cv=args["cv"]
     }
-    else if (args._.length > 1) {
+    let config =parseInt(cv)>=10?require('./utils/default_config_10.js'):require('./utils/default_config_9.js')
+    config.run_settings.npm_dependencies.cypress=cv.toString()
+    let content = JSON.stringify(config, null, 3);
+    if ("config-file-name" in args && args["config-file-name"] !=""){
         //check if file or directory exists
-        if (fs.existsSync(args._[1])) {
-            let stats = fs.statSync(args._[1]);
+        if (fs.existsSync(args["config-file-name"])) {
+            let stats = fs.statSync(args["config-file-name"]);
             if (stats.isFile()) {
-                make_file(args._[1], content)
+                create_file(args["config-file-name"], content)
             }
             else {
-                create_file(path.join(args._[1], constants.LT_CONFIG_NAME), content)
+                create_file(path.join(args["config-file-name"], constants.LT_CONFIG_NAME), content)
             }
         }
         else {
-            filename = path.basename(args._[1])
+            filename = path.basename(args["config-file-name"])
             var re = new RegExp(".+\\..+");
             if (re.test(filename)) {
-                fs.mkdirSync(path.dirname(args._[1]), { recursive: true });
-                create_file(args._[1], content)
-            }
-            else {
-                fs.mkdirSync(args._[1], { recursive: true });
-                create_file(path.join(args._[1], constants.LT_CONFIG_NAME), content)
+                fs.mkdirSync(path.dirname(args["config-file-name"]), { recursive: true });
+                create_file(args["config-file-name"], content)
+            }else {
+                fs.mkdirSync(args["config-file-name"], { recursive: true });
+                create_file(path.join(args["config-file-name"], constants.LT_CONFIG_NAME), content)
             }
         }
+    }else{
+        console.log("Picking the default config file name ",constants.LT_CONFIG_NAME)
+        create_file(constants.LT_CONFIG_NAME, content)
     }
 };
 
@@ -59,7 +63,7 @@ function create_custom_support_file(args){
           console.log("Error while copying custom support file", err);
         }
         else {
-            console.log("Successfully saved custom support file at - ", pathToNewDestination);
+            console.log("Saved at ", pathToNewDestination);
         }
       });
 }
@@ -67,5 +71,9 @@ function create_custom_support_file(args){
 module.exports = function (args) {
     create_ltconfig_file(args);
     create_base_reporter_config_file(args);
-    create_custom_support_file(args);
+    if ("cv" in args){
+        if (parseInt(args["cv"])>=10){
+            create_custom_support_file(args);
+        }
+    }
 };
