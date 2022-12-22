@@ -11,7 +11,7 @@ module.exports = {
   DEFAULT_TEST_PATH: ".",
   LAMBDA_CONFIG: "./lambdatest-config.json",
   SUPPORTED_CYPRESS_VERSIONS: ["5", "6"],
-  WHITELISTED_ENV_VARS: ["CI_BUILD_ID"],
+  WHITELISTED_ENV_VARS: ["CI_BUILD_ID", "PERCY_TOKEN"],
   BUILD_END_STATES:
     "&status=running,queued,created,initiated,pqueued,error,lambda error,failed",
   BUILD_ERROR_STATES: "&status=error,lambda error,failed",
