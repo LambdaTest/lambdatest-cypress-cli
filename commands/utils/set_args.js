@@ -27,7 +27,7 @@ function sync_args_from_cmd(args) {
           process.env.LT_USERNAME
         );
         lt_config["lambdatest_auth"]["username"] = process.env.LT_USERNAME;
-      } 
+      }
     } else if (
       process.env.LT_USERNAME &&
       (!("lambdatest_auth" in lt_config) ||
@@ -41,9 +41,9 @@ function sync_args_from_cmd(args) {
         lt_config["lambdatest_auth"] = {};
       }
       lt_config["lambdatest_auth"]["username"] = process.env.LT_USERNAME;
-    }else if ("username" in args && args["username"]!=""){
+    } else if ("username" in args && args["username"] != "") {
       lt_config["lambdatest_auth"]["username"] = args["username"];
-    } 
+    }
 
     if (
       "lambdatest_auth" in lt_config &&
@@ -65,7 +65,7 @@ function sync_args_from_cmd(args) {
       }
       console.log("Setting access key from environment");
       lt_config["lambdatest_auth"]["access_key"] = process.env.LT_ACCESS_KEY;
-    }else if ("access_key" in args && args["access_key"]!=""){
+    } else if ("access_key" in args && args["access_key"] != "") {
       lt_config["lambdatest_auth"]["access_key"] = args["access_key"];
     }
 
@@ -375,10 +375,10 @@ function sync_args_from_cmd(args) {
     if ("exclude_specs" in lt_config["run_settings"]) {
       lt_config["run_settings"]["exclude_specs"] =
         lt_config["run_settings"]["exclude_specs"].split(",");
-        console.log(
-          "specs to exclude are",
-          lt_config["run_settings"]["exclude_specs"]
-        );
+      console.log(
+        "specs to exclude are",
+        lt_config["run_settings"]["exclude_specs"]
+      );
     } else {
       lt_config["run_settings"]["exclude_specs"] == [];
     }
@@ -396,6 +396,10 @@ function sync_args_from_cmd(args) {
       } else {
         lt_config.run_settings.npmlpd = false;
       }
+    }
+    if ("res" in args) {
+      console.log("resolution set to ", args.res);
+      lt_config.run_settings.resolution = args.res;
     }
     //get specs from current directory if specs are not passed in config or cli
     if (

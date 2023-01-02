@@ -4,21 +4,26 @@ const { init } = require("./commands/init");
 
 const argv = require("yargs")
   .usage("Usage: $0 <command> [options]")
-  .command("init", "create an intial config file", function(yargs){
-    return yargs
-    .option("cv",{
-      alias: "cypress-version",
-      describe: "Cypress version",
-      type: "int",
-    })
-    .option("f",{
-      alias: "config-file-name",
-      describe: "Cypress version",
-      type: "string",
-    })
-  }, function (argv) {
-    require("./commands/init")(argv);
-  })
+  .command(
+    "init",
+    "create an intial config file",
+    function (yargs) {
+      return yargs
+        .option("cv", {
+          alias: "cypress-version",
+          describe: "Cypress version",
+          type: "int",
+        })
+        .option("f", {
+          alias: "config-file-name",
+          describe: "Cypress version",
+          type: "string",
+        });
+    },
+    function (argv) {
+      require("./commands/init")(argv);
+    }
+  )
   .command(
     "run",
     "run tests on lambdatest",
@@ -168,6 +173,11 @@ const argv = require("yargs")
         .option("vip", {
           alias: "vi-project",
           describe: "visual ui project name",
+          type: "string",
+        })
+        .option("res", {
+          alias: "resolution",
+          describe: "machine resolution",
           type: "string",
         });
     },
