@@ -48,7 +48,6 @@ function poll_build(lt_config, session_id, env) {
                 env: env,
                 reject_unauthorized: lt_config.run_settings.reject_unauthorized,
               };
-              console.log(args);
               reports(args);
               if (
                 Object.keys(stats).length == 1 &&
