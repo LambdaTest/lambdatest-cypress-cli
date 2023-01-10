@@ -16,7 +16,7 @@ const argv = require("yargs")
         })
         .option("f", {
           alias: "config-file-name",
-          describe: "Cypress version",
+          describe: "Init config file name",
           type: "string",
         });
     },
