@@ -150,7 +150,9 @@ function generate_report(args) {
     if ("reject_unauthorized" in args) {
       if (
         args["reject_unauthorized"] != "false" &&
-        args["reject_unauthorized"] != "true"
+        args["reject_unauthorized"] != "true" &&
+        args["reject_unauthorized"] != true &&
+        args["reject_unauthorized"] != false
       ) {
         console.log("reject_unauthorized has to boolean");
         return;
