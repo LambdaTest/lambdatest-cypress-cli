@@ -367,7 +367,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
 
     //validate if dedicated proxy field contains expected value
     if ("dedicated_proxy" in lt_config["run_settings"]) {
-      if (![true, false].includes(lt_config["run_settings"]["dedicated_proxy"])) {
+      if (!(typeof lt_config["run_settings"]["dedicated_proxy"] === "boolean")) {
         reject("Error!! boolean value is expected in dedicated_proxy key");
       }
     }
