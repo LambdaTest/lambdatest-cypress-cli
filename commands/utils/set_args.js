@@ -202,6 +202,12 @@ function sync_args_from_cmd(args) {
       lt_config["tunnel_settings"]["tunnel_name"] = "";
     }
 
+    // to avoid passing tunnel name to upstream service if tunnel is false
+    if  (lt_config["tunnel_settings"]["tunnel"]==false){
+      lt_config["tunnel_settings"]["tunnel_name"]=null
+    }
+
+
     //add browsers from cli
     if ("browsers" in args) {
       browsers = args["browsers"].split(",");
@@ -401,6 +407,15 @@ function sync_args_from_cmd(args) {
       console.log("resolution set to ", args.res);
       lt_config.run_settings.resolution = args.res;
     }
+    //Set values for Dedicated proxy
+    if ("dedicated_proxy" in args) {
+      lt_config["run_settings"]["dedicated_proxy"] = true
+        ? args["dedicated_proxy"] == "true"
+        : false;
+    } else if (!lt_config["run_settings"]["dedicated_proxy"]) {
+      lt_config["run_settings"]["dedicated_proxy"] = false;
+    }
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||

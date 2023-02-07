@@ -179,6 +179,11 @@ const argv = require("yargs")
           alias: "resolution",
           describe: "machine resolution",
           type: "string",
+        })
+        .option("dp", {
+          alias: "dedicated_proxy",
+          describe: "dedicated proxy",
+          type: "bool",
         });
     },
     function (argv) {
