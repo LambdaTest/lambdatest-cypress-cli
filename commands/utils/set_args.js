@@ -1,4 +1,6 @@
 const constants = require("./constants.js");
+var init_commands = require("./../init.js");
+
 const fs = require("fs");
 const path = require("path");
 const process = require("process");
@@ -237,6 +239,14 @@ function sync_args_from_cmd(args) {
       console.log(
         "Warning !! Value of reporter_config_file parameter missing. Proceeding with default reporter config"
       );
+      // make sure that the default file exists on user system. If not, place it. There is a possibility that 
+      // user may have delete it from his system.
+      if (!fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
+        console.log("!! Warning, Creating the default reporter config file");
+        init_commands.create_base_reporter_config_file(args);
+        // process.exit(1);
+
+      }
       lt_config["run_settings"]["reporter_config_file"] =
         constants.LT_BASE_REPORTER_CONFIG_FILE_NAME;
     }
