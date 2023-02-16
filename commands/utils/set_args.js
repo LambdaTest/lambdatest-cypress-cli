@@ -244,7 +244,6 @@ function sync_args_from_cmd(args) {
       if (!fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
         console.log("!! Warning, Creating the default reporter config file");
         init_commands.create_base_reporter_config_file(args);
-        // process.exit(1);
 
       }
       lt_config["run_settings"]["reporter_config_file"] =
