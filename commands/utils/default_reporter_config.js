@@ -5,5 +5,5 @@ module.exports = {
         "overwrite": true,
         "html": true,
         "json": true
-        }
-};
+    }
+}

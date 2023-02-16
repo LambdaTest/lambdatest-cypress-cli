@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 
-// const { init } = require("./commands/init");
-const { init_implementation } = require("./commands/init.js");
-
-console.log("init_implementation -> ", init_implementation);
 const argv = require("yargs")
   .usage("Usage: $0 <command> [options]")
   .command(
@@ -23,9 +19,7 @@ const argv = require("yargs")
         });
     },
     function (argv) {
-      // init.init_implementation(argv);
-      init_implementation(argv);
-      // require("./commands/init")(argv);
+      require("./commands/init").init_implementation(argv);
     }
   )
   .command(

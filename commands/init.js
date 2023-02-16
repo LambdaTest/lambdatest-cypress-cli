@@ -5,8 +5,6 @@ const { config } = require('yargs');
 const constants = require('./utils/constants.js')
 
 function create_file(file_path, content) {
-    // console.log("creating file at - ", file_path);
-    // console.log("file content - ", content);
     fs.writeFileSync(file_path, content, function (err) {
         if (err) throw err;
         console.log('Saved at ',file_path);
@@ -49,18 +47,6 @@ function create_ltconfig_file(args) {
     }
 };
 
-// function create_base_reporter_config_file(args) {
-//     let config = require('./utils/default_reporter_config.js')
-//     let content = JSON.stringify(config, null, 3);
-//     console.log("len ", args._.length);
-//     if (args._.length == 1) {
-//         console.log("creating file");
-//         create_file(constants.LT_BASE_REPORTER_CONFIG_FILE_NAME, content)
-//     }else{
-//         console.log("ELSE");
-//     }
-// };
-
 function create_custom_support_file(args){
     const pathToFile = path.join(__dirname, "default_custom_support_file.js");
     const pathToNewDestination = constants.LT_BASE_CUSTOM_SUPPORT_FILE_NAME;
@@ -78,20 +64,13 @@ function create_base_reporter_config_file(args) {
     let config = require('./utils/default_reporter_config.js')
     let content = JSON.stringify(config, null, 3);
 
-    console.log("content - ", content);
-    console.log("len ", args._.length);
     if (args._.length == 1) {
-        console.log("creating file");
         create_file(constants.LT_BASE_REPORTER_CONFIG_FILE_NAME, content)
-    }else{
-        console.log("ELSE");
     }
 };
 
 function init_implementation(args){
-    console.log("args - ", args);
-    // process.exit(1);
-    // create_ltconfig_file(args);
+    create_ltconfig_file(args);
     create_base_reporter_config_file(args);
     if ("cv" in args){
         if (parseInt(args["cv"])>=10){
@@ -99,47 +78,7 @@ function init_implementation(args){
         }
     }
 };
-// module.exports = function (args) {
 module.exports = {
-    create_base_reporter_config_file,init_implementation
-    // this.create_base_reporter_config_file = function (args) {
-    //     let config = require('./utils/default_reporter_config.js')
-    //     let content = JSON.stringify(config, null, 3);
-    //     console.log("len ", args._.length);
-    //     if (args._.length == 1) {
-    //         console.log("creating file");
-    //         create_file(constants.LT_BASE_REPORTER_CONFIG_FILE_NAME, content)
-    //     }else{
-    //         console.log("ELSE");
-    //     }
-    // };
-
-
-    // create_base_reporter_config_file: create_base_reporter_config_file,
-    // create_base_reporter_config_file: function (args) {
-    //     let config = require('./utils/default_reporter_config.js')
-    //     let content = JSON.stringify(config, null, 3);
-    //     console.log("len ", args._.length);
-    //     if (args._.length == 1) {
-    //         console.log("creating file");
-    //         create_file(constants.LT_BASE_REPORTER_CONFIG_FILE_NAME, content)
-    //     }else{
-    //         console.log("ELSE");
-    //     }
-    // },
-
-
-
-
-
-
-    // console.log("args - ", args);
-    // // process.exit(1);
-    // // create_ltconfig_file(args);
-    // create_base_reporter_config_file(args);
-    // if ("cv" in args){
-    //     if (parseInt(args["cv"])>=10){
-    //         create_custom_support_file(args);
-    //     }
-    // }
+    create_base_reporter_config_file:create_base_reporter_config_file,
+    init_implementation:init_implementation,
 };
