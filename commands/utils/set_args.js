@@ -1,4 +1,6 @@
 const constants = require("./constants.js");
+var init_commands = require("./../init.js");
+
 const fs = require("fs");
 const path = require("path");
 const process = require("process");
@@ -202,6 +204,12 @@ function sync_args_from_cmd(args) {
       lt_config["tunnel_settings"]["tunnel_name"] = "";
     }
 
+    // to avoid passing tunnel name to upstream service if tunnel is false
+    if  (lt_config["tunnel_settings"]["tunnel"]==false){
+      lt_config["tunnel_settings"]["tunnel_name"]=null
+    }
+
+
     //add browsers from cli
     if ("browsers" in args) {
       browsers = args["browsers"].split(",");
@@ -231,6 +239,13 @@ function sync_args_from_cmd(args) {
       console.log(
         "Warning !! Value of reporter_config_file parameter missing. Proceeding with default reporter config"
       );
+      // make sure that the default file exists on user system. If not, place it. There is a possibility that 
+      // user may have delete it from his system.
+      if (!fs.existsSync(lt_config["run_settings"]["reporter_config_file"])) {
+        console.log("!! Warning, Creating the default reporter config file");
+        init_commands.create_base_reporter_config_file(args);
+
+      }
       lt_config["run_settings"]["reporter_config_file"] =
         constants.LT_BASE_REPORTER_CONFIG_FILE_NAME;
     }
@@ -401,6 +416,15 @@ function sync_args_from_cmd(args) {
       console.log("resolution set to ", args.res);
       lt_config.run_settings.resolution = args.res;
     }
+    //Set values for Dedicated proxy
+    if ("dedicated_proxy" in args) {
+      lt_config["run_settings"]["dedicated_proxy"] = true
+        ? args["dedicated_proxy"] == "true"
+        : false;
+    } else if (!lt_config["run_settings"]["dedicated_proxy"]) {
+      lt_config["run_settings"]["dedicated_proxy"] = false;
+    }
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||

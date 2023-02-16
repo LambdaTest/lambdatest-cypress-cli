@@ -365,6 +365,27 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       });
     }
 
+    //validate if dedicated proxy field contains expected value
+    if ("dedicated_proxy" in lt_config["run_settings"]) {
+      if (!(typeof lt_config["run_settings"]["dedicated_proxy"] === "boolean")) {
+        reject("Error!! boolean value is expected in dedicated_proxy key");
+      }
+    }
+
+    //validate if dedicatedproxy and tunnel are not passed simultaniously
+    if (lt_config["run_settings"]["dedicated_proxy"]==true && lt_config["run_settings"]["geo_location"] !=""){
+      reject("Error!! Dedicated Proxy and Geolocation can not be passed in same run")
+    }
+    //validate if tunnel and geo are not passed simultaniously
+    if (lt_config["tunnel_settings"]["tunnel"]==true && lt_config["run_settings"]["geo_location"] !=""){
+      reject("Error!! Tunnel and Geolocation can not be passed in same run")
+    }
+    //validate if dedicatedproxy and geo are not passed simultaniously
+    if (lt_config["tunnel_settings"]["tunnel"]==true && lt_config["run_settings"]["dedicated_proxy"]==true){
+      reject("Error!! Tunnel and Dedicated Proxy can not be passed in same run")
+    }
+
+    if(lt_config)
     resolve(cypress_version);
   });
 };

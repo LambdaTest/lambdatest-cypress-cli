@@ -52,11 +52,11 @@ function get_spec_files(files, exclude_files) {
         remaining_files.push(matched_files[i]);
       }
       if (!fs.existsSync(matched_files[i])) {
-        reject("Spec files are not present");
+        reject("Error! Spec files are not present");
       }
     }
     if (remaining_files.length == 0) {
-      reject("Spec files are not present");
+      reject("Error! Spec files are not present");
     }
     resolve(remaining_files);
   });

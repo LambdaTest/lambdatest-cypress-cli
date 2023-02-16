@@ -37,6 +37,7 @@ module.exports = {
     REPORT_URL:
       "https://api-envrn-dev.lambdatestinternal.com/automation/api/v1/cypress/artefacts/test/",
   },
+  
   stage: {
     INTEGRATION_BASE_URL: "https://stage-api.lambdatestinternal.com/liis",
     BUILD_BASE_URL:

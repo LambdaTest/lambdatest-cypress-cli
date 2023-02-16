@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
-const { init } = require("./commands/init");
+const { init_implementation } = require("./commands/init.js");
 
+console.log("init_implementation -> ", init_implementation);
 const argv = require("yargs")
   .usage("Usage: $0 <command> [options]")
   .command(
     "init",
-    "create an intial config file",
+    "create an initial config file",
     function (yargs) {
       return yargs
         .option("cv", {
@@ -21,7 +22,7 @@ const argv = require("yargs")
         });
     },
     function (argv) {
-      require("./commands/init")(argv);
+      init_implementation(argv);
     }
   )
   .command(
@@ -179,6 +180,11 @@ const argv = require("yargs")
           alias: "resolution",
           describe: "machine resolution",
           type: "string",
+        })
+        .option("dp", {
+          alias: "dedicated_proxy",
+          describe: "dedicated proxy",
+          type: "bool",
         });
     },
     function (argv) {
