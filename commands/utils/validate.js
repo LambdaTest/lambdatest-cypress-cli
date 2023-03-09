@@ -393,10 +393,13 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     }
 
     //validate that if npm_via_tunnel is set, tunnel must be set to true
-    if (lt_config["run_settings"]["npm_via_tunnel"]==true && lt_config["tunnel_settings"]["tunnel"] ==false){
-      reject("Error!! Installing npm packages behind private VPN is supported only with tunnel. Please pass tunnel as true.")
-    }else{
-      console.log("Warning!! Using the flag `npm_via_tunnel` may result in higher build duration.")
+    if (lt_config["run_settings"]["npm_via_tunnel"]==true)
+    {
+      if (lt_config["tunnel_settings"]["tunnel"] ==false){
+        reject("Error!! Installing npm packages behind private VPN is supported only with tunnel. Please pass tunnel as true.");
+      }else{
+        console.log("Warning!! Using the flag `npm_via_tunnel` may result in higher build duration.");
+      }
     }
 
     if(lt_config)
