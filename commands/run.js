@@ -66,7 +66,6 @@ module.exports = function (args) {
           set_args
             .sync_args_from_cmd(args)
             .then(function (lt_config) {
-              console.log("lt_config -> ", lt_config);
               //validate the config options
               validate(lt_config, resp)
                 .then(function (cypressVersion) {
