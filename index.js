@@ -182,6 +182,11 @@ const argv = require("yargs")
           alias: "dedicated_proxy",
           describe: "dedicated proxy",
           type: "bool",
+        })
+        .option("npm_tun", {
+          alias: "npm_via_tunnel",
+          describe: "Install npm packages which are behind private VPN. Disclaimer:This will increase the build duration of your tests.",
+          type: "bool",
         });
     },
     function (argv) {

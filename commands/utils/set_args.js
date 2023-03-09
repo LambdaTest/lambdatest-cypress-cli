@@ -425,6 +425,15 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["dedicated_proxy"] = false;
     }
 
+    //Allow npm install via tunnel, to install private dependencies which are behind VPN
+    if ("npm_via_tunnel" in args) {
+      lt_config["run_settings"]["npm_via_tunnel"] = true
+        ? args["npm_via_tunnel"] == "true"
+        : false;
+    } else if (!lt_config["run_settings"]["npm_via_tunnel"]) {
+      lt_config["run_settings"]["npm_via_tunnel"] = false;
+    }
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
