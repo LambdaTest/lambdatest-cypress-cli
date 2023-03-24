@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 
-const { init } = require("./commands/init");
-
 const argv = require("yargs")
   .usage("Usage: $0 <command> [options]")
   .command(
     "init",
-    "create an intial config file",
+    "create an initial config file",
     function (yargs) {
       return yargs
         .option("cv", {
@@ -21,7 +19,7 @@ const argv = require("yargs")
         });
     },
     function (argv) {
-      require("./commands/init")(argv);
+      require("./commands/init").init_implementation(argv);
     }
   )
   .command(

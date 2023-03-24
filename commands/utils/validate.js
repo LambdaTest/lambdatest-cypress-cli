@@ -4,7 +4,7 @@ const semverCompare = require("semver/functions/compare");
 
 const constants = require("./constants.js");
 module.exports = validate_config = function (lt_config, validation_configs) {
-  console.log("validating config");
+  console.log("Validating lambdatest config");
   return new Promise(function (resolve, reject) {
     //validate auth keys are present
     if (
@@ -251,9 +251,9 @@ module.exports = validate_config = function (lt_config, validation_configs) {
               );
             }
           }
-        } catch {
+        } catch(e) {
           console.log(
-            "reporter_config_file could not be parsed, please provide a valid json in Reporter Config"
+            "reporter_config_file could not be parsed, please provide a valid json in Reporter Config - ", e
           );
           reject("Error!! Reporter JSON File does not have correct json");
         }
