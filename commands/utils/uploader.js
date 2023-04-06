@@ -36,6 +36,7 @@ function get_signed_url(lt_config, prefix, env = "prod") {
             reject(responseData);
           }
         } else {
+          console.log("zipped url %s",responseData["value"]["message"])
           resolve(responseData);
         }
       }

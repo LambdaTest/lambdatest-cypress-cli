@@ -49,7 +49,8 @@ module.exports = function (args) {
   validate_cli
     .validate_cli(env, rejectUnauthorized)
     .then(function (resp) {
-      let cli_flag = false;
+      let cli_flag = true;
+      // console.log('cli versions %s',resp.value[0].Version)
       for (let i = 0; i < resp["value"].length; i++) {
         if (resp.value[i].Version == cli_version) {
           cli_flag = true;
