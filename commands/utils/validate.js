@@ -51,6 +51,18 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       reject("Error!! Parallels value not correct");
     }
 
+    //validate max duration
+    if ("max_duration" in lt_config["run_settings"]){
+      let max_duration = lt_config["run_settings"]["max_duration"];
+      if (!(max_duration == undefined ||
+        max_duration == null ||
+        isNaN(max_duration))) {
+            if (parseFloat(max_duration) <2 || parseFloat(max_duration) > 240){
+              reject("Error!! max_duration should be between 2 and 240 minutes");
+            }
+        }
+    }  
+
     //Validate if package.json is having the cypress dependency
     var cypress_version;
     if (!fs.existsSync("package.json")) {
