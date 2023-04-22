@@ -57,7 +57,9 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       if (!(max_duration == undefined ||
         max_duration == null ||
         isNaN(max_duration))) {
-            if (parseFloat(max_duration) <2 || parseFloat(max_duration) > 240){
+          if (Number(parallels) && Number(parallels) % 1 !== 0){
+            reject("Error!! max_duration should be and Integer between 2 and 240 minutes");
+          }else if (parseInt(max_duration) <2 || parseInt(max_duration) > 240){
               reject("Error!! max_duration should be between 2 and 240 minutes");
             }
         }

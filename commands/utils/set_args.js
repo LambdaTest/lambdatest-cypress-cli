@@ -435,7 +435,11 @@ function sync_args_from_cmd(args) {
     }
 
     if ("max_duration" in args) {
-      lt_config["run_settings"]["max_duration"] = parseFloat(args["max_duration"]);
+      lt_config["run_settings"]["max_duration"] = parseInt(args["max_duration"]);
+    } else {
+      lt_config["run_settings"]["max_duration"] = parseInt(
+        lt_config["run_settings"]["max_duration"]
+      );
     }
 
     //get specs from current directory if specs are not passed in config or cli
