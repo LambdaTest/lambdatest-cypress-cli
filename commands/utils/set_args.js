@@ -434,6 +434,14 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["npm_via_tunnel"] = false;
     }
 
+    if ("max_duration" in args) {
+      lt_config["run_settings"]["max_duration"] = parseFloat(args["max_duration"]);
+    } else {
+      lt_config["run_settings"]["max_duration"] = parseFloat(
+        lt_config["run_settings"]["max_duration"]
+      );
+    }
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
