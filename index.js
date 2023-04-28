@@ -187,6 +187,11 @@ const argv = require("yargs")
           alias: "npm_via_tunnel",
           describe: "Install npm packages which are behind private VPN. Disclaimer:This will increase the build duration of your tests.",
           type: "bool",
+        })
+        .option("md", {
+          alias: "max_duration",
+          describe: "stops test if it is running more than max_duration minutes.",
+          type: "string",
         });
     },
     function (argv) {

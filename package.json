@@ -1,6 +1,6 @@
 {
   "name": "lambdatest-cypress-cli",
-  "version": "3.0.12",
+  "version": "3.0.13",
   "description": "The lambdatest-cypress-cli is LambdaTest's command-line interface (CLI) aimed to help you run your Cypress tests on LambdaTest platform.",
   "homepage": "https://github.com/LambdaTest/lambdatest-cypress-cli",
   "author": "LambdaTest <keys@lambdatest.com>",
@@ -17,7 +17,7 @@
     "lambdatest-cypress": "./index.js"
   },
   "dependencies": {
-    "@lambdatest/node-tunnel": "^3.0.0",
+    "@lambdatest/node-tunnel": "latest",
     "archiver": "^5.1.0",
     "async": "^3.2.3",
     "glob": "^7.1.6",
