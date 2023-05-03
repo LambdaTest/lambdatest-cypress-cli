@@ -87,12 +87,12 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
               }
             } else {
               console.log(`Uploaded ` + prefix + ` file successfully`);
+              let timeTaken = Date.now() - start;
+              console.log("Total time taken to upload file : " + timeTaken/1000 + "seconds");
               resolve(responseDataURL);
             }
           }
         });
-        let timeTaken = Date.now() - start;
-        console.log("Total time taken to upload file : " + timeTaken/1000 + "seconds");
       })
       .catch(function (err) {
         reject(err);
