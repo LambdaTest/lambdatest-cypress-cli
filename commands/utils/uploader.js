@@ -55,6 +55,7 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
     }
     get_signed_url(lt_config, prefix, env)
       .then(function (responseDataURL) {
+        let start = Date.now();
         console.log("Uploading the project");
         let options = {
           url: responseDataURL["value"]["message"],
@@ -90,6 +91,8 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
             }
           }
         });
+        let timeTaken = Date.now() - start;
+        console.log("Total time taken to upload file : " + timeTaken/1000 + "seconds");
       })
       .catch(function (err) {
         reject(err);
