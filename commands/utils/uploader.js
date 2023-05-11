@@ -50,8 +50,8 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
     let fileSizeInBytes = stats.size;
     //Convert the file size to megabytes (optional)
     let fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
-    if (fileSizeInMegabytes > 200) {
-      reject("File Size exceed 200 MB limit");
+    if (fileSizeInMegabytes > 400) {
+      reject("File Size exceeds 400 MB limit");
       return;
     }
     get_signed_url(lt_config, prefix, env)
