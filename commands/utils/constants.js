@@ -27,15 +27,15 @@ module.exports = {
       "https://api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
   },
   beta: {
-    INTEGRATION_BASE_URL: "https://api-envi-dev.lambdatestinternal.com/liis",
+    INTEGRATION_BASE_URL: "https://api-cypdevenv9-dev.lambdatestinternal.com/liis",
     BUILD_BASE_URL:
-      "https://api-envi-dev.lambdatestinternal.com/automation/api/v1/builds/",
+      "https://api-cypdevenv9-dev.lambdatestinternal.com/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://api-envi-dev.lambdatestinternal.com/api/v1/test/stop?sessionId=",
+      "https://api-cypdevenv9-dev.lambdatestinternal.com/api/v1/test/stop?sessionId=",
     SESSION_URL:
-      "https://api-envi-dev.lambdatestinternal.com/automation/api/v1/sessions?limit=200&session_id=",
+      "https://api-cypdevenv9-dev.lambdatestinternal.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
-      "https://api-envi-dev.lambdatestinternal.com/automation/api/v1/cypress/artefacts/test/",
+      "https://api-cypdevenv9-dev.lambdatestinternal.com/automation/api/v1/cypress/artefacts/test/",
   },
   
   stage: {
