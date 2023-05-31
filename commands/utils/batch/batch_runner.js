@@ -70,6 +70,10 @@ function run_test(payload, env = "prod", rejectUnauthorized) {
                   (session_id.length + 1)
               )
             );
+            smartuiLink = responseData["value"]["smartuiLink"]
+            if (smartuiLink != "") {
+            console.log('SmartUI link for the project: ' + smartuiLink)
+            }
             resolve(session_id);
           }
         }
