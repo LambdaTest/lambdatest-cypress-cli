@@ -71,7 +71,7 @@ function run_test(payload, env = "prod", rejectUnauthorized) {
               )
             );
             smartuiLink = responseData["value"]["smartuiLink"]
-            if (smartuiLink != "") {
+            if (smartuiLink != undefined && smartuiLink != "") {
             console.log('SmartUI link for the project: ' + smartuiLink)
             }
             resolve(session_id);
