@@ -1,40 +1,24 @@
 {
-  "name": "lambdatest-cypress-cli",
-  "version": "3.0.15",
-  "description": "The lambdatest-cypress-cli is LambdaTest's command-line interface (CLI) aimed to help you run your Cypress tests on LambdaTest platform.",
-  "homepage": "https://github.com/LambdaTest/lambdatest-cypress-cli",
-  "author": "LambdaTest <keys@lambdatest.com>",
-  "contributors": [
-    "LambdaTest <keys@lambdatest.com> (https://www.npmjs.com/~lambdatestdev)"
-  ],
-  "keywords": [
-    "cypress",
-    "browser testing",
-    "plugin",
-    "lambdatest"
-  ],
-  "bin": {
-    "lambdatest-cypress": "./index.js"
+  "name": "nodejs-selenium-sample",
+  "version": "1.0.0",
+  "description": "![LambdaTest Logo](https://www.lambdatest.com/images/logo.svg)",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
   },
-  "dependencies": {
-    "@lambdatest/node-tunnel": "latest",
-    "archiver": "^5.1.0",
-    "async": "^3.2.3",
-    "glob": "^7.1.6",
-    "mochawesome": "^7.1.3",
-    "node-stream-zip": "^1.15.0",
-    "request": "^2.88.2",
-    "semver": "^7.3.5",
-    "ws": "^7.4.3",
-    "yargs": "^16.1.0"
-  },
-  "license": "MIT",
-  "preferGlobal": true,
   "repository": {
     "type": "git",
-    "url": "git://github.com:LambdaTest/lambdatest-cypress-cli.git"
+    "url": "git+https://github.com/4msha/nodejs-selenium-sample.git"
   },
-  "engines": {
-    "node": ">=0.6.0"
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/4msha/nodejs-selenium-sample/issues"
+  },
+  "homepage": "https://github.com/4msha/nodejs-selenium-sample#readme",
+  "dependencies": {
+    "chrome-remote-interface": "^0.32.2",
+    "lighthouse": "latest",
+    "selenium-webdriver": "^4.7.1"
   }
 }
