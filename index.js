@@ -1,6 +1,6 @@
 import { generateReport}  from 'lighthouse';
 import lighthouse  from 'lighthouse';
-const fs = require('fs');
+import { writeFileSync } from 'fs';
 
 
 async function runLighthouse(url, path) {
