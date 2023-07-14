@@ -444,9 +444,9 @@ function sync_args_from_cmd(args) {
 
     if ("cmd_log" in args) {
       if (args["cmd_log"] == "true") {
-        lt_config.run_settings.commandLog = true;
+        lt_config["run_settings"]["command_log"] = true;
       } else {
-        lt_config.run_settings.commandLog = false;
+        lt_config["run_settings"]["command_log"] = false;
       }
     }
 
