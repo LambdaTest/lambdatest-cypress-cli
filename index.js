@@ -192,6 +192,11 @@ const argv = require("yargs")
           alias: "max_duration",
           describe: "stops test if it is running more than max_duration minutes.",
           type: "string",
+        })
+        .option("cmd_log", {
+          alias: "command_log",
+          describe: "show command logs on dashboard.",
+          type: "string",
         });
     },
     function (argv) {

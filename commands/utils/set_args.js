@@ -442,6 +442,14 @@ function sync_args_from_cmd(args) {
       );
     }
 
+    if ("cmd_log" in args) {
+      if (args["cmd_log"] == "true") {
+        lt_config.run_settings.commandLog = true;
+      } else {
+        lt_config.run_settings.commandLog = false;
+      }
+    }
+
     //get specs from current directory if specs are not passed in config or cli
     if (
       (lt_config["run_settings"]["specs"] == undefined ||
