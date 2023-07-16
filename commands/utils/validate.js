@@ -416,6 +416,13 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
 
+    //validate if npm_via_tunnel field contains expected value
+    if ("command_log" in lt_config["run_settings"]) {
+      if (!(typeof lt_config["run_settings"]["command_log"] === "boolean")) {
+        reject("Error!! boolean value is expected in command_log key");
+      }
+    }
+
     if(lt_config)
     resolve(cypress_version);
   });
