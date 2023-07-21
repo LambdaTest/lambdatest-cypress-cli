@@ -285,6 +285,13 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       reject("Type of stop_on_failure flag is not bool");
     }
 
+    if (
+      lt_config.run_settings.detailed_command_logs &&
+      typeof lt_config.run_settings.detailed_command_logs != "boolean"
+    ) {
+      reject("Type of detailed_command_logs flag should be bool");
+    }
+
     //Check for project capability
     if (
       lt_config.run_settings.project_name &&
