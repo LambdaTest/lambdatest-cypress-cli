@@ -130,6 +130,15 @@ function archive_project(lt_config) {
         ).version;
       }
     }
+
+    if (lt_config.run_settings.detailed_command_logs) {
+      if (lt_config.run_settings.npm_dependencies && !lt_config.run_settings.npm_dependencies['cypress-terminal-report']) {
+        reject("cypress-terminal-report is not installed in your project. Please add it in npm_dependencies of your lambdatest-config.json file and try again.");
+      } else if (!package.dependencies['cypress-terminal-report'] && !package.devDependencies['cypress-terminal-report']) {
+        reject("cypress-terminal-report is not installed in your project. Please add it in your package.json file and try again.");
+      }
+    }
+
     archive.append(
       JSON.stringify(package, null, 4),
       {
