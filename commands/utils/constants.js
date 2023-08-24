@@ -13,7 +13,7 @@ module.exports = {
   SUPPORTED_CYPRESS_VERSIONS: ["5", "6"],
   WHITELISTED_ENV_VARS: ["CI_BUILD_ID", "PERCY_TOKEN"],
   BUILD_END_STATES:
-    "&status=running,queued,created,initiated,pqueued,error,lambda error,failed",
+    "&status=running,queued,created,initiated,pqueued,error,lambda error,failed,completed,queue_timeout,idle_timeout,stopped,cancelled,passed,timeout,inactive",
   BUILD_ERROR_STATES: "&status=error,lambda error,failed",
   CYPRESS_ENV_FILE_PATH: "cypress.env.json",
   ENVS: ["stage", "beta", "prod", "preprod", "stage_new"],
