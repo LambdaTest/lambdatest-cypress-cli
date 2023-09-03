@@ -24,6 +24,11 @@ function poll_build(lt_config, session_id, env) {
           build_stats
             .get_completed_build_info(lt_config, session_id, env)
             .then(function (build_info) {
+              if (!build_info || build_info.data == null) {
+                console.log("Build info not found");
+                resolve(1);
+                return;
+              }
               let stats = {};
               let status = [];
               for (i = 0; i < build_info["data"].length; i++) {

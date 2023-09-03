@@ -2,6 +2,7 @@ const constants = require("../constants");
 const request = require("request");
 const builds = require("./build");
 //const poller=require("./poller.js")
+var get_build_info_count = 0;
 
 function get_completed_build_info(lt_config, session_id, env) {
   let options = {
@@ -66,6 +67,14 @@ function get_build_info(lt_config, session_id, env, update_status, callback) {
         error: 0,
         "lambda error": 0,
         failed: 0,
+        completed: 0,
+        queue_timeout : 0,
+        idle_timeout : 0,
+        stopped : 0,
+        cancelled : 0,
+        passed : 0,
+        timeout : 0,
+        inactive : 0,
       };
       let build_info = JSON.parse(body);
       if (build_info.Meta.result_set.count > 0) {
@@ -81,6 +90,27 @@ function get_build_info(lt_config, session_id, env, update_status, callback) {
           statsNew["pqueued"] ==
         0
       ) {
+        if (
+        statsNew["error"] +
+          statsNew["lambda error"] +
+          statsNew["failed"] +
+          statsNew["completed"] +
+          statsNew["queue_timeout"] +
+          statsNew["idle_timeout"] +
+          statsNew["stopped"] +
+          statsNew["cancelled"] +
+          statsNew["passed"] + 
+          statsNew["timeout"] +
+          statsNew["inactive"] ==
+        0
+        ) {
+          get_build_info_count = get_build_info_count + 1;
+          if (get_build_info_count > 4) {
+            update_status(false);
+            return callback(null, JSON.parse(body));
+          }
+          return setTimeout(callback, 5000, null);
+        }
         update_status(false);
         return callback(null, JSON.parse(body));
       }
