@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const process = require("process");
 const { type } = require("os");
+const dotenv = require('dotenv')
 
 function write_file(file_path, content) {
   fs.writeFileSync(file_path, content, function (err) {
@@ -385,6 +386,36 @@ function sync_args_from_cmd(args) {
         }
       }
     }
+    let dot_env_vars = undefined;
+    if ("sys-env-keys" in args) {
+      dot_env_vars = args["sys-env-keys"];
+    } else if (lt_config["run_settings"]["sys_env_keys"]) {
+      dot_env_vars = lt_config["run_settings"]["sys_env_keys"];
+    }
+    let parsedEnv,envFile;
+    let envFilePath = path.join(".", `.env`)
+    if (dot_env_vars) {
+      dot_env_vars = dot_env_vars.trim();
+      dot_env_vars = dot_env_vars.split(",");
+      if ("envfl" in args) {
+        envFilePath = args["envfl"];
+      } else if (lt_config["run_settings"]["env_file"]) {
+        envFilePath = lt_config["run_settings"]["env_file"];
+      }
+      
+      try {
+        envFile = fs.readFileSync(envFilePath, {encoding: 'utf8'})
+        parsedEnv = dotenv.parse(envFile)
+        for (index in dot_env_vars) {
+          envKey = dot_env_vars[index]
+          envValue = parsedEnv[envKey]
+          envs[envKey] = envValue
+        }
+      } catch (err) {
+        console.error("error in fetching environment variables from .env file",err);
+      }
+    }
+
     lt_config["run_settings"]["sys_envs"] = envs;
 
     if ("exclude_specs" in lt_config["run_settings"]) {
