@@ -407,8 +407,8 @@ function sync_args_from_cmd(args) {
         envFile = fs.readFileSync(envFilePath, {encoding: 'utf8'})
         parsedEnv = dotenv.parse(envFile)
         for (index in dot_env_vars) {
-          envKey = dot_env_vars[index]
-          envValue = parsedEnv[envKey]
+          let envKey = dot_env_vars[index]
+          let envValue = parsedEnv[envKey]
           envs[envKey] = envValue
         }
       } catch (err) {
