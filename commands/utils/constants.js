@@ -12,6 +12,8 @@ module.exports = {
   LAMBDA_CONFIG: "./lambdatest-config.json",
   SUPPORTED_CYPRESS_VERSIONS: ["5", "6"],
   WHITELISTED_ENV_VARS: ["CI_BUILD_ID", "PERCY_TOKEN", "QASE_REPORT", "QASE_RUN_ID", "QASE_RUN_NAME", "QASE_RUN_DESCRIPTION", "QASE_API_TOKEN", "QASE_API_BASE_URL", "QASE_ENVIRONMENT_ID", "QASE_SCREENSHOT_FOLDER", "QASE_SCREENSHOT_SENDING", "QASE_RUN_COMPLETE"],
+  BLOCKED_ENV_VARS: ["MANPATH", "NVM_CD_FLAGS", "TERM", "SHELL", "TMPDIR", "SSH_CLIENT", "NVM_PATH", "SSH_TTY", "NVM_DIR",
+  "USER", "PATH", "NVM_NODEJS_ORG_MIRROR", "PWD", "LANG", "SHLVL", "HOME", "LOGNAME", "SSH_CONNECTION", "LC_CTYPE", "NVM_BIN", "NVM_IOJS_ORG_MIRROR", "OLDPWD"],
   BUILD_END_STATES:
     "&status=running,queued,created,initiated,pqueued,error,lambda error,failed,completed,queue_timeout,idle_timeout,stopped,cancelled,passed,timeout,inactive",
   BUILD_ERROR_STATES: "&status=error,lambda error,failed",
