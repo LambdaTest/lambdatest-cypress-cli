@@ -389,7 +389,7 @@ function sync_args_from_cmd(args) {
     let dot_env_vars = undefined;
     if ("sys-env-keys" in args) {
       dot_env_vars = args["sys-env-keys"];
-    } else if (lt_config["run_settings"]["sys_env_keys"]) {
+    } else if (lt_config["run_settings"] && lt_config["run_settings"]["sys_env_keys"]) {
       dot_env_vars = lt_config["run_settings"]["sys_env_keys"];
     }
     let parsedEnv,envFile;
