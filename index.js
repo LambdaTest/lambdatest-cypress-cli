@@ -158,6 +158,16 @@ const argv = require("yargs")
           describe: "system environment variables",
           type: "string",
         })
+        .option("sys-env-keys", {
+          alias: "sys-env-keys",
+          describe: "system environment variables from .env file",
+          type: "string",
+        })
+        .option("envfl", {
+          alias: "env_file",
+          describe: "path of .env file",
+          type: "string",
+        })
         .option("npm-f", {
           alias: "npm-force",
           describe: "force npm install",

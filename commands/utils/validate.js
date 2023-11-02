@@ -375,9 +375,9 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       let envValue;
       Object.keys(sys_envs).forEach(function (envKey) {
         envValue = sys_envs[envKey];
-        if (envKey && !constants.WHITELISTED_ENV_VARS.includes(envKey)) {
+        if (envKey && constants.BLOCKED_ENV_VARS.includes(envKey)) {
           reject(
-            `Usage of unwanted environment variable detected. Allowed variables are - ${constants.WHITELISTED_ENV_VARS}`
+            `Usage of unwanted environment variable detected. Blocked variables are - ${constants.BLOCKED_ENV_VARS}`
           );
         }
         if (envValue == undefined || envValue === "") {
