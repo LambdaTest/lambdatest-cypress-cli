@@ -18,6 +18,51 @@ function sync_args_from_cmd(args) {
   return new Promise(function (resolve, reject) {
     let rawdata = fs.readFileSync(args["lambdatest-config-file"]);
     let lt_config = JSON.parse(rawdata);
+    let usernameFromEnvFile = undefined;
+    let accessKeyFromEnvFile = undefined;
+    let envFile,parsedEnv;
+    let dot_env_vars = undefined;
+    let envFilePath = path.join(".", `.env`);
+    if ("sys-env-keys" in args) {
+      dot_env_vars = args["sys-env-keys"];
+    } else if (lt_config["run_settings"] && lt_config["run_settings"]["sys_env_keys"]) {
+      dot_env_vars = lt_config["run_settings"]["sys_env_keys"];
+    }
+    if (dot_env_vars) {
+      dot_env_vars = dot_env_vars.trim();
+      dot_env_vars = dot_env_vars.split(",");
+      if ("envfl" in args) {
+        envFilePath = args["envfl"];
+      } else if (lt_config["run_settings"]["env_file"]) {
+        envFilePath = lt_config["run_settings"]["env_file"];
+      }
+
+      try {
+        envFile = fs.readFileSync(envFilePath, {encoding: 'utf8'})
+        parsedEnv = dotenv.parse(envFile)
+        for (index in dot_env_vars) {
+          let envKey = dot_env_vars[index]
+          if (envKey==constants.LT_USERNAME_ENV){
+            let envValue = parsedEnv[envKey]
+            if (envValue){
+              usernameFromEnvFile = envValue
+            } else {
+              console.error(`value of username is not set in .env file.`)
+            }
+            
+          } else if (envKey==constants.LT_ACCESS_KEY_ENV){
+            let envValue = parsedEnv[envKey]
+            if (envValue){
+              accessKeyFromEnvFile = envValue
+            } else {
+              console.error(`value of access key is not set in .env file.`)
+            }
+        }
+      }
+      } catch (err) {
+        console.error("error in fetching environment variables from .env file",err);
+      }
+    }
 
     if (
       "lambdatest_auth" in lt_config &&
@@ -31,6 +76,17 @@ function sync_args_from_cmd(args) {
         );
         lt_config["lambdatest_auth"]["username"] = process.env.LT_USERNAME;
       }
+    } else if ( usernameFromEnvFile &&
+      (!("lambdatest_auth" in lt_config) ||
+        !("username" in lt_config["lambdatest_auth"]))) {
+      console.log(
+        "Setting user name from .env file",
+        usernameFromEnvFile
+      );
+      if (!lt_config["lambdatest_auth"]) {
+        lt_config["lambdatest_auth"] = {};
+      }
+      lt_config["lambdatest_auth"]["username"] = usernameFromEnvFile;
     } else if (
       process.env.LT_USERNAME &&
       (!("lambdatest_auth" in lt_config) ||
@@ -58,6 +114,14 @@ function sync_args_from_cmd(args) {
         console.log("setting access key from environment");
         lt_config["lambdatest_auth"]["access_key"] = process.env.LT_ACCESS_KEY;
       }
+    } else if (accessKeyFromEnvFile &&
+      (!("lambdatest_auth" in lt_config) ||
+        !("access_key" in lt_config["lambdatest_auth"]))) {
+      if (!lt_config["lambdatest_auth"]) {
+        lt_config["lambdatest_auth"] = {};
+      }
+      console.log("Setting access key from .env file");
+      lt_config["lambdatest_auth"]["access_key"] = accessKeyFromEnvFile;
     } else if (
       process.env.LT_ACCESS_KEY &&
       (!("lambdatest_auth" in lt_config) ||
@@ -386,26 +450,9 @@ function sync_args_from_cmd(args) {
         }
       }
     }
-    let dot_env_vars = undefined;
-    if ("sys-env-keys" in args) {
-      dot_env_vars = args["sys-env-keys"];
-    } else if (lt_config["run_settings"] && lt_config["run_settings"]["sys_env_keys"]) {
-      dot_env_vars = lt_config["run_settings"]["sys_env_keys"];
-    }
-    let parsedEnv,envFile;
-    let envFilePath = path.join(".", `.env`)
-    if (dot_env_vars) {
-      dot_env_vars = dot_env_vars.trim();
-      dot_env_vars = dot_env_vars.split(",");
-      if ("envfl" in args) {
-        envFilePath = args["envfl"];
-      } else if (lt_config["run_settings"]["env_file"]) {
-        envFilePath = lt_config["run_settings"]["env_file"];
-      }
-      
+    
+    if (dot_env_vars) { 
       try {
-        envFile = fs.readFileSync(envFilePath, {encoding: 'utf8'})
-        parsedEnv = dotenv.parse(envFile)
         for (index in dot_env_vars) {
           let envKey = dot_env_vars[index]
           let envValue = parsedEnv[envKey]
