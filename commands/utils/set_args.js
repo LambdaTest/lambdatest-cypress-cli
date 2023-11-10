@@ -17,11 +17,17 @@ function write_file(file_path, content) {
 function sync_args_from_cmd(args) {
   return new Promise(function (resolve, reject) {
     let rawdata = fs.readFileSync(args["lambdatest-config-file"]);
-    let lt_config = JSON.parse(rawdata);
+    let lt_config;
+    try {
+      lt_config = JSON.parse(rawdata);
+    } catch (err) {
+      reject("error in parsing lambdatest-config-file",err);
+    }
     let usernameFromEnvFile = undefined;
     let accessKeyFromEnvFile = undefined;
     let envFile,parsedEnv;
     let dot_env_vars = undefined;
+    let dot_env_keys_list = undefined;
     let envFilePath = path.join(".", `.env`);
     if ("sys-env-keys" in args) {
       dot_env_vars = args["sys-env-keys"];
@@ -30,18 +36,18 @@ function sync_args_from_cmd(args) {
     }
     if (dot_env_vars) {
       dot_env_vars = dot_env_vars.trim();
-      dot_env_vars = dot_env_vars.split(",");
+      dot_env_keys_list = dot_env_vars.split(",");
       if ("envfl" in args) {
         envFilePath = args["envfl"];
-      } else if (lt_config["run_settings"]["env_file"]) {
+      } else if (lt_config["run_settings"] && lt_config["run_settings"]["env_file"]) {
         envFilePath = lt_config["run_settings"]["env_file"];
       }
 
       try {
         envFile = fs.readFileSync(envFilePath, {encoding: 'utf8'})
         parsedEnv = dotenv.parse(envFile)
-        for (index in dot_env_vars) {
-          let envKey = dot_env_vars[index]
+        for (index in dot_env_keys_list) {
+          let envKey = dot_env_keys_list[index]
           if (envKey==constants.LT_USERNAME_ENV){
             let envValue = parsedEnv[envKey]
             if (envValue){
@@ -451,10 +457,10 @@ function sync_args_from_cmd(args) {
       }
     }
     
-    if (dot_env_vars) { 
+    if (dot_env_keys_list) { 
       try {
-        for (index in dot_env_vars) {
-          let envKey = dot_env_vars[index]
+        for (index in dot_env_keys_list) {
+          let envKey = dot_env_keys_list[index]
           let envValue = parsedEnv[envKey]
           envs[envKey] = envValue
         }
