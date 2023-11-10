@@ -18,6 +18,8 @@ module.exports = {
     "&status=running,queued,created,initiated,pqueued,error,lambda error,failed,completed,queue_timeout,idle_timeout,stopped,cancelled,passed,timeout,inactive",
   BUILD_ERROR_STATES: "&status=error,lambda error,failed",
   CYPRESS_ENV_FILE_PATH: "cypress.env.json",
+  LT_USERNAME_ENV: "LT_USERNAME",
+  LT_ACCESS_KEY_ENV: "LT_ACCESS_KEY",
   ENVS: ["stage", "beta", "prod", "preprod", "stage_new"],
   prod: {
     INTEGRATION_BASE_URL: "https://api.lambdatest.com/liis",

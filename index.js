@@ -164,7 +164,7 @@ const argv = require("yargs")
           type: "string",
         })
         .option("envfl", {
-          alias: "env_file",
+          alias: "env-file",
           describe: "path of .env file",
           type: "string",
         })
