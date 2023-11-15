@@ -456,13 +456,20 @@ function sync_args_from_cmd(args) {
         }
       }
     }
-    
     if (dot_env_keys_list) { 
       try {
         for (index in dot_env_keys_list) {
           let envKey = dot_env_keys_list[index]
-          let envValue = parsedEnv[envKey]
-          envs[envKey] = envValue
+          if (parsedEnv && parsedEnv[envKey]) {
+            let envValue = parsedEnv[envKey]
+            envs[envKey] = envValue
+            console.log(`Setting custom key ${envKey} from .env file`)
+          } else if (process.env[envKey]){
+            envs[envKey] = process.env[envKey]
+            console.log(`Setting custom key ${envKey} from environment`)
+          } else {
+            console.error(`value of ${envKey} is not found in .env file or environment variable`)
+          }
         }
       } catch (err) {
         console.error("error in fetching environment variables from .env file",err);
