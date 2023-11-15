@@ -160,7 +160,7 @@ const argv = require("yargs")
         })
         .option("sys-env-keys", {
           alias: "sys-env-keys",
-          describe: "system environment variables from .env file and os environment",
+          describe: "system environment variables from .env file and os environment in order",
           type: "string",
         })
         .option("envfl", {
