@@ -381,7 +381,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
           );
         }
         if (envValue == undefined || envValue === "") {
-          reject("Value of environment variable cannot be left blank");
+          reject(`Value of environment variable ${envKey} cannot be left blank`);
         }
       });
     }
