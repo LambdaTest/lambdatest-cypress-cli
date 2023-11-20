@@ -1,6 +1,7 @@
 const fs = require("fs");
 const semver = require("semver");
 const semverCompare = require("semver/functions/compare");
+const { split_at_pattern } = require("./utils.js");
 
 const constants = require("./constants.js");
 module.exports = validate_config = function (lt_config, validation_configs) {
@@ -208,18 +209,18 @@ module.exports = validate_config = function (lt_config, validation_configs) {
           validation_configs.blacklistCommands[i]
         );
       }
-      let settings = lt_config["run_settings"]["cypress_settings"].split(";");
-      //let setting_names = [];
+      let settings = split_at_pattern(lt_config["run_settings"]["cypress_settings"], ';')
       let settings_flag = true;
       let setting_param = "";
       for (let i = 0; i < settings.length; i++) {
+        let configs = split_at_pattern(settings[i],' ')
         if (
           validation_configs.blacklistCommands.some((rx) =>
-            rx.test(settings[i].split(" ")[0])
+            rx.test(configs[0])
           )
         ) {
           settings_flag = false;
-          setting_param = settings[i].split(" ")[0];
+          setting_param = configs[0];
           break;
         }
       }
