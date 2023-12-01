@@ -489,6 +489,14 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["exclude_specs"] == [];
     }
 
+    if ("fullHar" in args) {
+      if (args["fullHar"] == "true") {
+        lt_config.run_settings.fullHar = true;
+      } else {
+        lt_config.run_settings.fullHar = false;
+      }
+    }
+
     if ("npm-f" in args) {
       if (args["npm-f"] == "true") {
         lt_config.run_settings.npmf = true;
