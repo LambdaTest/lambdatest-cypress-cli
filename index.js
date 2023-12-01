@@ -122,11 +122,6 @@ const argv = require("yargs")
           describe: "Capture Network logs",
           type: "string",
         })
-        .option("fullHar", {
-          alias: "fullHar",
-          describe: "Capture Full Har Network logs",
-          type: "bool",
-        })
         .option("eof", {
           alias: "exit-on-failure",
           describe: "Exit With Code 1 on failure",
