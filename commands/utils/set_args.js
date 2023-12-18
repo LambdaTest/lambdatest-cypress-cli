@@ -354,9 +354,11 @@ function sync_args_from_cmd(args) {
     }
 
     if ("network_http2" in args) {
-      lt_config["run_settings"]["network_http2"] = true
-        ? args["network_http2"] == "true"
-        : false;
+      if (args["network_http2"] == "true") {
+        lt_config.run_settings.network_http2 = true;
+      } else {
+        lt_config.run_settings.network_http2 = false;
+      }
     } else if (lt_config["run_settings"]["network_http2"] && !lt_config["run_settings"]["network_http2"]) {
       lt_config["run_settings"]["network_http2"] = false;
     }
