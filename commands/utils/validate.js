@@ -191,6 +191,13 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
 
+    //validate if network_http2 field contains expected value
+    if ("network_http2" in lt_config["run_settings"]) {
+      if (![true, false].includes(lt_config["run_settings"]["network_http2"])) {
+        reject("Error!! boolean value is expected in network_http2 key");
+      }
+    }
+
     if (
       "downloads" in lt_config["run_settings"] &&
       lt_config["run_settings"]["downloads"] != ""

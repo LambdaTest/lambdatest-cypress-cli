@@ -353,6 +353,14 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["network"] = false;
     }
 
+    if ("network_http2" in args) {
+      lt_config["run_settings"]["network_http2"] = true
+        ? args["network_http2"] == "true"
+        : false;
+    } else if (lt_config["run_settings"]["network_http2"] && !lt_config["run_settings"]["network_http2"]) {
+      lt_config["run_settings"]["network_http2"] = false;
+    }
+
     if ("headless" in args) {
       lt_config["run_settings"]["headless"] = args["headless"];
     } else if (!lt_config["run_settings"]["headless"]) {
