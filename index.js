@@ -212,6 +212,16 @@ const argv = require("yargs")
           alias: "command_log",
           describe: "show command logs on dashboard.",
           type: "string",
+        })
+        .option("net_http2", {
+          alias: "network_http2",
+          describe: "Capture Http2 Network logs",
+          type: "bool",
+        })
+        .option("net_ws", {
+          alias: "network_ws",
+          describe: "Bypass web socket calls for Network logs",
+          type: "bool",
         });
     },
     function (argv) {

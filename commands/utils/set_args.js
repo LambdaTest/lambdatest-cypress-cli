@@ -353,6 +353,26 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["network"] = false;
     }
 
+    if ("network_http2" in args) {
+      if (args["network_http2"] == "true") {
+        lt_config.run_settings.network_http2 = true;
+      } else {
+        lt_config.run_settings.network_http2 = false;
+      }
+    } else if (lt_config["run_settings"]["network_http2"] && !lt_config["run_settings"]["network_http2"]) {
+      lt_config["run_settings"]["network_http2"] = false;
+    }
+
+    if ("network_ws" in args) {
+      if (args["network_ws"] == "true") {
+        lt_config.run_settings.network_ws = true;
+      } else {
+        lt_config.run_settings.network_ws = false;
+      }
+    } else if (lt_config["run_settings"]["network_ws"] && !lt_config["run_settings"]["network_ws"]) {
+      lt_config["run_settings"]["network_ws"] = false;
+    }
+
     if ("headless" in args) {
       lt_config["run_settings"]["headless"] = args["headless"];
     } else if (!lt_config["run_settings"]["headless"]) {
