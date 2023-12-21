@@ -44,27 +44,31 @@ function sync_args_from_cmd(args) {
       }
 
       try {
-        envFile = fs.readFileSync(envFilePath, {encoding: 'utf8'})
-        parsedEnv = dotenv.parse(envFile)
-        for (index in dot_env_keys_list) {
-          let envKey = dot_env_keys_list[index]
-          if (envKey==constants.LT_USERNAME_ENV){
-            let envValue = parsedEnv[envKey]
-            if (envValue){
-              usernameFromEnvFile = envValue
-            } else {
-              console.error(`value of username is not set in .env file.`)
+        // check if envFilePath file exists
+        if (fs.existsSync(envFilePath)) {
+          console.log(`.env file found at ${envFilePath}`)
+          envFile = fs.readFileSync(envFilePath, {encoding: 'utf8'})
+          parsedEnv = dotenv.parse(envFile)
+          for (index in dot_env_keys_list) {
+            let envKey = dot_env_keys_list[index]
+            if (envKey==constants.LT_USERNAME_ENV){
+              let envValue = parsedEnv[envKey]
+              if (envValue){
+                usernameFromEnvFile = envValue
+              } else {
+                console.error(`value of username is not set in .env file.`)
+              }
+              
+            } else if (envKey==constants.LT_ACCESS_KEY_ENV){
+              let envValue = parsedEnv[envKey]
+              if (envValue){
+                accessKeyFromEnvFile = envValue
+              } else {
+                console.error(`value of access key is not set in .env file.`)
+              }
             }
-            
-          } else if (envKey==constants.LT_ACCESS_KEY_ENV){
-            let envValue = parsedEnv[envKey]
-            if (envValue){
-              accessKeyFromEnvFile = envValue
-            } else {
-              console.error(`value of access key is not set in .env file.`)
-            }
+          }
         }
-      }
       } catch (err) {
         console.error("error in fetching environment variables from .env file",err);
       }

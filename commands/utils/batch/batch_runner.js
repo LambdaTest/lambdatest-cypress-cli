@@ -148,7 +148,7 @@ async function run(lt_config, batches, env) {
                         });
                         if (
                           lt_config["run_settings"]["sync"] == true ||
-                          lt_config["tunnel_settings"]["tunnel"] == true
+                          (lt_config["tunnel_settings"]["tunnel"] && lt_config["tunnel_settings"]["autostart"])
                         ) {
                           console.log("Waiting for build to finish...");
                           poller
