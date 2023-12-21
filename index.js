@@ -222,7 +222,12 @@ const argv = require("yargs")
           alias: "network_ws",
           describe: "Bypass web socket calls for Network logs",
           type: "bool",
-        });
+        })
+        .option("net_sse", {
+          alias: "network_sse",
+          describe: "Bypass sse events calls for Network logs",
+          type: "bool",
+        });;
     },
     function (argv) {
       require("./commands/run")(argv);
