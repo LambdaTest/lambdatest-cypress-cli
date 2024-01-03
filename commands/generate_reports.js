@@ -70,10 +70,8 @@ function download_artefact(
             if (resp.body != null) {
               const responseObject = JSON.parse(resp.body);
               const dataValue = responseObject.data;
-              // console.log("Could not download artefacts with reason " + dataValue+ " for testID " + test_id)
               reject("Could not download artefacts for test id " + test_id + " with reason " + dataValue);
             }
-            // console.log("Could not download artefacts with reason " + resp.body + " for testID " + test_id)
             reject("Could not download artefacts for test id " + test_id);
           }
         })
@@ -105,7 +103,6 @@ function generate_report(args) {
     } else {
       reject("Access Key not provided");
     }
-    console.log("Generating report - step 3")
     //Check for session id
     if (
       !("session_id" in args) ||
@@ -132,7 +129,6 @@ function generate_report(args) {
         );
       }
     }
-    console.log("Generating report - step 3")
     //set working enviornment
     var env = "prod";
     if ("env" in args) {
@@ -193,7 +189,6 @@ function generate_report(args) {
           fs.mkdirSync(directory, { recursive: true });
           console.log("Directory created ", directory);
         }
-        console.log("Generating report - step 4")
         const downloadPromises = [];
 
         for (i = 0; i < build_info["data"].length; i++) {
@@ -211,10 +206,7 @@ function generate_report(args) {
             build_payload["run_settings"]["reject_unauthorized"]
           )
           downloadPromises.push(downloadPromise)
-          console.log("Generating report - step 5")
         }
-        // wait here till all the files are downloaded
-        // await Promise.all(downloadPromises);
 
         Promise.allSettled(downloadPromises)
         .then((results) => {
@@ -234,8 +226,6 @@ function generate_report(args) {
           resolve("Done");
         });
 
-        // resolve("Done");
-        console.log("Generating report - step 6")
       })
       .catch(function (err) {
         console.log("Error occured while getting the build response", err);
