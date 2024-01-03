@@ -23,10 +23,10 @@ function poll_build(lt_config, session_id, env) {
         if (err == null) {
           build_stats
             .get_completed_build_info(lt_config, session_id, env)
-            .then(function (build_info) {
+            .then(async function (build_info) {
               if (!build_info || build_info.data == null) {
                 console.log("Build info not found");
-                resolve(1);
+                resolve({exit_code:1, build_info:build_info});
                 return;
               }
               let stats = {};
@@ -55,16 +55,17 @@ function poll_build(lt_config, session_id, env) {
                   reject_unauthorized:
                     lt_config.run_settings.reject_unauthorized,
                 };
-                reports(args);
+
+                await reports.generate_report(args)
               }
               if (
                 Object.keys(stats).length == 1 &&
                 (Object.keys(stats).includes("completed") ||
                   Object.keys(stats).includes("passed"))
               ) {
-                resolve(0);
+                resolve({exit_code:0, build_info:build_info});
               } else {
-                resolve(1);
+                resolve({exit_code:1, build_info:build_info});
               }
             })
             .catch(function (err) {
@@ -72,7 +73,7 @@ function poll_build(lt_config, session_id, env) {
             });
         } else {
           console.log(err);
-          resolve(1);
+          resolve({exit_code:1, build_info:null});
         }
       }
     );
