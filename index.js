@@ -213,6 +213,11 @@ const argv = require("yargs")
           describe: "show command logs on dashboard.",
           type: "string",
         })
+        .option("ret_fail", {
+          alias: "retry_failed",
+          describe: "run failed tests in a new build.",
+          type: "bool",
+        })
         .option("net_http2", {
           alias: "network_http2",
           describe: "Capture Http2 Network logs",
@@ -227,7 +232,7 @@ const argv = require("yargs")
           alias: "network_sse",
           describe: "Bypass sse events calls for Network logs",
           type: "bool",
-        });;
+        });
     },
     function (argv) {
       require("./commands/run")(argv);
@@ -344,7 +349,7 @@ const argv = require("yargs")
         });
     },
     function (argv) {
-      require("./commands/generate_reports")(argv);
+      require("./commands/generate_reports").generate_report(argv);
     }
   )
   .help().argv;

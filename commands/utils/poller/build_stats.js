@@ -106,6 +106,7 @@ function get_build_info(lt_config, session_id, env, update_status, callback) {
         ) {
           get_build_info_count = get_build_info_count + 1;
           if (get_build_info_count > 4) {
+            get_build_info_count = 0;
             update_status(false);
             return callback(null, JSON.parse(body));
           }

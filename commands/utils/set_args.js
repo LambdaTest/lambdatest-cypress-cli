@@ -387,6 +387,16 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["network_sse"] = false;
     }
 
+    if ("retry_failed" in args) {
+      if (args["retry_failed"] == "true") {
+        lt_config.run_settings.retry_failed = true;
+      } else {
+        lt_config.run_settings.retry_failed = false;
+      }
+    } else if (lt_config["run_settings"]["retry_failed"] && !lt_config["run_settings"]["retry_failed"]) {
+      lt_config["run_settings"]["retry_failed"] = false;
+    }
+
     if ("headless" in args) {
       lt_config["run_settings"]["headless"] = args["headless"];
     } else if (!lt_config["run_settings"]["headless"]) {
