@@ -46,7 +46,7 @@ function poll_build(lt_config, session_id, env) {
               console.table(status);
               console.log(stats);
               //Download the artefacts if downloads is passed
-              if (lt_config.run_settings.downloads != "") {
+              if (lt_config.run_settings.downloads != "" && lt_config["run_settings"]["sync"] == true) {
                 let args = {
                   user: lt_config.lambdatest_auth.username,
                   access_key: lt_config.lambdatest_auth.access_key,
