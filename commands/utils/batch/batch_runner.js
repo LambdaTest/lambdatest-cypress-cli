@@ -168,7 +168,7 @@ async function run(lt_config, batches, env) {
                                   }
                                 }
                                 if (failed_tests.length > 0) {
-                                  console.log("retrying these failed tests "+ failed_tests)
+                                  console.log("Retrying failed tests.")
                                   lt_config["run_settings"]["specs"]=failed_tests;
                                   batcher
                                   .make_batches(lt_config)
