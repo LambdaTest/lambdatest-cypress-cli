@@ -20,6 +20,7 @@
     "@lambdatest/node-tunnel": "latest",
     "archiver": "^5.1.0",
     "async": "^3.2.3",
+    "axios": "^1.6.5",
     "dotenv": "^16.3.1",
     "glob": "^7.1.6",
     "mochawesome": "^7.1.3",

@@ -1,11 +1,14 @@
+const https = require('https');
+const axios = require('axios');
 const fs = require("fs");
-const request = require("request");
 const constants = require("./constants.js");
+const { reject } = require('async');
 
 function get_signed_url(lt_config, prefix, env = "prod") {
   console.log("Getting project upload url");
   return new Promise(function (resolve, reject) {
     let options = {
+      method: 'post',
       url: constants[env].INTEGRATION_BASE_URL + constants.PROJECT_UPLOAD_URL,
       body: JSON.stringify({
         Username: lt_config["lambdatest_auth"]["username"],
@@ -15,31 +18,39 @@ function get_signed_url(lt_config, prefix, env = "prod") {
     };
 
     if (lt_config.run_settings.reject_unauthorized == false) {
-      options["rejectUnauthorized"] = false;
+      options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
     }
-    let responseData = null;
-    request.post(options, function (err, resp, body) {
-      if (err) {
-        console.log(err);
-        reject(err);
-      } else {
-        try {
-          responseData = JSON.parse(body);
-        } catch (e) {
-          console.log("Error in JSON response", body);
-          responseData = null;
-        }
-        if (resp.statusCode != 200 && resp.statusCode != 202) {
-          if (responseData && responseData["error"]) {
-            reject(responseData["error"]);
-          } else {
-            reject(responseData);
-          }
+
+    axios(options)
+    .then(response => {
+      console.log("Got project upload url ");
+      console.log(response);
+      resolve(response.data);
+    })
+    .catch(error => {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      if (error.response.status != 200 && error.response.status != 202) {
+        if (error.response && error.response.data) {
+        reject(error.response.data);
         } else {
-          resolve(responseData);
+          reject(error.response);
         }
+      } else {
+        reject(error.response);
       }
-    });
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      console.log(error.cause);
+      reject(error.cause);
+    } else {
+      console.log(error);
+      reject(error);
+    }
+    })
   });
 }
 
@@ -55,7 +66,7 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
     }
     get_signed_url(lt_config, prefix, env)
       .then(function (responseDataURL) {
-        console.log("Uploading the project");
+        console.log("Uploading the project " + responseDataURL);
         let options = {
           url: responseDataURL["value"]["message"],
           formData: {

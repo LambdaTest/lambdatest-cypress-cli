@@ -349,7 +349,7 @@ const argv = require("yargs")
         });
     },
     function (argv) {
-      require("./commands/generate_reports").generate_report(argv);
+      require("./commands/generate_reports").generate_report_command(argv);
     }
   )
   .help().argv;
