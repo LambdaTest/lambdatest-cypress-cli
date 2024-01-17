@@ -161,18 +161,23 @@ async function run(lt_config, batches, env) {
                             .then( function (result) {
                               const { exit_code, build_info } = result;
                               if (lt_config["run_settings"]["retry_failed"] == true && build_info != null ) {
-                                let failed_tests = [];
+                                let failed_test_suites = [];
                                 for (i = 0; i < build_info["data"].length; i++) {
-                                  if (build_info["data"][i]["status_ind"] == "failed" ) {
-                                    failed_tests.push(build_info["data"][i]["path"]);
+                                  if (build_info["data"][i]["status_ind"] == "failed") {
+                                    let failed_spec = findSpecFile(lt_config["test_suite"],build_info["data"][i])
+                                    let failed_suite = {
+                                      spec_file: failed_spec,
+                                      path: build_info["data"][i]["path"],
+                                      browser: build_info["data"][i]["browser"],
+                                      version: build_info["data"][i]["version"],
+                                      platform: build_info["data"][i]["platform"]
+                                    }
+                                    failed_test_suites.push(failed_suite);
                                   }
                                 }
-                                if (failed_tests.length > 0) {
+                                if (failed_test_suites.length > 0) {
                                   console.log("Retrying failed tests.")
-                                  lt_config["run_settings"]["specs"]=failed_tests;
-                                  batcher
-                                  .make_batches(lt_config)
-                                  .then(function (batches) {
+                                  let batches = [failed_test_suites]
                                     retry_run(lt_config, batches, env)
                                     .then(function (exit_code) {
                                       if (exit_code) {
@@ -183,12 +188,7 @@ async function run(lt_config, batches, env) {
                                     .catch(function (error) {
                                       console.log(error);
                                       resolve(1);
-                                    });
-                                  })
-                                  .catch(function (err) {
-                                    console.log(err);
-                                    resolve(1);
-                                  });
+                                    });                                 
                                 } else {
                                   resolve(exit_code);
                                 }
@@ -316,6 +316,11 @@ async function retry_run(lt_config, batches, env) {
       reject(err);
     });
   });
+}
+
+function findSpecFile(testSuite, buildInfoData) {
+  const foundTest = testSuite.find((test) => test.path === buildInfoData.path);
+  return foundTest ? foundTest.spec_file : null;
 }
 
 module.exports = {
