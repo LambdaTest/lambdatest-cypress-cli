@@ -17,6 +17,7 @@ function download_artefact(
 ) {
   return new Promise(function (resolve, reject) {
     let response_code;
+    let resp;
     if (!fs.existsSync(file_path)) {
       fs.mkdirSync(file_path, { recursive: true });
     }
@@ -44,6 +45,7 @@ function download_artefact(
         reject(err);
       }
       response_code = res.statusCode;
+      resp = res
     }).pipe(
       fs
         .createWriteStream(file_path, {
@@ -65,6 +67,11 @@ function download_artefact(
             });
           } else {
             fs.unlinkSync(file_path);
+            if (resp.body != null) {
+              const responseObject = JSON.parse(resp.body);
+              const dataValue = responseObject.data;
+              reject("Could not download artefacts for test id " + test_id + " with reason " + dataValue);
+            }
             reject("Could not download artefacts for test id " + test_id);
           }
         })
@@ -73,7 +80,7 @@ function download_artefact(
 }
 
 function generate_report(args) {
-  return new Promise(function (resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     var username = "";
     var access_key = "";
 
@@ -96,7 +103,6 @@ function generate_report(args) {
     } else {
       reject("Access Key not provided");
     }
-
     //Check for session id
     if (
       !("session_id" in args) ||
@@ -123,7 +129,6 @@ function generate_report(args) {
         );
       }
     }
-
     //set working enviornment
     var env = "prod";
     if ("env" in args) {
@@ -184,8 +189,10 @@ function generate_report(args) {
           fs.mkdirSync(directory, { recursive: true });
           console.log("Directory created ", directory);
         }
+        const downloadPromises = [];
+
         for (i = 0; i < build_info["data"].length; i++) {
-          download_artefact(
+          const downloadPromise = download_artefact(
             username,
             access_key,
             env,
@@ -198,15 +205,27 @@ function generate_report(args) {
             ),
             build_payload["run_settings"]["reject_unauthorized"]
           )
-            .then(function (resp) {
-              //Files downloaded
-              console.log(resp);
-            })
-            .catch(function (err) {
-              console.log(err);
-            });
+          downloadPromises.push(downloadPromise)
         }
-        resolve("Done");
+
+        Promise.allSettled(downloadPromises)
+        .then((results) => {
+          // results is an array of objects
+          for (const result of results) {
+            if (result.status == 'fulfilled') {
+              console.log(result.value);
+            } else if (result.status == 'rejected') {
+              console.log(result.reason);
+            }
+          }
+          resolve("Done");
+        })
+        .catch((error) => {
+          // This catch block will not be executed
+          console.log(error);
+          resolve("Done");
+        });
+
       })
       .catch(function (err) {
         console.log("Error occured while getting the build response", err);
@@ -214,10 +233,6 @@ function generate_report(args) {
   });
 }
 
-module.exports = function (args) {
-  generate_report(args)
-    .then(function (resp) {})
-    .catch(function (err) {
-      console.log("ERR:", err);
-    });
+module.exports =  {
+    generate_report:generate_report
 };

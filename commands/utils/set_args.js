@@ -111,6 +111,9 @@ function sync_args_from_cmd(args) {
       }
       lt_config["lambdatest_auth"]["username"] = process.env.LT_USERNAME;
     } else if ("username" in args && args["username"] != "") {
+      if (!lt_config["lambdatest_auth"]) {
+        lt_config["lambdatest_auth"] = {};
+      }
       lt_config["lambdatest_auth"]["username"] = args["username"];
     }
 
@@ -143,6 +146,9 @@ function sync_args_from_cmd(args) {
       console.log("Setting access key from environment");
       lt_config["lambdatest_auth"]["access_key"] = process.env.LT_ACCESS_KEY;
     } else if ("access_key" in args && args["access_key"] != "") {
+      if (!lt_config["lambdatest_auth"]) {
+        lt_config["lambdatest_auth"] = {};
+      }
       lt_config["lambdatest_auth"]["access_key"] = args["access_key"];
     }
 
@@ -385,6 +391,16 @@ function sync_args_from_cmd(args) {
       }
     } else if (lt_config["run_settings"]["network_sse"] && !lt_config["run_settings"]["network_sse"]) {
       lt_config["run_settings"]["network_sse"] = false;
+    }
+
+    if ("retry_failed" in args) {
+      if (args["retry_failed"] == "true") {
+        lt_config.run_settings.retry_failed = true;
+      } else {
+        lt_config.run_settings.retry_failed = false;
+      }
+    } else if (lt_config["run_settings"]["retry_failed"] && !lt_config["run_settings"]["retry_failed"]) {
+      lt_config["run_settings"]["retry_failed"] = false;
     }
 
     if ("headless" in args) {
