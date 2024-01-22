@@ -5,7 +5,7 @@ const axios = require('axios');
 function stop_cypress_session(lt_config, session_id, env) {
   return new Promise(function (resolve, reject) {
     let options = {
-      url: constants[env].BUILD_STOP_URL + session_id,
+      url: constants[env].BUILD_STOP_URL + "?sessionId=" + session_id,
       headers: {
         Authorization: "Token " + lt_config["lambdatest_auth"]["access_key"],
         Username: lt_config["lambdatest_auth"]["username"],
