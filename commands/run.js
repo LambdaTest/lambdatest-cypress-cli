@@ -151,11 +151,15 @@ module.exports = function (args) {
                           .then(function (exit_code) {
                             if (lt_config["run_settings"]["exit-on-failure"]) {
                               process.exit(exit_code);
+                            } else {
+                              process.exit(0);
                             }
                           })
                           .catch(function (error) {
                             if (lt_config["run_settings"]["exit-on-failure"]) {
                               process.exit(1);
+                            } else {
+                              process.exit(0);
                             }
                           });
                       }

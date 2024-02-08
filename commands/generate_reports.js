@@ -84,7 +84,11 @@ function download_artefact(
           if (resp.data != null) {
             const responseObject = resp.data;
             const dataValue = responseObject.data;
-            reject("Could not download artefacts for test id " + test_id + " with reason " + dataValue);
+            if (dataValue != null) {
+              reject("Could not download artefacts for test id " + test_id + " with reason " + dataValue);
+            } else {
+              reject("Could not download artefacts for test id " + test_id);
+            }
           }
           reject("Could not download artefacts for test id " + test_id);
         }
