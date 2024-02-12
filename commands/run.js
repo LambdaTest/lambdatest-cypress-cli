@@ -117,6 +117,8 @@ module.exports = function (args) {
                                       ]
                                     ) {
                                       process.exit(exit_code);
+                                    } else {
+                                      process.exit(0);
                                     }
                                   })
                                   .catch(function (error) {
