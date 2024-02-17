@@ -1,5 +1,4 @@
 const set_args = require("./utils/set_args.js");
-const uploader = require("./utils/uploader.js");
 const validate = require("./utils/validate");
 const constants = require("./utils/constants.js");
 const batcher = require("./utils/batch/batcher.js");
@@ -7,7 +6,7 @@ const validate_cli = require("./utils/validate_cli.js");
 const fs = require("fs");
 const batch_runner = require("./utils/batch/batch_runner.js");
 var lambdaTunnel = require("@lambdatest/node-tunnel");
-const { exec, execSync } = require("child_process");
+const { execSync } = require("child_process");
 
 module.exports = function (args) {
   let cli_version = execSync("lambdatest-cypress --version");
@@ -35,8 +34,8 @@ module.exports = function (args) {
       args["reject_unauthorized"] != "false" &&
       args["reject_unauthorized"] != "true"
     ) {
-      console.log("reject_unauthorized has to boolean");
-      return;
+      console.error("reject_unauthorized has to be boolean");
+      process.exit(1);
     } else {
       if (args["reject_unauthorized"] == "false") {
         rejectUnauthorized = false;
@@ -75,13 +74,12 @@ module.exports = function (args) {
                   case 2: user hasn't passed cypress_version in run_settting, then also we will pass it, so that we can track this parameter in further services
                   */
 
-
                   /* TEST scenarios:
                   - user passes cypress_version in run_settings with both cases- with semver/without semver
                   - user doesnot pass cypress_version in run_settings
                   */
-                  
-                  if (!("cypress_version" in lt_config.run_settings)){
+
+                  if (!("cypress_version" in lt_config.run_settings)) {
                     lt_config.run_settings.cypress_version = cypressVersion;
                   }
                   batcher
@@ -129,21 +127,24 @@ module.exports = function (args) {
                                   });
                               })
                               .catch(function (error) {
-                                console.log(
+                                console.error(
                                   "Error occured while stopping tunnel"
                                 );
-                                console.log(error);
+                                console.error(error);
+                                process.exit(1);
                               })
                               .catch(function (error) {
-                                console.log("stopping tunnel failed");
-                                console.log(error);
+                                console.error("stopping tunnel failed");
+                                console.error(error);
                                 tunnelInstance.stop();
+                                process.exit(1);
                               });
                           })
                           .catch((error) => {
-                            console.log(
+                            console.error(
                               "Error occured while starting tunnel, check tunnel logs for more info on Error"
                             );
+                            process.exit(1);
                           });
                       } else {
                         batch_runner
@@ -155,28 +156,34 @@ module.exports = function (args) {
                           })
                           .catch(function (error) {
                             if (lt_config["run_settings"]["exit-on-failure"]) {
+                              console.error(error);
                               process.exit(1);
                             }
                           });
                       }
                     })
                     .catch(function (err) {
-                      console.log(err);
+                      console.error(err);
+                      process.exit(1);
                     });
                 })
                 .catch(function (err) {
-                  console.log(err);
+                  console.error(err);
+                  process.exit(1);
                 });
             })
             .catch(function (err) {
-              console.log(err);
+              console.error(err);
+              process.exit(1);
             });
         } else {
-          console.log("Lambda Test config not present");
+          console.error("Lambda Test config not present");
+          process.exit(1);
         }
       }
     })
     .catch(function (err) {
-      console.log("error occured while getting cli version ", err);
+      console.error("error occured while getting cli version ", err);
+      process.exit(1);
     });
 };
