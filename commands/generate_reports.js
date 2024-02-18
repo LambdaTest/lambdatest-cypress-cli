@@ -1,4 +1,5 @@
-const request = require("request");
+const https = require('https');
+const axios = require('axios');
 const constants = require("./utils/constants.js");
 const process = require("process");
 const build_stats = require("./utils/poller/build_stats.js");
@@ -27,6 +28,7 @@ function download_artefact(
     const stream = fs.createWriteStream(file_path);
     stream.end();
     let options = {
+      method: 'get',
       url: constants[env].REPORT_URL + test_id,
       auth: {
         username: username,
@@ -34,26 +36,26 @@ function download_artefact(
       },
       gzip: true,
       timeout: 120000,
+      responseType: 'stream'
     };
     if (rejectUnauthorized == false) {
-      options["rejectUnauthorized"] = false;
+      options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
       console.log("Setting rejectUnauthorized to false for web requests");
     }
 
-    request(options, (err, res, body) => {
-      if (err) {
-        reject(err);
-      }
-      response_code = res.statusCode;
-      resp = res
-    }).pipe(
-      fs
-        .createWriteStream(file_path, {
+    axios(options)
+    .then((response) => {
+      response_code = response.status;
+      resp = response;
+      response.data.pipe(
+        fs.createWriteStream(file_path, {
           overwrite: true,
         })
-        .on("finish", function () {
-          if (response_code == 200) {
-            const zip = new StreamZip({ file: file_path });
+      );
+
+      response.data.on('end', function () {
+        if (response_code == 200) {
+          const zip = new StreamZip({ file: file_path });
             zip.on("ready", () => {
               zip.extract(null, old_path, (err, count) => {
                 zip.close();
@@ -64,18 +66,41 @@ function download_artefact(
                     : `Extracted ${count} entries for ` + test_id
                 );
               });
-            });
-          } else {
-            fs.unlinkSync(file_path);
-            if (resp.body != null) {
-              const responseObject = JSON.parse(resp.body);
-              const dataValue = responseObject.data;
+            })
+        }
+       });
+
+    })
+    .catch((error) => {
+
+      if (error.response) {
+        resp = error.response
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (error.response.status == 401) {
+          resolve("Unauthorized");
+        } else {
+          fs.unlinkSync(file_path);
+          if (resp.data != null) {
+            const responseObject = resp.data;
+            const dataValue = responseObject.data;
+            if (dataValue != null) {
               reject("Could not download artefacts for test id " + test_id + " with reason " + dataValue);
+            } else {
+              reject("Could not download artefacts for test id " + test_id);
             }
-            reject("Could not download artefacts for test id " + test_id);
           }
-        })
-    );
+          reject("Could not download artefacts for test id " + test_id);
+        }
+      } else if (error.request) {
+        console.log(error.cause);
+      } else {
+        reject(error);
+      }
+     
+    });
+
+
   });
 }
 
@@ -233,6 +258,15 @@ function generate_report(args) {
   });
 }
 
+function generate_report_command(args) {
+  generate_report(args)
+    .then(function (resp) {})
+    .catch(function (err) {
+      console.log("ERR:", err);
+    });
+};
+
 module.exports =  {
-    generate_report:generate_report
+    generate_report:generate_report,
+    generate_report_command:generate_report_command
 };

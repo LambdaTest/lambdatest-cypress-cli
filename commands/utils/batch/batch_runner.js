@@ -7,14 +7,14 @@ const process = require("process");
 const archive = require("../archive.js");
 const WebSocket = require("ws");
 const { type } = require("os");
-const request = require("request");
-const { del } = require("request");
 const { delete_archive } = require("../archive.js");
 const poller = require("../poller/poller.js");
 const builds = require("../poller/build");
 const batcher = require("./batcher.js");
 const reports = require("../../../commands/generate_reports.js");
 const { fail } = require("yargs");
+const https = require('https');
+const axios = require('axios');
 
 var batchCounter = 0;
 var totalBatches = 0;
@@ -23,30 +23,18 @@ function run_test(payload, env = "prod", rejectUnauthorized) {
   return new Promise(function (resolve, reject) {
     let options = {
       url: constants[env].INTEGRATION_BASE_URL + constants.RUN_URL,
-      body: payload,
+      data: payload,
     };
     if (rejectUnauthorized == false) {
-      options["rejectUnauthorized"] = false;
+      options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
     }
     let responseData = null;
-    request.post(options, function (err, resp, body) {
-      if (err) {
-        reject(err);
-      } else {
-        try {
-          responseData = JSON.parse(body);
-        } catch (e) {
-          console.log("Error in JSON response", body);
-          responseData = null;
-        }
-        if (resp.statusCode != 200) {
-          if (responseData && responseData["error"]) {
-            reject(responseData["error"]);
-          } else {
-            reject(responseData);
-          }
-        } else {
-          build_id = responseData["value"]["message"]
+
+    axios.post(options.url, options.data, options)
+    .then(response => {
+      responseData = response.data;
+      // console.log(response);
+      build_id = responseData["value"]["message"]
             .split("=")
             [responseData["value"]["message"].split("=").length - 1].split(
               "&"
@@ -79,9 +67,30 @@ function run_test(payload, env = "prod", rejectUnauthorized) {
             }
             resolve(session_id);
           }
+    })
+    .catch(error => {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (error.response.status != 200) {
+          if (error.response && error.response.data) {
+          reject(error.response.data);
+          } else {
+            reject(error.response);
+          }
+        } else {
+          reject(error.response);
         }
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        reject(error.cause);
+      } else {
+        reject(error);
       }
-    });
+      })
+
   });
 }
 

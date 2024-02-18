@@ -1,45 +1,59 @@
+const https = require('https');
+const axios = require('axios');
 const fs = require("fs");
-const request = require("request");
 const constants = require("./constants.js");
+const { reject } = require('async');
+const FormData = require('form-data');
+
 
 function get_signed_url(lt_config, prefix, env = "prod") {
   console.log("Getting project upload url");
   return new Promise(function (resolve, reject) {
+    let url = constants[env].INTEGRATION_BASE_URL + constants.PROJECT_UPLOAD_URL
+    const api_headers = {
+      'Content-Type': 'application/json'
+    }
     let options = {
-      url: constants[env].INTEGRATION_BASE_URL + constants.PROJECT_UPLOAD_URL,
-      body: JSON.stringify({
-        Username: lt_config["lambdatest_auth"]["username"],
-        token: lt_config["lambdatest_auth"]["access_key"],
-        prefix: prefix,
-      }),
+      headers: api_headers
+    };
+    let data = {
+      Username: lt_config['lambdatest_auth']['username'],
+      token: lt_config['lambdatest_auth']['access_key'],
+      prefix: prefix,
     };
 
     if (lt_config.run_settings.reject_unauthorized == false) {
-      options["rejectUnauthorized"] = false;
+      options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
     }
-    let responseData = null;
-    request.post(options, function (err, resp, body) {
-      if (err) {
-        console.log(err);
-        reject(err);
-      } else {
-        try {
-          responseData = JSON.parse(body);
-        } catch (e) {
-          console.log("Error in JSON response", body);
-          responseData = null;
-        }
-        if (resp.statusCode != 200 && resp.statusCode != 202) {
-          if (responseData && responseData["error"]) {
-            reject(responseData["error"]);
-          } else {
-            reject(responseData);
-          }
+
+    axios.post(url, data, options)
+    .then(response => {
+      resolve(response.data);
+    })
+    .catch(error => {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      if (error.response.status != 200 && error.response.status != 202) {
+        if (error.response && error.response.data) {
+        reject(error.response.data);
         } else {
-          resolve(responseData);
+          reject(error.response);
         }
+      } else {
+        reject(error.response);
       }
-    });
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      console.log(error.cause);
+      reject(error.cause);
+    } else {
+      console.log(error);
+      reject(error);
+    }
+    })
   });
 }
 
@@ -56,40 +70,55 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
     get_signed_url(lt_config, prefix, env)
       .then(function (responseDataURL) {
         console.log("Uploading the project");
-        let options = {
-          url: responseDataURL["value"]["message"],
-          formData: {
-            name: file_name,
-            filename: file_name,
-          },
-          headers: {
-            "Content-Type": "application/zip",
-          },
+        let url = responseDataURL["value"]["message"]
+        const formData = new FormData();
+        formData.append('name', file_name);
+        formData.append('filename', file_name);
+        formData.append(file_name, fs.createReadStream(file_name));
+        
+        const headers = {
+          'Content-Type': 'application/zip',
         };
-        options["formData"][file_name] = fs.readFileSync(file_name);
+        let options = {
+          headers: headers
+        };
 
         if (lt_config.run_settings.reject_unauthorized == false) {
-          options["rejectUnauthorized"] = false;
+          options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
         }
-        let responseData = null;
-        request.put(options, function (err, resp, body) {
-          if (err) {
-            console.log("error occured while uploading project", err);
-            reject(err);
-          } else {
-            if (resp.statusCode != 200) {
-              if (resp && resp["error"]) {
-                reject(resp["error"]);
+       
+        axios.put(url, formData, headers)
+        .then(response => {
+          console.log(`Uploaded ` + prefix + ` file successfully`);
+          resolve(responseDataURL);
+        })
+        .catch(error => {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            if (error.response.status != 200) {
+              if (error.response && error.response.data) {
+              reject(error.response.data);
               } else {
                 console.log("Error occured in uploading", resp);
-                reject("error", resp);
+                reject("error", error.response);
               }
             } else {
-              console.log(`Uploaded ` + prefix + ` file successfully`);
-              resolve(responseDataURL);
+              console.log("error occured while uploading project", error.response);
+              reject(error.response);
             }
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            console.log("error occured while uploading project", error.cause);
+            reject(error.cause);
+          } else {
+            console.log("error occured while uploading project", error);
+            reject(error);
           }
-        });
+          })
+
       })
       .catch(function (err) {
         reject(err);

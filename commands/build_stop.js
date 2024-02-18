@@ -1,8 +1,9 @@
-const request = require("request");
+const https = require('https');
+const axios = require('axios');
 const constants = require("./utils/constants.js");
 const process = require("process");
 const fs = require("fs");
-function stop_session(args) {
+function stop_build(args) {
   return new Promise(function (resolve, reject) {
     var username = "";
     var access_key = "";
@@ -25,16 +26,16 @@ function stop_session(args) {
     } else {
       reject("Access Key not provided");
     }
-    if ("stop_last_session" in args) {
+    if ("stop_last_build" in args) {
       const file_path = "lambdatest_run.json";
       if (fs.existsSync(file_path)) {
         let lambda_run = fs.readFileSync(file_path);
         try {
           let lambda_run_obj = JSON.parse(lambda_run);
-          if (!("session_id" in lambda_run_obj)) {
-            throw new Error("session_id is missing from the file");
+          if (!("build_id" in lambda_run_obj)) {
+            throw new Error("build_id is missing from the file");
           }
-          args.session_id = lambda_run_obj.session_id;
+          args.build_id = lambda_run_obj.build_id;
         } catch (e) {
           reject(
             "Error!! lambdatest_run.json file is tampered Err: " + e.message
@@ -42,16 +43,16 @@ function stop_session(args) {
         }
       } else {
         reject(
-          "Error!! Last session details not found, lambdatest_run.json file not present!!"
+          "Error!! Last Build details not found, lambdatest_run.json file not present!!"
         );
       }
     } else {
       if (
-        !("session_id" in args) ||
-        args["session_id"] == "" ||
-        args["session_id"] == undefined
+        !("build_id" in args) ||
+        args["build_id"] == "" ||
+        args["build_id"] == undefined
       ) {
-        reject("Error!! Please provide a Session ID");
+        reject("Error!! Please provide a Build ID");
       }
     }
     var env = "prod";
@@ -66,7 +67,8 @@ function stop_session(args) {
     }
 
     let options = {
-      url: constants[env].BUILD_STOP_URL + args.session_id,
+      method: 'put',
+      url: constants[env].BUILD_STOP_URL + "?buildId=" + args.build_id,
       headers: {
         Authorization: "Token " + access_key,
         Username: username,
@@ -82,44 +84,43 @@ function stop_session(args) {
         return;
       } else {
         if (args["reject_unauthorized"] == "false") {
-          options["rejectUnauthorized"] = false;
+          options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
           console.log("Setting rejectUnauthorized to false for web requests");
         }
       }
     }
-    request.put(options, function (err, resp, body) {
-      if (err) {
-        reject(err);
+   
+    axios(options)
+    .then(response => {
+      if(response.data.length == 0){  
+        resolve("No tests to stop in build " + args.build_id);
       } else {
-        try {
-          responseData = JSON.parse(body);
-        } catch (e) {
-          console.log("Error in JSON response", body);
-          responseData = null;
-        }
-        if (resp.statusCode != 200) {
-          if (responseData && responseData["error"]) {
-            reject(responseData["error"]);
-          } else {
-            console.log(responseData);
-            reject("error", responseData);
-          }
-        } else {
-          if (responseData.length == 0) {
-            resolve("No tests to stop in session " + args.session_id);
-          }
-          resolve(
-            "Session Stopped successfully, No. of tests stopped are: " +
-              responseData.length
-          );
-        }
+        resolve(
+          "Build Stopped successfully, No. of tests stopped are: " +
+          response.data.length
+        );
       }
-    });
+    })
+    .catch(error => {
+      if (error.response != null) {
+        if (error.response.status != 200) {
+          reject(error.response.data)
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
+        reject(error.cause);
+      } else {
+        reject(error);
+      }
+    })
+
+
   });
 }
 
 module.exports = function (args) {
-  stop_session(args)
+  stop_build(args)
     .then(function (resp) {
       console.log(resp);
     })

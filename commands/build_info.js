@@ -1,4 +1,5 @@
-const request = require("request");
+const https = require('https');
+const axios = require('axios');
 const constants = require("./utils/constants.js");
 const process = require("process");
 
@@ -40,6 +41,7 @@ function get_build_info(args) {
       }
     }
     let options = {
+      method: 'get',
       url: constants[env].BUILD_BASE_URL + args.buildId,
       auth: {
         username: username,
@@ -55,25 +57,38 @@ function get_build_info(args) {
         return;
       } else {
         if (args["reject_unauthorized"] == "false") {
-          options["rejectUnauthorized"] = false;
+          options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
           console.log("Setting rejectUnauthorized to false for web requests");
         }
       }
     }
 
-    request.get(options, (err, res, body) => {
-      if (err) {
-        reject(err);
+    axios(options)
+    .then(response => {
+      if (response.data.status == "success") {
+        resolve(response.data.data);
       } else {
-        if (res.statusCode == "401") {
-          resolve("Unauthorized");
-        } else if (JSON.parse(body).status == "success") {
-          resolve(JSON.parse(body).data);
-        } else {
-          resolve(JSON.parse(body).message);
-        }
+        resolve(response.data.message);
       }
-    });
+    })
+    .catch(error => {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (error.response.status == 401) {
+          resolve("Unauthorized");
+        } else {
+          console.log(error.response.data);
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        console.log(error.cause);
+      } else {
+        reject(error);
+      }
+    })
   });
 }
 

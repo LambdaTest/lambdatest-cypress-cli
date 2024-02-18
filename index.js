@@ -281,8 +281,8 @@ const argv = require("yargs")
     function (yargs) {
       return yargs
         .option("id", {
-          alias: "session_id",
-          describe: "Session Identifier",
+          alias: "build_id",
+          describe: "Build Identifier",
           type: "string",
         })
         .option("user", {
@@ -306,9 +306,9 @@ const argv = require("yargs")
             "Default rejects self signed certificates in external requests",
           type: "bool",
         })
-        .option("sls", {
-          alias: "stop_last_session",
-          describe: "stop last session",
+        .option("slb", {
+          alias: "stop_last_build",
+          describe: "stop last build",
           type: "bool",
         });
     },
@@ -349,7 +349,7 @@ const argv = require("yargs")
         });
     },
     function (argv) {
-      require("./commands/generate_reports").generate_report(argv);
+      require("./commands/generate_reports").generate_report_command(argv);
     }
   )
   .help().argv;

@@ -24,7 +24,7 @@ module.exports = {
   prod: {
     INTEGRATION_BASE_URL: "https://api.lambdatest.com/liis",
     BUILD_BASE_URL: "https://api.lambdatest.com/automation/api/v1/builds/",
-    BUILD_STOP_URL: "https://api.lambdatest.com/api/v1/test/stop?sessionId=",
+    BUILD_STOP_URL: "https://api.lambdatest.com/api/v1/test/stop",
     SESSION_URL:
       "https://api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
@@ -35,7 +35,7 @@ module.exports = {
     BUILD_BASE_URL:
       "https://api-cypdevenv22-dev.lambdatestinternal.com/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://api-cypdevenv22-dev.lambdatestinternal.com/api/v1/test/stop?sessionId=",
+      "https://api-cypdevenv22-dev.lambdatestinternal.com/api/v1/test/stop",
     SESSION_URL:
       "https://api-cypdevenv22-dev.lambdatestinternal.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
@@ -47,7 +47,7 @@ module.exports = {
     BUILD_BASE_URL:
       "https://stage-api.lambdatestinternal.com/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://stage-api.lambdatestinternal.com/api/v1/test/stop?sessionId=",
+      "https://stage-api.lambdatestinternal.com/api/v1/test/stop",
     SESSION_URL:
       "https://stage-api.lambdatestinternal.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
@@ -59,7 +59,7 @@ module.exports = {
     BUILD_BASE_URL:
       "https://prestage-api.lambdatest.com/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://prestage-api.lambdatest.com/api/v1/test/stop?sessionId=",
+      "https://prestage-api.lambdatest.com/api/v1/test/stop",
     SESSION_URL:
       "https://prestage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
@@ -70,7 +70,7 @@ module.exports = {
     BUILD_BASE_URL:
       "https://preprod-api.lambdatest.com/automation/api/v1/builds/",
     BUILD_STOP_URL:
-      "https://preprod-api.lambdatest.com/api/v1/test/stop?sessionId=",
+      "https://preprod-api.lambdatest.com/api/v1/test/stop",
     SESSION_URL:
       "https://preprod-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
