@@ -456,15 +456,6 @@ function sync_args_from_cmd(args) {
 
     //Override baseline for visual ui
     if ("vi-base" in args) {
-      if (lt_config.run_settings.smart_ui != undefined) {
-        lt_config.run_settings.smart_ui.baseline = args["vi-base"];
-      } else {
-        lt_config.run_settings.smart_ui = {};
-        lt_config.run_settings.smart_ui.baseline = args["vi-base"];
-      }
-    }
-
-    if ("vi-base" in args) {
       if (lt_config.run_settings.smart_ui == undefined) {
         lt_config.run_settings.smart_ui = {};
       }
