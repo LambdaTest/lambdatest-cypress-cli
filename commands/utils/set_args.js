@@ -464,6 +464,17 @@ function sync_args_from_cmd(args) {
       }
     }
 
+    if ("vi-base" in args) {
+      if (lt_config.run_settings.smart_ui == undefined) {
+        lt_config.run_settings.smart_ui = {};
+      }
+      if (args["vi-base"] == "true") {
+        lt_config.run_settings.smart_ui.baseline = true;
+      } else {
+        lt_config.run_settings.smart_ui.baseline = false;
+      }
+    }
+
     if (
       lt_config.run_settings.project_name &&
       !lt_config.run_settings.project_key
