@@ -444,6 +444,28 @@ function sync_args_from_cmd(args) {
       }
     }
 
+    //Override build name for visual ui
+    if ("vi-build" in args) {
+      if (lt_config.run_settings.smart_ui != undefined) {
+        lt_config.run_settings.smart_ui.build = args["vi-build"];
+      } else {
+        lt_config.run_settings.smart_ui = {};
+        lt_config.run_settings.smart_ui.build = args["vi-build"];
+      }
+    }
+
+    //Override baseline for visual ui
+    if ("vi-base" in args) {
+      if (lt_config.run_settings.smart_ui == undefined) {
+        lt_config.run_settings.smart_ui = {};
+      }
+      if (args["vi-base"] == "true") {
+        lt_config.run_settings.smart_ui.baseline = true;
+      } else {
+        lt_config.run_settings.smart_ui.baseline = false;
+      }
+    }
+
     if (
       lt_config.run_settings.project_name &&
       !lt_config.run_settings.project_key
