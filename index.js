@@ -187,6 +187,14 @@ const argv = require("yargs")
           alias: "vi-project",
           describe: "visual ui project name",
           type: "string",
+        }).option("vib", {
+          alias: "vi-build",
+          describe: "visual ui build name",
+          type: "string",
+        }).option("vibase", {
+          alias: "vi-base",
+          describe: "visual ui baseline",
+          type: "bool",
         })
         .option("res", {
           alias: "resolution",
