@@ -140,7 +140,7 @@ async function run(lt_config, batches, env) {
                       lt_config.run_settings.reject_unauthorized
                     )
                       .then(function (session_id) {
-                        if (lt_config["run_settings"]["retry_failed"] == false ) {
+                        if (!lt_config["run_settings"]["retry_failed"]) {
                           delete_archive(project_file);
                         }
                         delete_archive(file_obj["name"]);
