@@ -198,6 +198,13 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
 
+    //validate if network_http2 field contains expected value
+    if ("useNode18" in lt_config["run_settings"]) {
+      if (![true, false].includes(lt_config["run_settings"]["useNode18"])) {
+        reject("Error!! boolean value is expected in useNode18 key");
+      }
+    }
+
     if (
       "downloads" in lt_config["run_settings"] &&
       lt_config["run_settings"]["downloads"] != ""
