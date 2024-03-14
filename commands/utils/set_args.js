@@ -373,6 +373,16 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["network_http2"] = false;
     }
 
+    if ("useNode18" in args) {
+      if (args["useNode18"] == "true") {
+        lt_config.run_settings.useNode18 = true;
+      } else {
+        lt_config.run_settings.useNode18 = false;
+      }
+    } else if (lt_config["run_settings"]["useNode18"] && !lt_config["run_settings"]["useNode18"]) {
+      lt_config["run_settings"]["useNode18"] = false;
+    }
+
     if ("network_ws" in args) {
       if (args["network_ws"] == "true") {
         lt_config.run_settings.network_ws = true;

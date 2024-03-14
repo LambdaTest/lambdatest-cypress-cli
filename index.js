@@ -236,6 +236,11 @@ const argv = require("yargs")
           describe: "Bypass web socket calls for Network logs",
           type: "bool",
         })
+        .option("node18", {
+          alias: "useNode18",
+          describe: "Use node version 18 for cypress",
+          type: "bool",
+        })
         .option("net_sse", {
           alias: "network_sse",
           describe: "Bypass sse events calls for Network logs",
