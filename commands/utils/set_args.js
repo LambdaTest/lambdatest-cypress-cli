@@ -383,6 +383,16 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["useNode18"] = false;
     }
 
+    if ("accessibility" in args) {
+      if (args["accessibility"] == "true") {
+        lt_config.run_settings.accessibility = true;
+      } else {
+        lt_config.run_settings.accessibility = false;
+      }
+    } else if (lt_config["run_settings"]["accessibility"] && !lt_config["run_settings"]["accessibility"]) {
+      lt_config["run_settings"]["accessibility"] = false;
+    }
+
     if ("network_ws" in args) {
       if (args["network_ws"] == "true") {
         lt_config.run_settings.network_ws = true;
