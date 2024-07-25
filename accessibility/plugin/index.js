@@ -57,12 +57,14 @@ const Accessibility = (on, config) => {
         } catch(err) {}
         
       })
-      console.log('log', "picking env from system " + process.env.TEST_VAR);
-      config.env.TEST_VAR= process.env.TEST_VAR;
       config.env.WCAG_CRITERIA= process.env.WCAG_CRITERIA;
       config.env.BEST_PRACTICE= process.env.BEST_PRACTICE;
       config.env.NEEDS_REVIEW= process.env.NEEDS_REVIEW;
       config.env.ACCESSIBILITY_REPORT_PATH = process.env.ACCESSIBILITY_REPORT_PATH;
+      console.log(`debug point 4. ` + config.env.WCAG_CRITERIA)
+      console.log(`debug point 5. ` + config.env.BEST_PRACTICE)
+      console.log(`debug point 6. ` + config.env.NEEDS_REVIEW)
+      console.log(`debug point 7. ` + config.env.ACCESSIBILITY_REPORT_PATH)
 
       return config;
 }
