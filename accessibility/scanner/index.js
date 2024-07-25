@@ -127,7 +127,8 @@ cy.window().then((win) => {
     needsReview: needsReviewValue
     }
     let testId = Cypress.env("TEST_ID") || ""
-    const filePath = 'cypress/reports/accessibilityReport_' + testId + '.json';
+    // const filePath = 'cypress/reports/accessibilityReport_' + testId + '.json';
+    const filePath = Cypress.env(ACCESSIBILITY_REPORT_PATH) || 'cypress/results/accessibilityReport_' + testId + '.json';
 
     cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
     // LambdatestLog('log', "logging report **************")

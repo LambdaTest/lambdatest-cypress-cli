@@ -62,7 +62,7 @@ const Accessibility = (on, config) => {
       config.env.WCAG_CRITERIA= process.env.WCAG_CRITERIA;
       config.env.BEST_PRACTICE= process.env.BEST_PRACTICE;
       config.env.NEEDS_REVIEW= process.env.NEEDS_REVIEW;
-      
+      config.env.ACCESSIBILITY_REPORT_PATH = process.env.ACCESSIBILITY_REPORT_PATH;
 
       return config;
 }
