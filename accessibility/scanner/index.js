@@ -175,6 +175,5 @@ cy.window().then((win) => {
 
 Cypress.on('command:end', (command) => {
 
-// console.log('log', "debugging scan form command end " + command.attributes.name);
 return;
 })
