@@ -245,6 +245,11 @@ const argv = require("yargs")
           alias: "network_sse",
           describe: "Bypass sse events calls for Network logs",
           type: "bool",
+        })
+        .option("cypress_accessibility", {
+          alias: "accessibility",
+          describe: "enable accessibility testing for cypress.",
+          type: "bool",
         });
     },
     function (argv) {
