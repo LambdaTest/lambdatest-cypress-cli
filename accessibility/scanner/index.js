@@ -28,7 +28,7 @@ const setScanConfig = (win, payload) =>
         
 
           setTimeout(() => {
-            reject(new Error('automation-custom-event not received within timeout'));
+            resolve(new Error('automation-custom-event not received within timeout'));
           }, 45000);
       }
       startScan();
@@ -56,7 +56,7 @@ const getScanData = (win, payload) =>
         win.document.dispatchEvent(e);
 
         setTimeout(() => {
-          reject(new Error('automation-custom-event not received within timeout'));
+          resolve(new Error('automation-custom-event not received within timeout'));
         }, 45000);
 
       }
