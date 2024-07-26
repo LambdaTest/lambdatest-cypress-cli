@@ -51,6 +51,8 @@ const Accessibility = (on, config) => {
       console.log(`parameter for accessibility report WCAG_CRITERIA - ` + config.env.WCAG_CRITERIA)
       console.log(`parameter for accessibility report BEST_PRACTICE -` + config.env.BEST_PRACTICE)
       console.log(`parameter for accessibility report NEEDS_REVIEW -` + config.env.NEEDS_REVIEW)
+      console.log(`parameter for accessibility report ACCESSIBILITY_REPORT_PATH -` + config.env.ACCESSIBILITY_REPORT_PATH)
+
 
       return config;
 }
