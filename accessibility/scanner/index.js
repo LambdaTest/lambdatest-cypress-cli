@@ -26,11 +26,10 @@ const setScanConfig = (win, payload) =>
         const e = new CustomEvent("accessibility-extension-custom-event", { detail: payload });
         win.document.dispatchEvent(e);
         
-        // add timeout of 4 sec
 
           setTimeout(() => {
             reject(new Error('automation-custom-event not received within timeout'));
-          }, 9000); // Adding a custom timeout for the event
+          }, 9000);
       }
       startScan();
 
@@ -58,7 +57,7 @@ const getScanData = (win, payload) =>
 
         setTimeout(() => {
           reject(new Error('automation-custom-event not received within timeout'));
-        }, 9000); // Adding a custom timeout for the event
+        }, 9000);
 
       }
   
