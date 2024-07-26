@@ -29,7 +29,7 @@ const setScanConfig = (win, payload) =>
 
           setTimeout(() => {
             reject(new Error('automation-custom-event not received within timeout'));
-          }, 9000);
+          }, 45000);
       }
       startScan();
 
@@ -57,7 +57,7 @@ const getScanData = (win, payload) =>
 
         setTimeout(() => {
           reject(new Error('automation-custom-event not received within timeout'));
-        }, 9000);
+        }, 45000);
 
       }
   
