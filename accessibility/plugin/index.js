@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require('path');
 const Accessibility = (on, config) => {
 
     on('task', {
@@ -7,6 +8,10 @@ const Accessibility = (on, config) => {
           return null
         },
         initializeFile(filePath) {
+          const dir = path.dirname(filePath);
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+          }
           if (!fs.existsSync(filePath)) {
               fs.writeFileSync(filePath, '[]');
           }
