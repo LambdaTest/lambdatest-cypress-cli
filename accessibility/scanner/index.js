@@ -106,6 +106,11 @@ Cypress.on('command:start', async (command) => {
   }
 
   if (!commandsToWrap.includes(command.attributes.name)) return;
+  let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+  if (!isAccessibilityLoaded){
+    console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+    return;
+  } 
 
 // const attributes = Cypress.mocha.getRunner().suite.ctx.currentTest || Cypress.mocha.getRunner().suite.ctx._runnable;
 
