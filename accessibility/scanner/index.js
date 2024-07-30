@@ -66,39 +66,6 @@ const getScanData = (win, payload) =>
       
     })
 
-const shouldScanForAccessibility = (attributes) => {
-    if (Cypress.env("IS_ACCESSIBILITY_EXTENSION_LOADED") !== "true") return false;
-  
-    const extensionPath = Cypress.env("ACCESSIBILITY_EXTENSION_PATH");
-    const isHeaded = Cypress.browser.isHeaded;
-  
-    if (!isHeaded || (extensionPath === undefined)) return false;
-  
-    let shouldScanTestForAccessibility = true;
-  
-    if (Cypress.env("INCLUDE_TAGS_FOR_ACCESSIBILITY") || Cypress.env("EXCLUDE_TAGS_FOR_ACCESSIBILITY")) {
-      try {
-        let includeTagArray = [];
-        let excludeTagArray = [];
-        if (Cypress.env("INCLUDE_TAGS_FOR_ACCESSIBILITY")) {
-          includeTagArray = Cypress.env("INCLUDE_TAGS_FOR_ACCESSIBILITY").split(";")
-        }
-        if (Cypress.env("EXCLUDE_TAGS_FOR_ACCESSIBILITY")) {
-          excludeTagArray = Cypress.env("EXCLUDE_TAGS_FOR_ACCESSIBILITY").split(";")
-        }
-  
-        const fullTestName = attributes.title;
-        const excluded = excludeTagArray.some((exclude) => fullTestName.includes(exclude));
-        const included = includeTagArray.length === 0 || includeTags.some((include) => fullTestName.includes(include));
-        shouldScanTestForAccessibility = !excluded && included;
-      } catch (error) {
-        LambdatestLog("Error while validating test case for accessibility before scanning. Error : ", error);
-      }
-    }
-  
-    return shouldScanTestForAccessibility;
-  }
-
 Cypress.on('command:start', async (command) => {
   if(!command || !command.attributes) return;
   if(command.attributes.name == 'window' || command.attributes.name == 'then' || command.attributes.name == 'wrap' || command.attributes.name == 'wait') {
@@ -112,14 +79,9 @@ Cypress.on('command:start', async (command) => {
     return;
   } 
 
-// const attributes = Cypress.mocha.getRunner().suite.ctx.currentTest || Cypress.mocha.getRunner().suite.ctx._runnable;
 
-// let shouldScanTestForAccessibility = shouldScanForAccessibility(attributes);
-// if (!shouldScanTestForAccessibility) return;
-// console.log('log', "debugging scan form command " + command.attributes.name);
 console.log('log', "debugging scan form command " + command.attributes.name);
 cy.window().then((win) => {
-    // LambdatestLog('Performing scan form command ' + command.attributes.name);
     let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
     let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
     let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
@@ -131,23 +93,22 @@ cy.window().then((win) => {
     needsReview: needsReviewValue
     }
     let testId = Cypress.env("TEST_ID") || ""
-    // const filePath = 'cypress/reports/accessibilityReport_' + testId + '.json';
+    
     const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
 
     cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
-    // LambdatestLog('log', "logging report **************")
     console.log('logging config reponse', res);
     
     const payload = {
     message: 'GET_LATEST_SCAN_DATA',
     }
-    // cy.wait(5000);
-    cy.wrap(getScanData(win, payload), {timeout: 30000}).then((res) => {
-    LambdatestLog('log', "logging report **************")
+
+    cy.wrap(getScanData(win, payload), {timeout: 45000}).then((res) => {
+    LambdatestLog('log', "scanning data ");
     
 
     cy.task('initializeFile', filePath).then((filePath) => {
-      cy.readFile(filePath, { log: true, timeout: 30000 }).then((fileContent) => {
+      cy.readFile(filePath, { log: true, timeout: 45000 }).then((fileContent) => {
           let resultsArray = [{}];
           console.log('logging report', res);
           // If the file is not empty, parse the existing content
@@ -160,7 +121,7 @@ cy.window().then((win) => {
                   return;
               }
           }
-          console.log('debugging res', res.message);
+          console.log('scanned data recieved is', res.message);
           if (res.message == "GET_LATEST_SCAN_DATA") {
           // Append the new result
             resultsArray.push(res);
@@ -168,7 +129,7 @@ cy.window().then((win) => {
           }
 
           // Write the updated content back to the file
-          cy.writeFile(filePath, resultsArray, { log: true, timeout: 30000 });
+          cy.writeFile(filePath, resultsArray, { log: true, timeout: 45000 });
       });
     });
         });
