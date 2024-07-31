@@ -198,7 +198,14 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
 
-    //validate if network_http2 field contains expected value
+    //validate if accessibility field contains expected value
+    if ("accessibility" in lt_config["run_settings"]) {
+      if (![true, false].includes(lt_config["run_settings"]["accessibility"])) {
+        reject("Error!! boolean value is expected in accessibility key");
+      }
+    }
+
+    //validate if useNode18 field contains expected value
     if ("useNode18" in lt_config["run_settings"]) {
       if (![true, false].includes(lt_config["run_settings"]["useNode18"])) {
         reject("Error!! boolean value is expected in useNode18 key");
