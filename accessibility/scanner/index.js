@@ -1,4 +1,3 @@
-const fs = require("fs")
 
 const LambdatestLog = (message) => {
     if (!Cypress.env('LAMBDATEST_LOGS')) return;
