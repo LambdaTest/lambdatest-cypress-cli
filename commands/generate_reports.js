@@ -97,7 +97,6 @@ function download_artefact(
           reject("Could not download artefacts for test id " + test_id);
         }
       } else if (error.request) {
-        console.log("Got error: error in request",error.toJSON());
         console.log(error.cause);
       } else {
         console.log("Got error:",error.toJSON());
@@ -223,7 +222,6 @@ function generate_report(args) {
         const downloadPromises = [];
 
         for (i = 0; i < build_info["data"].length; i++) {
-          console.log("Downloading artefacts for ", build_info["data"][i]["test_id"]);
           const downloadPromise = download_artefact(
             username,
             access_key,
