@@ -24,8 +24,8 @@ const Accessibility = (on, config) => {
     on('before:browser:launch', (browser = {}, launchOptions) => {
         try {
           if (process.env.ACCESSIBILITY_EXTENSION_PATH !== undefined) {
-            if (browser.name !== 'chrome') {
-              console.log(`Accessibility Automation will run only on Chrome browsers.`);
+            if (browser.name !== 'chrome' && browser.name !== 'edge') {
+              console.log(`Accessibility Automation will run only on Chrome browsers. But browser run on ` + browser.name);
               browser_validation = false;
             }
             if (browser.name === 'chrome' && browser.majorVersion <= 94) {
