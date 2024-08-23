@@ -254,6 +254,7 @@ function generate_report(args) {
         })
         .catch((error) => {
           // This catch block will not be executed
+          console.log(error);
           resolve("Done");
         });
 
