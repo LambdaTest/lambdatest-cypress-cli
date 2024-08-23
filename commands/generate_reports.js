@@ -47,13 +47,10 @@ function download_artefact(
     .then((response) => {
       response_code = response.status;
       resp = response;
-      response.data.pipe(
-        fs.createWriteStream(file_path, {
-          overwrite: true,
-        })
-      );
+      const writer = fs.createWriteStream(file_path, {overwrite: true,});
+      response.data.pipe(writer);
 
-      response.data.on('end', function () {
+      writer.on('finish', function () {
         if (response_code == 200) {
           const zip = new StreamZip({ file: file_path });
             zip.on("ready", () => {
@@ -70,6 +67,12 @@ function download_artefact(
         }
        });
 
+      writer.on('error', (err) => {
+        console.error('Error writing to file:', err);
+        fs.unlinkSync(file_path); // Cleanup on error
+        reject('Error writing to file for test id ' + test_id);
+      });
+
     })
     .catch((error) => {
 
@@ -77,6 +80,7 @@ function download_artefact(
         resp = error.response
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
+        console.log("Got error:",error.response);
         if (error.response.status == 401) {
           resolve("Unauthorized");
         } else {
@@ -93,8 +97,10 @@ function download_artefact(
           reject("Could not download artefacts for test id " + test_id);
         }
       } else if (error.request) {
+        console.log("Got error: error in request",error.toJSON());
         console.log(error.cause);
       } else {
+        console.log("Got error:",error.toJSON());
         reject(error);
       }
      
@@ -144,11 +150,13 @@ function generate_report(args) {
           }
           args.session_id = lambda_run_obj.session_id;
         } catch (e) {
+          console.log("Got error4 ",error.response);
           reject(
             "Error!! lambdatest_run.json file is tampered Err: " + e.message
           );
         }
       } else {
+        console.log("Got error5",error.response);
         reject(
           "Error!! Last session details not found, lambdatest_run.json file not present!!"
         );
@@ -217,6 +225,7 @@ function generate_report(args) {
         const downloadPromises = [];
 
         for (i = 0; i < build_info["data"].length; i++) {
+          console.log("Downloading artefacts for ", build_info["data"][i]["test_id"]);
           const downloadPromise = download_artefact(
             username,
             access_key,
@@ -247,7 +256,7 @@ function generate_report(args) {
         })
         .catch((error) => {
           // This catch block will not be executed
-          console.log(error);
+          console.log("Error7",error);
           resolve("Done");
         });
 
