@@ -150,13 +150,11 @@ function generate_report(args) {
           }
           args.session_id = lambda_run_obj.session_id;
         } catch (e) {
-          console.log("Got error4 ",error.response);
           reject(
             "Error!! lambdatest_run.json file is tampered Err: " + e.message
           );
         }
       } else {
-        console.log("Got error5",error.response);
         reject(
           "Error!! Last session details not found, lambdatest_run.json file not present!!"
         );
@@ -256,7 +254,6 @@ function generate_report(args) {
         })
         .catch((error) => {
           // This catch block will not be executed
-          console.log("Error7",error);
           resolve("Done");
         });
 
