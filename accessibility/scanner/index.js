@@ -85,7 +85,8 @@ cy.window().then((win) => {
     let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
     let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
     let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
-    
+    bestPracticeValue =  bestPracticeValue == "true" ? true : false;
+    needsReviewValue = needsReviewValue == "true" ? true : false;
     const payloadToSend = {
     message: 'SET_CONFIG',
     wcagCriteria: wcagCriteriaValue,
@@ -95,7 +96,7 @@ cy.window().then((win) => {
     let testId = Cypress.env("TEST_ID") || ""
     
     const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
-
+    console.log('payload to send',payloadToSend);
     cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
     console.log('logging config reponse', res);
     
