@@ -96,7 +96,6 @@ cy.window().then((win) => {
     let testId = Cypress.env("TEST_ID") || ""
     
     const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
-    console.log('payload to send',payloadToSend);
     cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
     console.log('logging config reponse', res);
     
