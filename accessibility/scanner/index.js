@@ -85,7 +85,8 @@ cy.window().then((win) => {
     let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
     let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
     let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
-    
+    bestPracticeValue =  bestPracticeValue == "true" ? true : false;
+    needsReviewValue = needsReviewValue == "true" ? true : false;
     const payloadToSend = {
     message: 'SET_CONFIG',
     wcagCriteria: wcagCriteriaValue,
