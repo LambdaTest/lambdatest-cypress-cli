@@ -84,6 +84,9 @@ cy.window().then((win) => {
     let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
     let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
     let needsReviewValue = Cypress.env("NEEDS_REVIEW") || false;
+
+    bestPracticeValue =  bestPracticeValue == "true" ? true : false;
+    needsReviewValue = needsReviewValue == "true" ? true : false;
     
     const payloadToSend = {
     message: 'SET_CONFIG',
@@ -152,6 +155,15 @@ console.log("after each hook")
     let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
     let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
     let needsReviewValue = Cypress.env("NEEDS_REVIEW") || false;
+
+    bestPracticeValue =  bestPracticeValue == "true" ? true : false;
+    needsReviewValue = needsReviewValue == "true" ? true : false;
+
+    let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+    if (!isAccessibilityLoaded){
+      console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+      return;
+    } 
     
     const payloadToSend = {
     message: 'SET_CONFIG',
