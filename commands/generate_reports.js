@@ -47,13 +47,10 @@ function download_artefact(
     .then((response) => {
       response_code = response.status;
       resp = response;
-      response.data.pipe(
-        fs.createWriteStream(file_path, {
-          overwrite: true,
-        })
-      );
+      const writer = fs.createWriteStream(file_path, {overwrite: true,});
+      response.data.pipe(writer);
 
-      response.data.on('end', function () {
+      writer.on('finish', function () {
         if (response_code == 200) {
           const zip = new StreamZip({ file: file_path });
             zip.on("ready", () => {
@@ -70,6 +67,12 @@ function download_artefact(
         }
        });
 
+      writer.on('error', (err) => {
+        console.error('Error writing to file:', err);
+        fs.unlinkSync(file_path); // Cleanup on error
+        reject('Error writing to file for test id ' + test_id);
+      });
+
     })
     .catch((error) => {
 
@@ -77,6 +80,7 @@ function download_artefact(
         resp = error.response
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
+        console.log("Got error:",error.response);
         if (error.response.status == 401) {
           resolve("Unauthorized");
         } else {
@@ -95,6 +99,7 @@ function download_artefact(
       } else if (error.request) {
         console.log(error.cause);
       } else {
+        console.log("Got error:",error.toJSON());
         reject(error);
       }
      
