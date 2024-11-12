@@ -4,7 +4,7 @@ const LambdatestLog = (message) => {
     cy.task('lambdatest_log', message);
   }
 
-const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin', 'get', 'section', 'fixture'];
+const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'];
 
 const setScanConfig = (win, payload) =>
     new Promise(async (resolve, reject) => {
@@ -67,6 +67,8 @@ const getScanData = (win, payload) =>
 
 Cypress.on('command:start', async (command) => {
   if(!command || !command.attributes) return;
+
+  console.log("cypress accessibility command " + command.attributes.name);
   if(command.attributes.name == 'window' || command.attributes.name == 'then' || command.attributes.name == 'wrap' || command.attributes.name == 'wait') {
       return;
   }
