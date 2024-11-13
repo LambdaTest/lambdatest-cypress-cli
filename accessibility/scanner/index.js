@@ -4,7 +4,7 @@ const LambdatestLog = (message) => {
     cy.task('lambdatest_log', message);
   }
 
-const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin', 'get', 'find'];
+const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin', 'get', 'find', 'fixture'];
 
 const setScanConfig = (win, payload) =>
     new Promise(async (resolve, reject) => {
@@ -161,7 +161,7 @@ console.log("after each hook")
 
     let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
     if (!isAccessibilityLoaded){
-      console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+      console.log('after each hook - log', "accessibility not enabled " + isAccessibilityLoaded);
       return;
     } 
     
@@ -172,41 +172,41 @@ console.log("after each hook")
     needsReview: needsReviewValue
     }
 
-    console.log('log', "payload to send " + payloadToSend);
+    console.log('after each hook - log', "payload to send " + payloadToSend);
     let testId = Cypress.env("TEST_ID") || ""
     
     const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
 
     cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
-    console.log('logging config reponse', res);
+    console.log('after each hook - logging config reponse', res);
     
     const payload = {
     message: 'GET_LATEST_SCAN_DATA',
     }
 
     cy.wrap(getScanData(win, payload), {timeout: 45000}).then((res) => {
-    LambdatestLog('log', "scanning data ");
+    LambdatestLog('after each hook - log', "scanning data ");
     
 
     cy.task('initializeFile', filePath).then((filePath) => {
       cy.readFile(filePath, { log: true, timeout: 45000 }).then((fileContent) => {
           let resultsArray = [{}];
-          console.log('logging report', res);
+          console.log('after each hook - logging report', res);
           // If the file is not empty, parse the existing content
           if (fileContent) {
               try {
                   resultsArray = JSON.parse(JSON.stringify(fileContent));
               } catch (e) {
-                console.log("parsing error for content " , fileContent)
-                  console.log('Error parsing JSON file:', e);
+                console.log("after each hook - parsing error for content " , fileContent)
+                  console.log('after each hook - Error parsing JSON file:', e);
                   return;
               }
           }
-          console.log('scanned data recieved is', res.message);
+          console.log('after each hook - scanned data recieved is', res.message);
           if (res.message == "GET_LATEST_SCAN_DATA") {
           // Append the new result
             resultsArray.push(res);
-            console.log('resultsarray logging', resultsArray);
+            console.log('after each hook - resultsarray logging', resultsArray);
           }
 
           // Write the updated content back to the file
