@@ -4,7 +4,7 @@ const LambdatestLog = (message) => {
     cy.task('lambdatest_log', message);
   }
 
-const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin', 'get', 'find', 'fixture'];
+const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'];
 
 const setScanConfig = (win, payload) =>
     new Promise(async (resolve, reject) => {
@@ -144,7 +144,7 @@ cy.window().then((win) => {
 
 
 Cypress.on('command:end', (command) => {
-
+console.log('accessibility process ended for command ', command.attributes.name)
 return;
 })
 
@@ -220,3 +220,74 @@ console.log("after each hook")
 
 
 })
+
+const getAccessibilityIssues = () => {
+
+  let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+  if (!isAccessibilityLoaded){
+    console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+    return;
+  } 
+
+
+cy.window().then((win) => {
+    let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
+    let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
+    let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
+    bestPracticeValue =  bestPracticeValue == "true" ? true : false;
+    needsReviewValue = needsReviewValue == "true" ? true : false;
+    const payloadToSend = {
+    message: 'SET_CONFIG',
+    wcagCriteria: wcagCriteriaValue,
+    bestPractice: bestPracticeValue,
+    needsReview: needsReviewValue
+    }
+
+    console.log('custom command log', "payload to send " + payloadToSend);
+    let testId = Cypress.env("TEST_ID") || ""
+    
+    const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
+
+    cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
+    console.log('custom command log ', 'logging config reponse', res);
+    
+    const payload = {
+    message: 'GET_LATEST_SCAN_DATA',
+    }
+
+    cy.wrap(getScanData(win, payload), {timeout: 45000}).then((res) => {
+
+    cy.task('initializeFile', filePath).then((filePath) => {
+      cy.readFile(filePath, { log: true, timeout: 45000 }).then((fileContent) => {
+          let resultsArray = [{}];
+          console.log('custom command log ','logging report', res);
+          // If the file is not empty, parse the existing content
+          if (fileContent) {
+              try {
+                  resultsArray = JSON.parse(JSON.stringify(fileContent));
+              } catch (e) {
+                console.log("custom command log ","parsing error for content " , fileContent)
+                  console.log('custom command log ','Error parsing JSON file:', e);
+                  return;
+              }
+          }
+          console.log('custom command log', 'scanned data recieved is', res.message);
+          if (res.message == "GET_LATEST_SCAN_DATA") {
+          // Append the new result
+            resultsArray.push(res);
+            console.log('custom command log', 'resultsarray logging', resultsArray);
+          }
+
+          // Write the updated content back to the file
+          cy.writeFile(filePath, resultsArray, { log: true, timeout: 45000 });
+      });
+    });
+        });
+
+    });
+})
+
+
+}
+
+export {getAccessibilityIssues};
