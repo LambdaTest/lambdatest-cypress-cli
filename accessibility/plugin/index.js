@@ -16,6 +16,15 @@ const Accessibility = (on, config) => {
               fs.writeFileSync(filePath, '[]');
           }
           return filePath;
+        },
+        readFileIfExists(filePath) {
+          const fullPath = path.resolve(filePath);
+          if (fs.existsSync(fullPath)) {
+            const fileContent = fs.readFileSync(fullPath, 'utf8');
+            return { exists: true, content:fileContent }; 
+          } else {
+            return { exists: false, content: null }; // Return null if the file doesn't exist
+          }
         }
   })
 
