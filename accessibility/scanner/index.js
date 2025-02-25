@@ -101,7 +101,7 @@ function processAccessibilityReport(win){
         // If the file is not empty, parse the existing content
         if (result.exists && result.content) {
             try {
-                resultsArray = JSON.parse(JSON.stringify(result.content));
+                resultsArray = JSON.parse(result.content);
             } catch (e) {
               console.log("parsing error for content " , result.content)
                 console.log('Error parsing JSON file:', e);
