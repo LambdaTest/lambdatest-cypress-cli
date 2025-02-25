@@ -20,8 +20,8 @@ const Accessibility = (on, config) => {
         readFileIfExists(filePath) {
           const fullPath = path.resolve(filePath);
           if (fs.existsSync(fullPath)) {
-            const content = fs.readFileSync(fullPath, 'utf8');
-            return { exists: true, content }; 
+            const fileContent = fs.readFileSync(fullPath, 'utf8');
+            return { exists: true, content:fileContent }; 
           } else {
             return { exists: false, content: null }; // Return null if the file doesn't exist
           }

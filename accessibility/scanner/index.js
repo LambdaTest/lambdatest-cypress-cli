@@ -99,11 +99,11 @@ function processAccessibilityReport(win){
         let resultsArray = [{}];
         console.log('logging report', res);
         // If the file is not empty, parse the existing content
-        if (result.exists && result.fileContent) {
+        if (result.exists && result.content) {
             try {
-                resultsArray = JSON.parse(JSON.stringify(result.fileContent));
+                resultsArray = JSON.parse(JSON.stringify(result.content));
             } catch (e) {
-              console.log("parsing error for content " , result.fileContent)
+              console.log("parsing error for content " , result.content)
                 console.log('Error parsing JSON file:', e);
                 return;
             }
@@ -115,9 +115,13 @@ function processAccessibilityReport(win){
         }
 
         if (res && res.message == "GET_LATEST_SCAN_DATA") {
+          try {
         // Append the new result
           resultsArray.push(res);
           console.log('resultsarray logging', resultsArray);
+          } catch (e) {
+            console.log('Error pushing issues to array:', e);
+          }
         }
 
         // Write the updated content back to the file
