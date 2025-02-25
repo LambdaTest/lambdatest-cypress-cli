@@ -65,6 +65,70 @@ const getScanData = (win, payload) =>
       
     })
 
+function processAccessibilityReport(win){
+  let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
+  let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
+  let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
+  bestPracticeValue =  bestPracticeValue == "true" ? true : false;
+  needsReviewValue = needsReviewValue == "true" ? true : false;
+  const payloadToSend = {
+  message: 'SET_CONFIG',
+  wcagCriteria: wcagCriteriaValue,
+  bestPractice: bestPracticeValue,
+  needsReview: needsReviewValue
+  }
+
+  console.log('log', "payload to send " + payloadToSend);
+  let testId = Cypress.env("TEST_ID") || ""
+  
+  const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
+
+  cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
+  console.log('logging config reponse', res);
+  
+  const payload = {
+  message: 'GET_LATEST_SCAN_DATA',
+  }
+
+  cy.wrap(getScanData(win, payload), {timeout: 45000}).then((res) => {
+  LambdatestLog('log', "scanning data ");
+  
+
+  cy.task('initializeFile', filePath).then((filePath) => {
+      cy.task('readFileIfExists', filePath,{ log: true, timeout: 45000 }).then((result) => {
+        let resultsArray = [{}];
+        console.log('logging report', res);
+        // If the file is not empty, parse the existing content
+        if (result.exists && result.fileContent) {
+            try {
+                resultsArray = JSON.parse(JSON.stringify(result.fileContent));
+            } catch (e) {
+              console.log("parsing error for content " , result.fileContent)
+                console.log('Error parsing JSON file:', e);
+                return;
+            }
+        } else if(!result.exists) {
+          console.log('accessibility file does not exist');
+        }
+        if (res) {
+          console.log('scanned data recieved is', res.message);
+        }
+
+        if (res && res.message == "GET_LATEST_SCAN_DATA") {
+        // Append the new result
+          resultsArray.push(res);
+          console.log('resultsarray logging', resultsArray);
+        }
+
+        // Write the updated content back to the file
+        cy.writeFile(filePath, resultsArray, { log: true, timeout: 45000 });
+    });
+  });
+      });
+
+  });
+}
+
 Cypress.on('command:start', async (command) => {
   if(!command || !command.attributes) return;
   if(command.attributes.name == 'window' || command.attributes.name == 'then' || command.attributes.name == 'wrap' || command.attributes.name == 'wait') {
@@ -80,63 +144,9 @@ Cypress.on('command:start', async (command) => {
 
 
 console.log('log', "debugging scan form command " + command.attributes.name);
+
 cy.window().then((win) => {
-    let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
-    let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
-    let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
-    bestPracticeValue =  bestPracticeValue == "true" ? true : false;
-    needsReviewValue = needsReviewValue == "true" ? true : false;
-    const payloadToSend = {
-    message: 'SET_CONFIG',
-    wcagCriteria: wcagCriteriaValue,
-    bestPractice: bestPracticeValue,
-    needsReview: needsReviewValue
-    }
-
-    console.log('log', "payload to send " + payloadToSend);
-    let testId = Cypress.env("TEST_ID") || ""
-    
-    const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
-
-    cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
-    console.log('logging config reponse', res);
-    
-    const payload = {
-    message: 'GET_LATEST_SCAN_DATA',
-    }
-
-    cy.wrap(getScanData(win, payload), {timeout: 45000}).then((res) => {
-    LambdatestLog('log', "scanning data ");
-    
-
-    cy.task('initializeFile', filePath).then((filePath) => {
-      cy.readFile(filePath, { log: true, timeout: 45000 }).then((fileContent) => {
-          let resultsArray = [{}];
-          console.log('logging report', res);
-          // If the file is not empty, parse the existing content
-          if (fileContent) {
-              try {
-                  resultsArray = JSON.parse(JSON.stringify(fileContent));
-              } catch (e) {
-                console.log("parsing error for content " , fileContent)
-                  console.log('Error parsing JSON file:', e);
-                  return;
-              }
-          }
-          console.log('scanned data recieved is', res.message);
-          if (res.message == "GET_LATEST_SCAN_DATA") {
-          // Append the new result
-            resultsArray.push(res);
-            console.log('resultsarray logging', resultsArray);
-          }
-
-          // Write the updated content back to the file
-          cy.writeFile(filePath, resultsArray, { log: true, timeout: 45000 });
-      });
-    });
-        });
-
-    });
+  processAccessibilityReport(win);
 })
 })
 
@@ -149,72 +159,14 @@ return;
 
 afterEach(() => {
 console.log("after each hook")
+  let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+  if (!isAccessibilityLoaded){
+    console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+    return;
+  } 
   cy.window().then((win) => {
-    let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
-    let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
-    let needsReviewValue = Cypress.env("NEEDS_REVIEW") || false;
-
-    bestPracticeValue =  bestPracticeValue == "true" ? true : false;
-    needsReviewValue = needsReviewValue == "true" ? true : false;
-
-    let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
-    if (!isAccessibilityLoaded){
-      console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
-      return;
-    } 
-    
-    const payloadToSend = {
-    message: 'SET_CONFIG',
-    wcagCriteria: wcagCriteriaValue,
-    bestPractice: bestPracticeValue,
-    needsReview: needsReviewValue
-    }
-
-    console.log('log', "payload to send " + payloadToSend);
-    let testId = Cypress.env("TEST_ID") || ""
-    
-    const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
-
-    cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
-    console.log('logging config reponse', res);
-    
-    const payload = {
-    message: 'GET_LATEST_SCAN_DATA',
-    }
-
-    cy.wrap(getScanData(win, payload), {timeout: 45000}).then((res) => {
-    LambdatestLog('log', "scanning data ");
-    
-
-    cy.task('initializeFile', filePath).then((filePath) => {
-      cy.readFile(filePath, { log: true, timeout: 45000 }).then((fileContent) => {
-          let resultsArray = [{}];
-          console.log('logging report', res);
-          // If the file is not empty, parse the existing content
-          if (fileContent) {
-              try {
-                  resultsArray = JSON.parse(JSON.stringify(fileContent));
-              } catch (e) {
-                console.log("parsing error for content " , fileContent)
-                  console.log('Error parsing JSON file:', e);
-                  return;
-              }
-          }
-          console.log('scanned data recieved is', res.message);
-          if (res.message == "GET_LATEST_SCAN_DATA") {
-          // Append the new result
-            resultsArray.push(res);
-            console.log('resultsarray logging', resultsArray);
-          }
-
-          // Write the updated content back to the file
-          cy.writeFile(filePath, resultsArray, { log: true, timeout: 45000 });
-      });
-    });
-        });
-
-    });
-})
+    processAccessibilityReport(win);
+  })
 
 
 })
