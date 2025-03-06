@@ -133,26 +133,23 @@ function processAccessibilityReport(win){
   });
 }
 
-Cypress.on('command:start', async (command) => {
-  if(!command || !command.attributes) return;
-  if(command.attributes.name == 'window' || command.attributes.name == 'then' || command.attributes.name == 'wrap' || command.attributes.name == 'wait') {
-      return;
-  }
+commandsToWrap.forEach((command) => {
+    Cypress.Commands.overwrite(command, (originalFn, ...args) => {
+        let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+        if (!isAccessibilityLoaded) {
+            console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+            return originalFn(...args);
+        }
 
-  if (!commandsToWrap.includes(command.attributes.name)) return;
-  let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
-  if (!isAccessibilityLoaded){
-    console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
-    return;
-  } 
+        console.log('log', "debugging scan for command " + command);
+        cy.window().then((win) => {
+            processAccessibilityReport(win);
+        });
 
+        return originalFn(...args);
+    });
+});
 
-console.log('log', "debugging scan form command " + command.attributes.name);
-
-cy.window().then((win) => {
-  processAccessibilityReport(win);
-})
-})
 
 
 Cypress.on('command:end', (command) => {
