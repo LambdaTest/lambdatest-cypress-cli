@@ -133,26 +133,42 @@ function processAccessibilityReport(win){
   });
 }
 
-Cypress.on('window:load', async (command) => {
-  if(!command || !command.attributes) return;
-  if(command.attributes.name == 'window' || command.attributes.name == 'then' || command.attributes.name == 'wrap' || command.attributes.name == 'wait') {
-      return;
-  }
+// Cypress.on('window:load', async (command) => {
+//   if(!command || !command.attributes) return;
+//   if(command.attributes.name == 'window' || command.attributes.name == 'then' || command.attributes.name == 'wrap' || command.attributes.name == 'wait') {
+//       return;
+//   }
+//
+//   if (!commandsToWrap.includes(command.attributes.name)) return;
+//   let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+//   if (!isAccessibilityLoaded){
+//     console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+//     return;
+//   }
+//
+//
+// console.log('log', "debugging scan form command " + command.attributes.name);
+//
+// cy.window().then((win) => {
+//   processAccessibilityReport(win);
+// });
+// })
 
-  if (!commandsToWrap.includes(command.attributes.name)) return;
-  let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
-  if (!isAccessibilityLoaded){
-    console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
-    return;
-  }
+// Ensure scan runs AFTER visit completes
+Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
+    return originalFn(url, options).then(() => {
+        let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+        if (!isAccessibilityLoaded) {
+            console.log('log', "Accessibility not enabled.");
+            return;
+        }
 
-
-console.log('log', "debugging scan form command " + command.attributes.name);
-
-cy.window().then((win) => {
-  processAccessibilityReport(win);
-})
-})
+        cy.window().then((win) => {
+            console.log('log', "Running accessibility scan after visit: " + url);
+            processAccessibilityReport(win);
+        });
+    });
+});
 
 
 Cypress.on('command:end', (command) => {
