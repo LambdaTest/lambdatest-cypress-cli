@@ -2,7 +2,7 @@
 const LambdatestLog = (message) => {
     if (!Cypress.env('LAMBDATEST_LOGS')) return;
     cy.task('lambdatest_log', message);
-  }
+}
 
 const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'];
 
@@ -133,30 +133,31 @@ function processAccessibilityReport(win){
   });
 }
 
-// Cypress.on('window:load', async (command) => {
-//   if(!command || !command.attributes) return;
-//   if(command.attributes.name == 'window' || command.attributes.name == 'then' || command.attributes.name == 'wrap' || command.attributes.name == 'wait') {
-//       return;
-//   }
-//
-//   if (!commandsToWrap.includes(command.attributes.name)) return;
-//   let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
-//   if (!isAccessibilityLoaded){
-//     console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
-//     return;
-//   }
-//
-//
-// console.log('log', "debugging scan form command " + command.attributes.name);
-//
-// cy.window().then((win) => {
-//   processAccessibilityReport(win);
-// });
-// })
+Cypress.on('command:start', async (command) => {
+  if(!command || !command.attributes) return;
+  if(command.attributes.name == 'window' || command.attributes.name == 'then' || command.attributes.name == 'wrap' || command.attributes.name == 'wait') {
+      return;
+  }
+
+  if (!commandsToWrap.includes(command.attributes.name)) return;
+  let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+  if (!isAccessibilityLoaded){
+    console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+    return;
+  }
+
+
+console.log('log', "debugging scan form command " + command.attributes.name);
+
+cy.window().then((win) => {
+  processAccessibilityReport(win);
+});
+})
 
 // Ensure scan runs AFTER visit completes
 Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
-    return originalFn(url, options).then(() => {
+    function getReportAfterVisiting() {
+        originalFn(url, options)
         let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
         if (!isAccessibilityLoaded) {
             console.log('log', "Accessibility not enabled.");
@@ -167,7 +168,9 @@ Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
             console.log('log', "Running accessibility scan after visit: " + url);
             processAccessibilityReport(win);
         });
-    });
+    }
+
+    return getReportAfterVisiting();
 });
 
 
@@ -178,15 +181,15 @@ return;
 
 
 afterEach(() => {
-console.log("after each hook")
-  let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
-  if (!isAccessibilityLoaded){
-    console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
-    return;
-  } 
-  cy.window().then((win) => {
-    processAccessibilityReport(win);
-  })
+    console.log("after each hook")
+    let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+    if (!isAccessibilityLoaded){
+        console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+        return;
+    }
+    cy.window().then((win) => {
+        processAccessibilityReport(win);
+    })
 
 
 })
