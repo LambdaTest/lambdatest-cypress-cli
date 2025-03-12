@@ -99,6 +99,8 @@ async function processAccessibilityReport(url) {
        console.log("Logging response before sending to API:", scanData);
 
         try {
+            let testId = Cypress.env("TEST_ID") || ""
+            console.log("TestID is",testId);
             const response = await fetch("http://127.0.0.1:43000/cypress/v1/generateAccessibilityReport", {
                 method: "POST",
                 headers: {
@@ -106,7 +108,8 @@ async function processAccessibilityReport(url) {
                 },
                 body: JSON.stringify({
                     url: url,
-                    scanData: scanData
+                    scanData: scanData,
+                    testId :testId
                 })
             });
 
