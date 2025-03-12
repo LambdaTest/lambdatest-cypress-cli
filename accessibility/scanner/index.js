@@ -77,24 +77,49 @@ async function processAccessibilityReport(url) {
             needsReview: needsReviewValue
         };
 
-        console.log('log', "Payload to send: for url: ", payloadToSend,url);
+        console.log('log', "SET SCAN: Payload to send: for url: ", payloadToSend,url);
         try {
             let setResult = await setScanConfig(currentWindow, payloadToSend);
-            console.log('SET SCAN response:', setResult);
+            console.log('SET SCAN: response:', setResult);
         } catch (err) {
-            console.error("Error while setting scan", err);
+            console.error("SET SCAN: Error while setting scan", err);
+            return ;
         }
 
         let scanData;
         try {
             const payload = {message: 'GET_LATEST_SCAN_DATA'};
             scanData = await getScanData(currentWindow, payload);
-            LambdatestLog("LambdaTest Accessibility: Scanning URL");
+            LambdatestLog("GET SCAN:LambdaTest Accessibility: Scanning URL");
         } catch (err) {
             console.error("GET SCAN:Error while setting scan", err);
+            return ;
         }
 
        console.log("Logging response before sending to API:", scanData);
+
+        try {
+            const response = await fetch("http://127.0.0.1:43000/cypress/v1/generateAccessibilityReport", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    url: url,
+                    scanData: scanData
+                })
+            });
+
+            if (!response.ok) {
+                console.log("HTTP error! Status", response.status);
+                return ;
+            }
+
+            const result = await response.json();
+            console.log("Accessibility Report Response:", result);
+        }catch(err) {
+            console.error("Error while making api", err);
+        }
 
     } catch (error) {
         LambdatestLog("ERROR", error);
@@ -116,3 +141,8 @@ commandsToOverride.forEach((command) => {
 
     });
 });
+
+// AI:
+// mutliple it()
+// make error in set scan & get scan and ensure it doesnt break flow
+// virgin media repo run rishabh singh (hyperex)
