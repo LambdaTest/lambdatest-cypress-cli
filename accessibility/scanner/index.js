@@ -110,8 +110,8 @@ commandsToOverride.forEach((command) => {
         }
 
 
-        return originalFn(url, options).then(() => {
-            processAccessibilityReport(url);
+        return originalFn(url, options).then(async () => {
+            await processAccessibilityReport(url);
         })
 
     });
