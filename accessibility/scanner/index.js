@@ -100,6 +100,7 @@ async function processAccessibilityReport(url) {
 
         try {
             let testId = Cypress.env("TEST_ID") || ""
+            const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
             console.log("TestID is",testId);
             const response = await fetch("http://127.0.0.1:43000/cypress/v1/generateAccessibilityReport", {
                 method: "POST",
@@ -109,7 +110,8 @@ async function processAccessibilityReport(url) {
                 body: JSON.stringify({
                     url: url,
                     scanData: scanData,
-                    testId :testId
+                    testId :testId,
+                    accessibilityReportPath:filePath
                 })
             });
 
