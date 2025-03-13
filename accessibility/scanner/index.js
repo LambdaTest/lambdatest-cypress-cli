@@ -102,14 +102,19 @@ async function processAccessibilityReport(url) {
             let testId = Cypress.env("TEST_ID") || ""
             const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
             console.log("TestID is",testId);
-            const response = await fetch("http://127.0.0.1:43000/api/v1.0/cypress/generateAccessibilityReport", {
+            const payload = {
+                message: "GET_LATEST_SCAN_DATA",
+                data: scanData.data,
+                axeVersion: scanData.axeVersion
+            };
+            const response = await fetch("http://localhost:43000/api/v1.0/cypress/generateAccessibilityReport", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     url: url,
-                    scanData: scanData,
+                    scanData: payload,
                     testId :testId,
                     accessibilityReportPath:filePath
                 })
@@ -147,7 +152,4 @@ commandsToOverride.forEach((command) => {
     });
 });
 
-// AI:
-// mutliple it()
-// make error in set scan & get scan and ensure it doesnt break flow
-// virgin media repo run rishabh singh (hyperex)
+
