@@ -64,6 +64,26 @@ const getScanData = (win, payload) => {
     });
 };
 
+const sendScanData = (win, payload) => {
+    return new Promise((resolve, reject) => {
+        const isHttpOrHttps = /^(http|https):$/.test(win.location.protocol);
+        if (!isHttpOrHttps) return resolve();
+
+        function onReceiveSummary(event) {
+            win.document.removeEventListener("automation-custom-event", onReceiveSummary);
+            resolve(event.detail);
+        }
+
+        win.document.addEventListener("automation-custom-event", onReceiveSummary);
+        const e = new CustomEvent("accessibility-extension-custom-event", { detail: payload });
+        win.document.dispatchEvent(e);
+
+        setTimeout(() => {
+            resolve(new Error('automation-custom-event not received within timeout'));
+        }, 45000);
+    });
+};
+
 async function processAccessibilityReport(url) {
     try {
         let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
@@ -99,28 +119,21 @@ async function processAccessibilityReport(url) {
        console.log("Logging response before sending to API:", scanData);
 
         try {
+
             let testId = Cypress.env("TEST_ID") || ""
+            let reportAPI = Cypress.env("GENERATE_REPORT_API") || "http://localhost:43000/api/v1.0/cypress/generateAccessibilityReport"
             const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
             console.log("TestID is",testId);
-            const response = await fetch("http://localhost:43000/api/v1.0/cypress/generateAccessibilityReport", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    testId :testId,
-                    scanData: scanData,
-                    accessibilityReportPath:filePath
-                })
-            });
-
-            if (!response.ok) {
-                console.log("HTTP error! Status", response.status);
-                return ;
-            }
-
-            const result = await response.json();
-            console.log("Accessibility Report Response:", result);
+            const payloadToSend = {
+                message: 'SEND_ACESSIBILITY_DATA',
+                testId : testId,
+                scanData: scanData,
+                accessibilityReportPath:filePath,
+                api: reportAPI
+            };
+           
+            let response = await sendScanData(payloadToSend);
+            console.log("Accessibility Report Response:", response);
         }catch(err) {
             console.error("Error while making api", err);
         }
