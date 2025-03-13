@@ -99,6 +99,7 @@ async function processAccessibilityReport(url) {
 
         console.log('log', "SET SCAN: Payload to send: for url: ", payloadToSend,url);
         try {
+            console.log("Current Window Object:", currentWindow);
             let setResult = await setScanConfig(currentWindow, payloadToSend);
             console.log('SET SCAN: response:', setResult);
         } catch (err) {
