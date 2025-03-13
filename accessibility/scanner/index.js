@@ -102,20 +102,14 @@ async function processAccessibilityReport(url) {
             let testId = Cypress.env("TEST_ID") || ""
             const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
             console.log("TestID is",testId);
-            const payload = {
-                message: "GET_LATEST_SCAN_DATA",
-                data: scanData.data,
-                axeVersion: scanData.axeVersion
-            };
             const response = await fetch("http://localhost:43000/api/v1.0/cypress/generateAccessibilityReport", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    url: url,
-                    scanData: payload,
                     testId :testId,
+                    scanData: scanData,
                     accessibilityReportPath:filePath
                 })
             });
