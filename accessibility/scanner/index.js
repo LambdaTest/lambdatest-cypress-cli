@@ -33,7 +33,7 @@ const setScanConfig = (win, payload) => {
             console.log('log', "Received scan config data: ", event.detail);
             resolve(event.detail);
         }
-
+        console.log('log', "Dispactched event");
         win.document.addEventListener("automation-custom-event", onScanComplete);
         const e = new CustomEvent("accessibility-extension-custom-event", { detail: payload });
         win.document.dispatchEvent(e);
