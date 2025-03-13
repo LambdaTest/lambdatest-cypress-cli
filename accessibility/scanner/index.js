@@ -104,7 +104,7 @@ async function processAccessibilityReport(url) {
             console.log("TestID is",testId);
             const payload = {
                 message: "GET_LATEST_SCAN_DATA",
-                data: scanData.data,  // Ensure scanData already follows the required structure
+                data: scanData.data,
                 axeVersion: scanData.axeVersion
             };
             const response = await fetch("http://localhost:43000/api/v1.0/cypress/generateAccessibilityReport", {
@@ -152,7 +152,4 @@ commandsToOverride.forEach((command) => {
     });
 });
 
-// AI:
-// mutliple it()
-// make error in set scan & get scan and ensure it doesnt break flow
-// virgin media repo run rishabh singh (hyperex)
+
