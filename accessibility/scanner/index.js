@@ -123,7 +123,7 @@ async function processAccessibilityReport(url) {
 
             let testId = Cypress.env("TEST_ID") || "dummy1234"
             let reportAPI = Cypress.env("GENERATE_REPORT_API") || "http://localhost:43000/api/v1.0/cypress/generateAccessibilityReport"
-            const filePath =  (Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' ) + testId + '.json';
+            const filePath =  Cypress.env("ACCESSIBILITY_REPORT_PATH") || ('cypress/results/accessibilityReport_'  + testId + '.json');
             console.log("TestID is",testId);
             const payloadToSend = {
                 message: 'SEND_ACESSIBILITY_DATA',
