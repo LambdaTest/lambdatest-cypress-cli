@@ -220,11 +220,6 @@ function oldprocessAccessibilityReport(win){
 
 const overRideCommands = Cypress.env("ACCESSIBILITY_OVERIDE_COMMANDS") || false;
 if (overRideCommands) {
-    let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
-    if (!isAccessibilityLoaded){
-        console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
-        return ;
-    }
     commandsToOverride.forEach((command) => {
         Cypress.Commands.overwrite(command, (originalFn, url, options) => {
             let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
