@@ -10,6 +10,8 @@ const commandsToOverride = [
     'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'
 ];
 
+const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'];
+
 let currentWindow = null;
 Cypress.Commands.add('storeWindowObject', () => {
     cy.window().then(win => {
@@ -216,8 +218,13 @@ function oldprocessAccessibilityReport(win){
     });
 }
 
-const overRideCommands = Cypress.env("ACCESSIBILITY_OVERIDE_COMMANDS");
+const overRideCommands = Cypress.env("ACCESSIBILITY_OVERIDE_COMMANDS") || false;
 if (overRideCommands) {
+    let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+    if (!isAccessibilityLoaded){
+        console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+        return ;
+    }
     commandsToOverride.forEach((command) => {
         Cypress.Commands.overwrite(command, (originalFn, url, options) => {
             let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
