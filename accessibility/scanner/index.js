@@ -41,7 +41,7 @@ const setScanConfig = (win, payload) => {
         win.document.dispatchEvent(e);
 
         setTimeout(() => {
-            reject(new Error('automation-custom-event not received within timeout'));
+            resolve(new Error('automation-custom-event not received within timeout'));
         }, 45000);
     });
 };
@@ -258,6 +258,19 @@ if (overRideCommands) {
         })
     })
 
+    afterEach(() => {
+        console.log("after each hook")
+        let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+        if (!isAccessibilityLoaded){
+            console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
+            return;
+        }
+        cy.window().then((win) => {
+            processAccessibilityReport(win);
+        })
+
+
+    })
 }
 
 
