@@ -86,7 +86,7 @@ const sendScanData = (win, payload) => {
     });
 };
 
-async function processAccessibilityReport(url,newWindow) {
+async function processAccessibilityReport(url,windowNew) {
     try {
         let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
         let bestPracticeValue = Cypress.env("BEST_PRACTICE") === "true";
@@ -101,7 +101,7 @@ async function processAccessibilityReport(url,newWindow) {
 
         console.log('log', "SET SCAN: Payload to send: for url: ", payloadToSend,url);
         try {
-            let setResult = await setScanConfig(newWindow, payloadToSend);
+            let setResult = await setScanConfig(windowNew, payloadToSend);
             console.log('SET SCAN: response:', setResult);
         } catch (err) {
             console.error("SET SCAN: Error while setting scan", err);
@@ -111,7 +111,7 @@ async function processAccessibilityReport(url,newWindow) {
         let scanData;
         try {
             const payload = {message: 'GET_LATEST_SCAN_DATA'};
-            scanData = await getScanData(newWindow, payload);
+            scanData = await getScanData(windowNew, payload);
             LambdatestLog("GET SCAN:LambdaTest Accessibility: Scanning URL");
         } catch (err) {
             console.error("GET SCAN:Error while setting scan", err);
@@ -134,7 +134,7 @@ async function processAccessibilityReport(url,newWindow) {
                 apiUrl: reportAPI
             };
            try{
-               let response = await sendScanData(newWindow,payloadToSend);
+               let response = await sendScanData(windowNew,payloadToSend);
                console.log("Accessibility Report Response:", response);
            }catch(e){
                console.error("Error in Accessibility Report Response:",e);
@@ -228,10 +228,15 @@ if (overRideCommands) {
                 return originalFn(url, options);
             }
 
-            const currentWindow = window;  //
-            return originalFn(url, options).then(async () => {
-                await processAccessibilityReport(url,currentWindow);
-            })
+            return cy.window().then((currentWindowNew) => {
+                return originalFn(url, options).then(() => {
+                    Cypress.log({
+                        name: command, // Ensure the correct command name is logged
+                        message: url,
+                    });
+                    return processAccessibilityReport(url, currentWindowNew);
+                });
+            });
 
         });
     });
