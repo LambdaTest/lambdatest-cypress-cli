@@ -12,16 +12,6 @@ const commandsToOverride = [
 
 const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'];
 
-let currentWindow = null;
-Cypress.Commands.add('storeWindowObject', () => {
-    cy.window().then(win => {
-        currentWindow = win;
-    });
-});
-
-beforeEach(() => {
-    cy.storeWindowObject();
-});
 
 const setScanConfig = (win, payload) => {
     return new Promise((resolve, reject) => {
@@ -86,7 +76,7 @@ const sendScanData = (win, payload) => {
     });
 };
 
-async function processAccessibilityReport(url) {
+async function processAccessibilityReport(url,windowNew) {
     try {
         let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
         let bestPracticeValue = Cypress.env("BEST_PRACTICE") === "true";
@@ -101,7 +91,7 @@ async function processAccessibilityReport(url) {
 
         console.log('log', "SET SCAN: Payload to send: for url: ", payloadToSend,url);
         try {
-            let setResult = await setScanConfig(currentWindow, payloadToSend);
+            let setResult = await setScanConfig(windowNew, payloadToSend);
             console.log('SET SCAN: response:', setResult);
         } catch (err) {
             console.error("SET SCAN: Error while setting scan", err);
@@ -111,7 +101,7 @@ async function processAccessibilityReport(url) {
         let scanData;
         try {
             const payload = {message: 'GET_LATEST_SCAN_DATA'};
-            scanData = await getScanData(currentWindow, payload);
+            scanData = await getScanData(windowNew, payload);
             LambdatestLog("GET SCAN:LambdaTest Accessibility: Scanning URL");
         } catch (err) {
             console.error("GET SCAN:Error while setting scan", err);
@@ -134,7 +124,7 @@ async function processAccessibilityReport(url) {
                 apiUrl: reportAPI
             };
            try{
-               let response = await sendScanData(currentWindow,payloadToSend);
+               let response = await sendScanData(windowNew,payloadToSend);
                console.log("Accessibility Report Response:", response);
            }catch(e){
                console.error("Error in Accessibility Report Response:",e);
@@ -227,12 +217,16 @@ if (overRideCommands) {
                 console.log('log', "Accessibility not enabled.");
                 return originalFn(url, options);
             }
-
-
-            return originalFn(url, options).then(async () => {
-
-                await processAccessibilityReport(url);
-            })
+            Cypress.log({
+                name: command, // Display the passed command name
+                displayName: `${command}`, // Change how it looks in the Cypress log
+                message: url,
+            });
+            return cy.window().then((currentWindowNew) => {
+                return originalFn(url, options).then(() => {
+                    return processAccessibilityReport(url, currentWindowNew);
+                });
+            });
 
         });
     });
