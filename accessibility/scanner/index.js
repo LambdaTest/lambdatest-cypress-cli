@@ -86,7 +86,7 @@ const sendScanData = (win, payload) => {
     });
 };
 
-async function processAccessibilityReport(url) {
+async function processAccessibilityReport(url,newWindow) {
     try {
         let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
         let bestPracticeValue = Cypress.env("BEST_PRACTICE") === "true";
@@ -101,7 +101,7 @@ async function processAccessibilityReport(url) {
 
         console.log('log', "SET SCAN: Payload to send: for url: ", payloadToSend,url);
         try {
-            let setResult = await setScanConfig(currentWindow, payloadToSend);
+            let setResult = await setScanConfig(newWindow, payloadToSend);
             console.log('SET SCAN: response:', setResult);
         } catch (err) {
             console.error("SET SCAN: Error while setting scan", err);
@@ -111,7 +111,7 @@ async function processAccessibilityReport(url) {
         let scanData;
         try {
             const payload = {message: 'GET_LATEST_SCAN_DATA'};
-            scanData = await getScanData(currentWindow, payload);
+            scanData = await getScanData(newWindow, payload);
             LambdatestLog("GET SCAN:LambdaTest Accessibility: Scanning URL");
         } catch (err) {
             console.error("GET SCAN:Error while setting scan", err);
@@ -228,10 +228,9 @@ if (overRideCommands) {
                 return originalFn(url, options);
             }
 
-
+            const currentWindow = window;  //
             return originalFn(url, options).then(async () => {
-
-                await processAccessibilityReport(url);
+                await processAccessibilityReport(url,currentWindow);
             })
 
         });
