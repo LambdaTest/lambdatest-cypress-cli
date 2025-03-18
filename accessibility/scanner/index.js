@@ -12,16 +12,16 @@ const commandsToOverride = [
 
 const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'];
 
-let currentWindow = null;
-Cypress.Commands.add('storeWindowObject', () => {
-    cy.window().then(win => {
-        currentWindow = win;
-    });
-});
-
-beforeEach(() => {
-    cy.storeWindowObject();
-});
+// let currentWindow = null;
+// Cypress.Commands.add('storeWindowObject', () => {
+//     cy.window().then(win => {
+//         currentWindow = win;
+//     });
+// });
+//
+// beforeEach(() => {
+//     cy.storeWindowObject();
+// });
 
 const setScanConfig = (win, payload) => {
     return new Promise((resolve, reject) => {
