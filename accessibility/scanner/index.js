@@ -134,7 +134,7 @@ async function processAccessibilityReport(url,newWindow) {
                 apiUrl: reportAPI
             };
            try{
-               let response = await sendScanData(currentWindow,payloadToSend);
+               let response = await sendScanData(newWindow,payloadToSend);
                console.log("Accessibility Report Response:", response);
            }catch(e){
                console.error("Error in Accessibility Report Response:",e);
