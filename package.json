@@ -27,7 +27,8 @@
     "node-stream-zip": "^1.15.0",
     "semver": "^7.3.5",
     "ws": "^7.4.3",
-    "yargs": "^16.1.0"
+    "yargs": "^16.1.0",
+    "yaml": "^2.4.1"
   },
   "license": "MIT",
   "preferGlobal": true,
