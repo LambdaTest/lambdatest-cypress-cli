@@ -229,11 +229,13 @@ if (overRideCommands) {
             }
 
             return cy.window().then((currentWindowNew) => {
+                Cypress.log({
+                    name: command, // Display the passed command name
+                    displayName: `Accessibility: ${command}`, // Change how it looks in the Cypress log
+                    message: url,
+                });
+
                 return originalFn(url, options).then(() => {
-                    Cypress.log({
-                        name: command, // Ensure the correct command name is logged
-                        message: url,
-                    });
                     return processAccessibilityReport(url, currentWindowNew);
                 });
             });
