@@ -227,14 +227,12 @@ if (overRideCommands) {
                 console.log('log', "Accessibility not enabled.");
                 return originalFn(url, options);
             }
-
+            Cypress.log({
+                name: command, // Display the passed command name
+                displayName: `Accessibility: ${command}`, // Change how it looks in the Cypress log
+                message: url,
+            });
             return cy.window().then((currentWindowNew) => {
-                Cypress.log({
-                    name: command, // Display the passed command name
-                    displayName: `Accessibility: ${command}`, // Change how it looks in the Cypress log
-                    message: url,
-                });
-
                 return originalFn(url, options).then(() => {
                     return processAccessibilityReport(url, currentWindowNew);
                 });
