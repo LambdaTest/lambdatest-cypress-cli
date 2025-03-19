@@ -12,6 +12,44 @@ const commandsToOverride = [
 
 const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'];
 
+const performModifiedScan = (originalFn, Subject, stateType, ...args) => {
+    let customChaining = cy.wrap(null).processAccessibilityReport();
+    const changeSub = (args, stateType, newSubject) => {
+        if (stateType !== 'parent') {
+            return [newSubject, ...args.slice(1)];
+        }
+        return args;
+    }
+    const runCustomizedCommand = () => {
+        if (!Subject) {
+            let orgS1, orgS2, cypressCommandSubject = null;
+            if((orgS2 = (orgS1 = cy).subject) !==null && orgS2 !== void 0){
+                cypressCommandSubject = orgS2.call(orgS1);
+            }
+            customChaining.then(()=> cypressCommandSubject).then(() => {originalFn(...args)});
+        } else {
+            let orgSC1, orgSC2, timeO1, cypressCommandChain = null, setTimeout = null;
+            if((timeO1 = args.find(arg => arg !== null && arg !== void 0 ? arg.timeout : null)) !== null && timeO1 !== void 0) {
+                setTimeout = timeO1.timeout;
+            }
+            if((orgSC1 = (orgSC2 = cy).subjectChain) !== null && orgSC1 !== void 0){
+                cypressCommandChain = orgSC1.call(orgSC2);
+            }
+            customChaining.performScanSubjectQuery(cypressCommandChain, setTimeout).then({timeout: 30000}, (newSubject) => originalFn(...changeSub(args, stateType, newSubject)));
+        }
+    }
+    runCustomizedCommand();
+}
+
+Cypress.Commands.add('processAccessibilityReport', () => {
+    try {
+        cy.window().then((win) => {
+            return cy.wrap(processAccessibilityReport(win), { timeout: 45000 });
+        });
+    } catch(error) {
+        console.log(`Error in performing scan with error: ${error.message}`);
+    }
+})
 
 const setScanConfig = (win, payload) => {
     return new Promise((resolve, reject) => {
@@ -76,7 +114,7 @@ const sendScanData = (win, payload) => {
     });
 };
 
-async function processAccessibilityReport(url,windowNew) {
+const processAccessibilityReport = async (windowNew) => {
     try {
         let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
         let bestPracticeValue = Cypress.env("BEST_PRACTICE") === "true";
@@ -89,7 +127,7 @@ async function processAccessibilityReport(url,windowNew) {
             needsReview: needsReviewValue
         };
 
-        console.log('log', "SET SCAN: Payload to send: for url: ", payloadToSend,url);
+        console.log('log', "SET SCAN: Payload to send: for url: ", payloadToSend);
         try {
             let setResult = await setScanConfig(windowNew, payloadToSend);
             console.log('SET SCAN: response:', setResult);
@@ -211,22 +249,18 @@ const overRideCommands = JSON.parse(Cypress.env("ACCESSIBILITY_OVERIDE_COMMANDS"
 
 if (overRideCommands) {
     commandsToOverride.forEach((command) => {
-        Cypress.Commands.overwrite(command, (originalFn, url, options) => {
+        Cypress.Commands.overwrite(command, (originalFn, ...args) => {
             let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
-            if (!isAccessibilityLoaded) {
-                console.log('log', "Accessibility not enabled.");
-                return originalFn(url, options);
+            const state = cy.state('current'), Subject = 'getSubjectFromChain' in cy;
+            const stateName = state === null || state === void 0 ? void 0 : state.get('name');
+            let stateType = null;
+            if (!isAccessibilityLoaded || (stateName && stateName !== command)) {
+                return originalFn(...args);
             }
-            Cypress.log({
-                name: command, // Display the passed command name
-                displayName: `${command}`, // Change how it looks in the Cypress log
-                message: url,
-            });
-            return cy.window().then((currentWindowNew) => {
-                return originalFn(url, options).then(() => {
-                    return processAccessibilityReport(url, currentWindowNew);
-                });
-            });
+            if(state !== null && state !== void 0){
+                stateType = state.get('type');
+            }
+            performModifiedScan(originalFn, Subject, stateType, ...args);
 
         });
     });
@@ -260,13 +294,16 @@ if (overRideCommands) {
             return;
         }
         cy.window().then((win) => {
-            processAccessibilityReport(win);
+            oldprocessAccessibilityReport(win);
         })
 
 
     })
 }
 
-
+Cypress.Commands.addQuery('performScanSubjectQuery', function (chaining, setTimeout) {
+    this.set('timeout', setTimeout);
+    return () => cy.getSubjectFromChain(chaining);
+});
 
 
