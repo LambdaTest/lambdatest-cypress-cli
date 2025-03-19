@@ -127,7 +127,7 @@ const processAccessibilityReport = async (windowNew) => {
             needsReview: needsReviewValue
         };
 
-        console.log('log', "SET SCAN: Payload to send: for url: ", payloadToSend);
+        console.log('log', "SET SCAN: Payload to send: ", payloadToSend);
         try {
             let setResult = await setScanConfig(windowNew, payloadToSend);
             console.log('SET SCAN: response:', setResult);
@@ -285,8 +285,16 @@ if (overRideCommands) {
             oldprocessAccessibilityReport(win);
         })
     })
+}
+afterEach(() => {
+    if(overRideCommands){
+        cy.window().then(async (win) => {
+            let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+            if (!isAccessibilityLoaded) return cy.wrap({});
 
-    afterEach(() => {
+            cy.wrap(processAccessibilityReport(win), {timeout: 30000})
+        });
+    }else{
         console.log("after each hook")
         let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
         if (!isAccessibilityLoaded){
@@ -296,10 +304,9 @@ if (overRideCommands) {
         cy.window().then((win) => {
             oldprocessAccessibilityReport(win);
         })
+    }
 
-
-    })
-}
+})
 
 Cypress.Commands.addQuery('performScanSubjectQuery', function (chaining, setTimeout) {
     this.set('timeout', setTimeout);
