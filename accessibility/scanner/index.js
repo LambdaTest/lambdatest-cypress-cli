@@ -297,7 +297,7 @@ afterEach(() => {
             let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
             if (!isAccessibilityLoaded) return cy.wrap({});
 
-            cy.wrap(processAccessibilityReport(win), {timeout: 30000})
+            cy.wrap(processAccessibilityReport(win), {timeout: 45000})
         });
     }else{
         console.log("after each hook")
@@ -313,11 +313,11 @@ afterEach(() => {
 
 })
 
-if (!Cypress.Commands.hasOwnProperty('_lambdaTestSDKQueryAdded')) {
+if (!Cypress.Commands.hasOwnProperty('_lambdaTestAcessibilityQueryAdded')) {
     Cypress.Commands.addQuery('performScanSubjectQuery', function (chaining, setTimeout) {
         this.set('timeout', setTimeout);
         return () => cy.getSubjectFromChain(chaining);
     });
-    Cypress.Commands._lambdaTestSDKQueryAdded = true;
+    Cypress.Commands._lambdaTestAcessibilityQueryAdded = true;
 }
 
