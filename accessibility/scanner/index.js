@@ -20,7 +20,7 @@ const performModifiedScan = (originalFn, Subject, stateType, ...args) => {
 
     const runCustomizedCommand = () => {
         if (!Subject) {
-            const cypressCommandSubject = cy.subject?.() || cy.wrap(null);
+            const cypressCommandSubject = cy.subject ? cy.subject() : cy.wrap(null);
             customChaining.then(() => cypressCommandSubject).then(() => originalFn(...args));
         } else {
             const timeoutArg = args.find(arg => arg?.timeout)?.timeout;
