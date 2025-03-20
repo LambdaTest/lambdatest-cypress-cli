@@ -69,7 +69,7 @@ const Accessibility = (on, config) => {
       config.env.ACCESSIBILITY = process.env.ACCESSIBILITY;
       config.env.TEST_ID = process.env.TEST_ID;
       config.env.ACCESSIBILITY_OVERIDE_COMMANDS = process.env.ACCESSIBILITY_OVERIDE_COMMANDS;
-      config.env.GENERATE_REPORT_API = process.env.GENERATE_REPORT_API;
+      config.env.GENERATE_REPORT_API = process.env.GENERATE_REPORT_API || "NA";
       console.log(`parameter for accessibility report ACCESSIBILITY - ` + config.env.ACCESSIBILITY)
       console.log(`parameter for accessibility report WCAG_CRITERIA - ` + config.env.WCAG_CRITERIA)
       console.log(`parameter for accessibility report BEST_PRACTICE -` + config.env.BEST_PRACTICE)
