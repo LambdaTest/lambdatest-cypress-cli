@@ -13,7 +13,7 @@ const commandsToOverride = [
 const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'];
 
 const performModifiedScan = (originalFn, Subject, stateType, ...args) => {
-    let customChaining = cy.wrap(null).performScan();
+    let customChaining = cy.wrap(null).processAccessibilityReport();
     const updateSubj = (args, stateType, newSubject) =>
         stateType === 'parent' ? args : [newSubject, ...args.slice(1)];
 
