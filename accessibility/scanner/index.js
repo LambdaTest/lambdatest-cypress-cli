@@ -13,53 +13,39 @@ const commandsToOverride = [
 const commandsToWrap = ['visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check', 'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scroll', 'scrollTo', 'blur', 'focus', 'go', 'reload', 'submit', 'viewport', 'origin'];
 
 const performModifiedScan = (originalFn, Subject, stateType, ...args) => {
-    // Initialize custom chaining
-    const customChaining = cy.wrap(null).performScan();
+    let customChaining = cy.wrap(null).performScan();
+    const updateSubj = (args, stateType, newSubject) =>
+        stateType === 'parent' ? args : [newSubject, ...args.slice(1)];
 
-    // Function to modify arguments based on stateType
-    const updateArgs = (args, stateType, newSubject) => {
-        return stateType !== 'parent' ? [newSubject, ...args.slice(1)] : args;
-    };
+    const runCustomizedChainingCommand = () => {
+        if (!Subject) {
+            let cypressCommandSubject = null;
+            const subjectFn = cy && cy.subject;
+            if (subjectFn !== null && subjectFn !== void 0) {
+                cypressCommandSubject = subjectFn.call(cy);
+            }
 
-    // Extract timeout from args if present
-    const getTimeout = (args) => {
-        const timeoutArg = args.find(arg => arg && arg.timeout !== undefined);
-        return timeoutArg?.timeout;
-    };
-
-    // Get the current Cypress subject
-    const getCurrentSubject = () => {
-        return cy.subject?.() || null;
-    };
-
-    // Get the current Cypress subject chain
-    const getSubjectChain = () => {
-        return cy.subjectChain?.() || null;
-    };
-
-    // Execute the command pipeline
-    if (!Subject) {
-        // Handle case without Subject
-        const cypressCommandSubject = getCurrentSubject();
-
-        customChaining
-            .then(() => cypressCommandSubject)
-            .then(() => {
-                originalFn(...args);
-            });
-    } else {
-        // Handle case with Subject
-        const cypressCommandChain = getSubjectChain();
-        const timeout = getTimeout(args);
-
-        customChaining
-            .performScanSubjectQuery(cypressCommandChain, timeout)
-            .then({ timeout: 30000 }, (newSubject) => {
-                originalFn(...updateArgs(args, stateType, newSubject));
-            });
+            customChaining
+                .then(() => cypressCommandSubject)
+                .then(() => {
+                    originalFn(...args);
+                });
+        } else {
+            let cypressCommandChain = null, setTimeout = null;
+            // Extract timeout value if present
+            const timeoutArg = args.find(arg => arg !== null && arg !== void 0 ? arg.timeout : null);
+            if (timeoutArg !== null && timeoutArg !== void 0) {
+                setTimeout = timeoutArg.timeout;
+            }
+            const subjectChainFn = cy && cy.subjectChain;
+            if (subjectChainFn !== null && subjectChainFn !== void 0) {
+                cypressCommandChain = subjectChainFn.call(cy);
+            }
+            customChaining.performScanSubjectQuery(cypressCommandChain, setTimeout).then({timeout: 30000}, (newSubject) => originalFn(...updateSubj(args, stateType, newSubject)));
+        }
     }
-};
-
+    runCustomizedChainingCommand();
+}
 
 Cypress.Commands.add('processAccessibilityReport', () => {
     try {
