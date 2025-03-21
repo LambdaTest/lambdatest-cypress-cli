@@ -448,6 +448,13 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["geo_location"] = "";
     }
 
+    //Check for timezone
+    if ("timezone" in args) {
+      lt_config["run_settings"]["timezone"] = args["timezone"];
+    } else if (!lt_config["run_settings"]["timezone"]) {
+      lt_config["run_settings"]["timezone"] = "";
+    }
+
     //Check for stop on failure location
     if ("stop_on_failure" in args) {
       lt_config["run_settings"]["stop_on_failure"] = true;
