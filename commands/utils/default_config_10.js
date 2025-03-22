@@ -26,7 +26,6 @@ module.exports = {
     npm_dependencies: {
       cypress: "10.5.0",
     },
-    timezone:"",
   },
   tunnel_settings: {
     tunnel: false,

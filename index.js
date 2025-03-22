@@ -250,11 +250,6 @@ const argv = require("yargs")
           alias: "accessibility",
           describe: "enable accessibility testing for cypress.",
           type: "bool",
-        })
-        .option("timezone",{
-          alias: "tz",
-          describe: "Set custom timezone in machine for cypress.",
-          type: "string",
         });
     },
     function (argv) {
