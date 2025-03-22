@@ -313,7 +313,7 @@ afterEach(() => {
 
 })
 
-if (!Cypress.Commands.hasOwnProperty('_lambdaTestAcessibilityQueryAdded')) {
+if (!Cypress.Commands.hasOwnProperty('_lambdaTestAcessibilityQueryAdded') && (overRideCommands)) {
     Cypress.Commands.addQuery('performScanSubjectQuery', function (chaining, setTimeout) {
         this.set('timeout', setTimeout);
         return () => cy.getSubjectFromChain(chaining);
