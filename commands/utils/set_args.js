@@ -455,6 +455,12 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["timezone"] = "";
     }
 
+    if ("privateCloud" in args) {
+      lt_config["run_settings"]["privateCloud"] = args["privateCloud"];
+    }else if (!lt_config["run_settings"]["privateCloud"]) {
+      lt_config["run_settings"]["privateCloud"] = false ;
+    }
+
     //Check for stop on failure location
     if ("stop_on_failure" in args) {
       lt_config["run_settings"]["stop_on_failure"] = true;
