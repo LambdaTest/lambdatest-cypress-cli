@@ -452,11 +452,6 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
 
-    if ("privateCloud" in lt_config["run_settings"]) {
-      if (![true, false].includes(lt_config["run_settings"]["privateCloud"])) {
-        reject("Error!! boolean value is expected in privateCloud key");
-      }
-    }
 
     if(lt_config)
     resolve(cypress_version);
