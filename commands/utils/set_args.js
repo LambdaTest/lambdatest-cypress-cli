@@ -456,7 +456,11 @@ function sync_args_from_cmd(args) {
     }
 
     if ("privateCloud" in args) {
-      lt_config["run_settings"]["privateCloud"] = args["privateCloud"];
+      if (lt_config["run_settings"]["privateCloud"]=="true"){
+        lt_config["run_settings"]["privateCloud"] = true;
+      }else{
+        lt_config["run_settings"]["privateCloud"] = false;
+      }
     }else if (!lt_config["run_settings"]["privateCloud"]) {
       lt_config["run_settings"]["privateCloud"] = false ;
     }
