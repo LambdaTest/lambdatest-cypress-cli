@@ -1,7 +1,15 @@
 const fs = require('fs');
 const yaml = require('yaml');
 const batcher = require('../commands/utils/batch/batcher.js'); 
+const platformMapping={
+  "windows 10":"win",
+  "windows 11":"win11",
+  "linux":"linux",
+  "macos monterey":"mac",
+  "macos ventura":"mac13",
+  "macos sequoia":"mac15",
 
+}
 function convertConfig(lt_config, outputFilePath) {
   return new Promise((resolve, reject) => {
     try {
@@ -11,14 +19,17 @@ function convertConfig(lt_config, outputFilePath) {
         globalTimeout: 90,
         testSuiteTimeout: 90,
         testSuiteStep: 90,
-        runson: "${{ matrix.os }}",
+        runson: "${matrix.os}",
         cypress: true,
         concurrency: 2,
         jobLabel: ["heJob"],
         pre: [],
-        cacheKey: '{{ checksum "package.json" }}',
+        cacheKey: '{{ checksum "package.lock.json" }}',
         cacheDirectories: ["node_modules", "cypressCache"],
-        env: { CYPRESS_CACHE_FOLDER: "cypressCache" },
+        env: {
+          CYPRESS_CACHE_FOLDER: "cypressCache",
+          HYPEREXECUTE_CUSTOM_BUILD: "",
+        },
         matrix: { browser: [], test: [], os: new Set() },
         testSuites: [
           "npx cypress run --browser=$browser --headed --config video=false --spec $test",
@@ -32,12 +43,23 @@ function convertConfig(lt_config, outputFilePath) {
           GeoLocation: "",
         },
         uploadArtefacts: [],
+        project: {
+          name: "cypress_project",
+          differentialUpload: {
+            enabled: true,
+            ttlHours:60,
+          },
+        },
       };
 
       // add browsers,platform in yaml matrix
       for (let i = 0; i < obj.browsers.length; i++) {
         for (let j = 0; j < obj.browsers[i].versions.length; j++) {
-          he_yaml.matrix.os.add(obj.browsers[i].platform);
+          if (platformMapping[obj.browsers[i].platform.toLowerCase()]){
+            he_yaml.matrix.os.add(platformMapping[obj.browsers[i].platform.toLowerCase()]);
+          }else{
+            he_yaml.matrix.os.add(obj.browsers[i].platform)
+          }
           he_yaml.matrix.browser.push(
             obj.browsers[i].browser + "-" + obj.browsers[i].versions[j]
           );
@@ -45,10 +67,13 @@ function convertConfig(lt_config, outputFilePath) {
       }
 
       he_yaml.cypressOps.Build = obj.run_settings.build_name;
+      he_yaml.env.HYPEREXECUTE_CUSTOM_BUILD = obj.run_settings.build_name;
       he_yaml.cypressOps.Network = obj.run_settings.network;
       he_yaml.cypressOps.DedicatedProxy = obj.run_settings.dedicated_proxy;
       he_yaml.concurrency = obj.run_settings.parallels;
-
+      // he_yaml.concurrency = obj.run_settings.parallels;
+      // he_yaml.parallelism = obj.run_settings.parallels;
+      he_yaml.combineTasksInMatrixMode=true;
       if (obj.run_settings.downloads) {
         he_yaml.uploadArtefacts.push({
           name: "artefacts",
@@ -62,39 +87,48 @@ function convertConfig(lt_config, outputFilePath) {
         );
       }
 
-      if (obj.run_settings.npm_dependencies === undefined) {
+      if (obj.run_settings.npm_dependencies) {
         he_yaml.pre.push("npm install");
       }
 
-      if (obj.tunnel_settings !== undefined) {
-        if (obj.tunnel_settings.tunnel !== undefined) {
-          he_yaml.Tunnel = obj.tunnel_settings.tunnel;
-        }
+      if (obj.tunnel_settings && obj.tunnel_settings.tunnel_name){
+        he_yaml.tunnelNames = [obj.tunnel_settings.tunnel_name];
       }
-
-      if (obj.run_settings.stop_on_failure !== undefined) {
+      if (obj.run_settings.stop_on_failure ) {
         he_yaml.failFast = { maxNumberOfTests: 1 };
       }
 
-      if (obj.run_settings.sys_envs !== undefined) {
+      if (obj.run_settings.sys_envs) {
         for (key in obj.run_settings.sys_envs) {
           he_yaml.env[key] = obj.run_settings.sys_envs[key];
         }
       }
 
-      if (obj.run_settings.envs !== undefined) {
+      if (obj.run_settings.envs ) {
         for (key in obj.run_settings.envs) {
           he_yaml.env[key] = obj.run_settings.envs[key];
         }
       }
 
-      if (obj.run_settings.geo_location !== undefined) {
+      if (obj.run_settings.geo_location) {
         he_yaml.cypressOps.GeoLocation = obj.run_settings.geo_location;
       }
-
-      if (obj.run_settings.ignore_files.length > 0) {
-        fs.writeFileSync(".hyperexecuteignore", obj.run_settings.ignore_files.join("\n"));
+      if (!obj.run_settings.ignore_files){
+        obj.run_settings.ignore_files=[]
       }
+      let ignore_files=[ "node_modules",
+        "node_modules/*",
+        "test.zip",
+        "project.zip",
+        "mochawesome-report/**/*",
+        "cypress/screenshots/**/*",
+        "cypress/videos/**/*",
+        "cypress/results/**/*",
+        "lambdatest-artefacts/**/*",
+        "*.lock"]
+        obj.run_settings.ignore_files=obj.run_settings.ignore_files.concat(ignore_files)
+      fs.writeFileSync(".hyperexecuteignore", obj.run_settings.ignore_files.join("\n"));
+      
 
       if (obj.run_settings.useNodeVersion) {
         he_yaml.runtime = { language: "node", version: obj.run_settings.useNodeVersion };

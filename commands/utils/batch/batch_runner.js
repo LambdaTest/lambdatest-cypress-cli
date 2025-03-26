@@ -16,11 +16,12 @@ const { fail } = require("yargs");
 const https = require('https');
 const axios = require('axios');
 const converter=require("../../../converter/converter.js");
+const { execSync } = require('child_process');
 
 var batchCounter = 0;
 var totalBatches = 0;
 
-function run_test(payload, env = "prod", rejectUnauthorized) {
+function run_test(payload, env = "prod", rejectUnauthorized,lt_config) {
   return new Promise(function (resolve, reject) {
     let options = {
       url: constants[env].INTEGRATION_BASE_URL + constants.RUN_URL,
@@ -30,70 +31,275 @@ function run_test(payload, env = "prod", rejectUnauthorized) {
       options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
     }
     let responseData = null;
-
-    axios.post(options.url, options.data, options)
-    .then(response => {
-      responseData = response.data;
-      // console.log(response);
-      build_id = responseData["value"]["message"]
-            .split("=")
-            [responseData["value"]["message"].split("=").length - 1].split(
-              "&"
-            )[0];
-          session_id = responseData["value"]["message"]
-            .split("=")
-            [responseData["value"]["message"].split("=").length - 1].split(
-              "&"
-            )[1];
-          if (parseInt(build_id) == 0) {
-            reject("Some Error occured on Lambdatest Server");
-          } else {
-            //Write session_id to a file
-            data = { build_id: build_id, session_id: session_id };
-            fs.writeFileSync(
-              "lambdatest_run.json",
-              JSON.stringify(data, null, 3)
-            );
-            console.log(
-              `Uploaded tests successfully `,
-              responseData["value"]["message"].substr(
-                0,
-                responseData["value"]["message"].length -
-                  (session_id.length + 1)
-              )
-            );
-            smartuiLink = responseData["value"]["smartuiLink"]
-            if (smartuiLink !== undefined && smartuiLink !== "") {
-            console.log('SmartUI link for the project: ' + smartuiLink)
-            }
-            resolve(session_id);
-          }
-    })
-    .catch(error => {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        if (error.response.status != 200) {
-          if (error.response && error.response.data) {
-          reject(error.response.data);
-          } else {
-            reject(error.response);
-          }
-        } else {
-          reject(error.response);
-        }
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
-        reject(error.cause);
-      } else {
-        reject(error);
+    getFeatureFlags(
+      lt_config["lambdatest_auth"]["username"],
+      lt_config["lambdatest_auth"]["access_key"],
+      env
+    ).then(async function (featureFlags) {
+      // this is used for fallback to magicleap in case cli fails
+      var run_on_hyper=false
+      if (featureFlags.data && featureFlags.data.includes("cypress-runon-hyper") ) {
+        run_on_hyper=true
       }
-      })
+      if (run_on_hyper) {
+        try {
+          await executeHyperExecuteCLI(
+            lt_config["lambdatest_auth"]["username"],
+            lt_config["lambdatest_auth"]["access_key"],
+            "he_conv.yaml",
+            env,
+            lt_config["run_settings"]["sync"]
+          );
+          let jobID = getLastJobIDFromLog();
+          let build_id;
+          try {
+            if (jobID) {
+              build_id = await pollJobStatus(
+                jobID,
+                lt_config["lambdatest_auth"]["username"],
+                lt_config["lambdatest_auth"]["access_key"],
+                env
+              );
+            }
+          } catch (error) {
+            console.log("could not fetch build id ", error);
+          }
+          //Write session_id to a file
+          data = { build_id: build_id, session_id: jobID };
+          fs.writeFileSync(
+            "lambdatest_run.json",
+            JSON.stringify(data, null, 3)
+          );
+          console.log(
+            `Uploaded tests successfully Check Dashboard : ${constants.Dashboard_URL[env]}${build_id}`
+          );
+          resolve({ session_id: jobID, hyperexecute: true });
+        } catch (error) {
+          run_on_hyper = false;
+          try {
+            // kill the running hyperexecute-cli process
+            const osType = type();
+            if (osType === 'Windows_NT') {
+              execSync('taskkill /IM hyperexecute-cli.exe /F');
+            } else {
+              execSync('pkill -f hyperexecute-cli');
+            }
+            // console.log('Successfully terminated hyperexecute-cli process.');
+          } catch (error) {
+            // we don't want to show these errors to user
+            // console.error('Error while terminating hyperexecute-cli process:', error.message);
+          }
+        }
+        // console.log("setting  run_on_hyper = false;",run_on_hyper)
+      } 
+      if (!run_on_hyper) {
+        // console.log("running on ML")
+        axios
+          .post(options.url, options.data, options)
+          .then((response) => {
+            responseData = response.data;
+            // console.log(response);
+            build_id = responseData["value"]["message"]
+              .split("=")
+              [responseData["value"]["message"].split("=").length - 1].split(
+                "&"
+              )[0];
+            session_id = responseData["value"]["message"]
+              .split("=")
+              [responseData["value"]["message"].split("=").length - 1].split(
+                "&"
+              )[1];
+            if (parseInt(build_id) == 0) {
+              reject("Some Error occured on Lambdatest Server");
+            } else {
+              //Write session_id to a file
+              data = { build_id: build_id, session_id: session_id };
+              fs.writeFileSync(
+                "lambdatest_run.json",
+                JSON.stringify(data, null, 3)
+              );
+              console.log(
+                `Uploaded tests successfully `,
+                responseData["value"]["message"].substr(
+                  0,
+                  responseData["value"]["message"].length -
+                    (session_id.length + 1)
+                )
+              );
+              smartuiLink = responseData["value"]["smartuiLink"];
+              if (smartuiLink !== undefined && smartuiLink !== "") {
+                console.log("SmartUI link for the project: " + smartuiLink);
+              }
+              resolve({ session_id: session_id, hyperexecute: false });
+            }
+          })
+          .catch((error) => {
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              if (error.response.status != 200) {
+                if (error.response && error.response.data) {
+                  reject(error.response.data);
+                } else {
+                  reject(error.response);
+                }
+              } else {
+                reject(error.response);
+              }
+            } else if (error.request) {
+              // The request was made but no response was received
+              // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+              // http.ClientRequest in node.js
+              reject(error.cause);
+            } else {
+              reject(error);
+            }
+          });
+      }
+    });
+    
 
   });
 }
+
+async function getFeatureFlags(username, accessKey,env="prod") {
+  return new Promise((resolve, reject) => {
+    const url = constants.FeatureFlagURL[env];
+    // console.log("getFeatureFlags url is ",url)
+    const auth = Buffer.from(`${username}:${accessKey}`).toString('base64');
+    
+    axios.get(url, {
+      headers: {
+        'Authorization': `Basic ${auth}`
+      }
+    })
+    .then(response => {
+      resolve(response.data);
+    })
+    .catch(error => {
+      reject(error);
+    });
+  });
+}
+
+async function executeHyperExecuteCLI(username, accessKey, yamlFile, env,sync) {
+  try {
+    // console.log("Executing HyperExecute CLI");
+    const cliPath = await downloadHyperExecuteCLI(env);
+    const osType = type();
+    let command;
+
+    if (osType === 'Windows_NT') {
+      command = `${cliPath}.exe`;
+    } else {
+      command = `${cliPath}`;
+    }
+    command += ` --user ${username} --key ${accessKey} -i ${yamlFile}  --env ${env} --no-track`;
+
+    const { stdout, stderr } = await execSync(command, { encoding: 'utf-8' });
+
+    if (stderr) {
+      console.error(`HyperCLI stderr: ${stderr}`);
+      return;
+    }
+    // console.log(`stdout: ${stdout}`);
+  } catch (error) {
+    // console.error(`Failed to execute HyperExecute CLI: ${error.message}`);
+    throw error;
+  }
+  // console.log("HyperExecute CLI executed successfully");
+}
+
+function getLastJobIDFromLog() {
+  let lastJobID = null;
+  try {
+    const logFilePath = path.join("hyperexecute-cli.log");
+    const logContent = fs.readFileSync(logFilePath, "utf-8");
+    const jobIDPattern = /Job ID: ([a-f0-9-]{36})/g;
+    let match;
+
+    while ((match = jobIDPattern.exec(logContent)) !== null) {
+      lastJobID = match[1];
+    }
+    fs.unlinkSync(logFilePath); // Delete the file after reading
+  } catch (error) {
+    console.log("Error in reading log file ", error);
+    throw error;
+  }
+  // console.log("Last Job ID: ", lastJobID);
+  return lastJobID;
+}
+
+async function pollJobStatus(jobID,username,accessKey,env) {
+  const maxAttempts = 300;
+  const delay = 5000; // 5 seconds
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      const auth = Buffer.from(`${username}:${accessKey}`).toString('base64');
+      const response = await axios.get(constants.JobStatus_URL[env]+jobID, {
+        headers: {
+          'Authorization': `Basic ${auth}`
+        }
+      });
+      const data = response.data;
+      // console.log(`Polling attempt ${attempt + 1}`);
+      if (data && data.data && data.data.build_id) {
+        return data.data.build_id;
+      }
+    } catch (error) {
+      console.error(`Error polling job status: ${error.message}`);
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
+  throw new Error('Max polling attempts reached without receiving build_id');
+}
+
+
+function downloadHyperExecuteCLI(env) {
+  return new Promise((resolve, reject) => {
+    const osType = type();
+    let downloadUrl;
+    let binaryfileName="hyperexecute-cli"
+    if (osType === 'Linux') {
+      downloadUrl = constants.HyperExecuteCLIBinaryDownloadLinks[env].linux;
+    } else if (osType === 'Darwin') {
+      downloadUrl = constants.HyperExecuteCLIBinaryDownloadLinks[env].darwin;
+    } else if (osType === 'Windows_NT') {
+      downloadUrl = constants.HyperExecuteCLIBinaryDownloadLinks[env].windows;
+      binaryfileName="hyperexecute-cli.exe"
+    } else {
+      return reject(new Error('Unsupported OS type'));
+    }
+
+    const filePath = path.join(__dirname, binaryfileName);
+    const file = fs.createWriteStream(filePath);
+
+    https.get(downloadUrl, (response) => {
+      response.pipe(file);
+      file.on('finish', () => {
+        file.close(() => {
+          if (osType === 'Linux' || osType === 'Darwin') {
+            fs.chmod(filePath, '755', (err) => {
+              if (err) {
+                return reject(err);
+              }
+              resolve(filePath);
+            });
+          } else {
+            resolve(filePath);
+          }
+        });
+      });
+    }).on('error', (err) => {
+      fs.unlink(filePath, () => reject(err));
+    });
+  });
+}
+
+
 
 async function run(lt_config, batches, env) {
   totalBatches = batches.length;
@@ -140,9 +346,11 @@ async function run(lt_config, batches, env) {
                       run_test(
                         payload,
                         env,
-                        lt_config.run_settings.reject_unauthorized
+                        lt_config.run_settings.reject_unauthorized,
+                        lt_config
                       )
-                        .then(function (session_id) {
+                        .then(function (data) {
+                          session_id = data["session_id"];
                           if (!lt_config["run_settings"]["retry_failed"]) {
                             delete_archive(project_file);
                           }
@@ -169,7 +377,7 @@ async function run(lt_config, batches, env) {
                           ) {
                             console.log("Waiting for build to finish...");
                             poller.update_status(true);
-                            poller.poll_build(lt_config, session_id, env)
+                            poller.poll_build(lt_config, session_id,data["hyperexecute"], env)
                               .then( function (result) {
                                 const { exit_code, build_info } = result;
                                 if (lt_config["run_settings"]["retry_failed"] == true && build_info != null ) {
@@ -269,9 +477,10 @@ async function retry_run(lt_config, batches, env) {
         run_test(
           payload,
           env,
-          lt_config.run_settings.reject_unauthorized
-        ).then(function (session_id) {
-          
+          lt_config.run_settings.reject_unauthorized,
+          lt_config
+        ).then(function (data) {
+          session_id = data["session_id"];
           delete_archive(lt_config["run_settings"]["project_file"]);
           delete_archive(file_obj["name"]);
           
@@ -296,7 +505,7 @@ async function retry_run(lt_config, batches, env) {
           ) {
             console.log("Retry - Waiting for build to finish...");
             poller.update_status(true);
-            poller.poll_build(lt_config, session_id, env)
+            poller.poll_build(lt_config, session_id,data["hyperexecute"], env)
               .then(function (result) {
                 const { exit_code, build_json } = result;
                 resolve(exit_code);
@@ -339,4 +548,5 @@ function findSpecFile(testSuite, buildInfoData) {
 module.exports = {
   run_batches: run,
   run_batches_retry: retry_run,
+  getFeatureFlags:getFeatureFlags
 };

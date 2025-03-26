@@ -5,6 +5,8 @@ const constants = require("./utils/constants.js");
 const batcher = require("./utils/batch/batcher.js");
 const validate_cli = require("./utils/validate_cli.js");
 const fs = require("fs");
+const  { v4 }=require('uuid');
+
 const batch_runner = require("./utils/batch/batch_runner.js");
 var lambdaTunnel = require("@lambdatest/node-tunnel");
 const { exec, execSync } = require("child_process");
@@ -86,7 +88,7 @@ module.exports = function (args) {
                   }
                   batcher
                     .make_batches(lt_config)
-                    .then(function (batches) {
+                    .then(async function (batches) {
                       if (
                         lt_config["tunnel_settings"]["tunnel"] &&
                         lt_config["tunnel_settings"]["autostart"]
@@ -100,7 +102,31 @@ module.exports = function (args) {
                           v: true,
                           env: env,
                         };
-
+                        try {
+                          let featureFlags = await batch_runner.getFeatureFlags(
+                            lt_config["lambdatest_auth"]["username"],
+                            lt_config["lambdatest_auth"]["username"],
+                            env
+                          );
+                          if (
+                            featureFlags.data &&
+                            featureFlags.data.includes("cypress-runon-hyper")
+                          ) {
+                            if (!lt_config["tunnel_settings"]["tunnel_name"]) {
+                              lt_config["tunnel_settings"]["tunnel_name"] =
+                                v4();
+                              tunnelArguments.tunnelName =
+                                lt_config["tunnel_settings"]["tunnel_name"];
+                            }
+                            if (env === "stage") {
+                              tunnelArguments.env = "ht-stage";
+                            } else {
+                              tunnelArguments.env = "ht-prod";
+                            }
+                          }
+                        } catch (e) {
+                          console.log("Error while fetching feature flags",e);
+                        }
                         tunnelInstance
                           .start(tunnelArguments)
                           .then((status) => {
