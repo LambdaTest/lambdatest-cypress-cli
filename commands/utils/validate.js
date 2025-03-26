@@ -453,8 +453,8 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     }
 
     if ("privateCloud" in lt_config["run_settings"]) {
-      if (!(typeof lt_config["run_settings"]["privateCloud"] === "boolean")) {
-        reject("Error!! boolean value is expected in command_log key");
+      if (![true, false].includes(lt_config["run_settings"]["privateCloud"])) {
+        reject("Error!! boolean value is expected in privateCloud key");
       }
     }
 
