@@ -456,7 +456,7 @@ function sync_args_from_cmd(args) {
     }
 
     if ("privateCloud" in args) {
-      if (args["run_settings"]["privateCloud"]=="true"){
+      if (args["privateCloud"]=="true"){
         lt_config["run_settings"]["privateCloud"] = true;
       }else{
         lt_config["run_settings"]["privateCloud"] = false;
