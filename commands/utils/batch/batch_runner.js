@@ -43,37 +43,37 @@ function run_test(payload, env = "prod", rejectUnauthorized,lt_config) {
       }
       if (run_on_hyper) {
         try {
-          await executeHyperExecuteCLI(
+            await executeHyperExecuteCLI(
             lt_config["lambdatest_auth"]["username"],
             lt_config["lambdatest_auth"]["access_key"],
             "he_conv.yaml",
             env,
             lt_config["run_settings"]["sync"]
           );
-          let jobID = getLastJobIDFromLog();
-          let build_id;
-          try {
-            if (jobID) {
-              build_id = await pollJobStatus(
-                jobID,
-                lt_config["lambdatest_auth"]["username"],
-                lt_config["lambdatest_auth"]["access_key"],
-                env
-              );
+            let jobID = getLastJobIDFromLog(lt_config);
+            let build_id;
+            try {
+              if (jobID) {
+                build_id = await pollJobStatus(
+                  jobID,
+                  lt_config["lambdatest_auth"]["username"],
+                  lt_config["lambdatest_auth"]["access_key"],
+                  env
+                );
+              }
+            } catch (error) {
+              console.log("could not fetch build id ", error);
             }
-          } catch (error) {
-            console.log("could not fetch build id ", error);
-          }
-          //Write session_id to a file
-          data = { build_id: build_id, session_id: jobID };
-          fs.writeFileSync(
-            "lambdatest_run.json",
-            JSON.stringify(data, null, 3)
-          );
-          console.log(
-            `Uploaded tests successfully Check Dashboard : ${constants.Dashboard_URL[env]}${build_id}`
-          );
-          resolve({ session_id: jobID, hyperexecute: true });
+            //Write session_id to a file
+            data = { build_id: build_id, session_id: jobID };
+            fs.writeFileSync(
+              "lambdatest_run.json",
+              JSON.stringify(data, null, 3)
+            );
+            console.log(
+              `Uploaded tests successfully Check Dashboard : ${constants.Dashboard_URL[env]}${build_id}`
+            );
+            resolve({ session_id: jobID, hyperexecute: true });
         } catch (error) {
           run_on_hyper = false;
           try {
@@ -210,7 +210,7 @@ async function executeHyperExecuteCLI(username, accessKey, yamlFile, env,sync) {
   // console.log("HyperExecute CLI executed successfully");
 }
 
-function getLastJobIDFromLog() {
+function getLastJobIDFromLog(lt_config) {
   let lastJobID = null;
   try {
     const logFilePath = path.join("hyperexecute-cli.log");
@@ -221,7 +221,10 @@ function getLastJobIDFromLog() {
     while ((match = jobIDPattern.exec(logContent)) !== null) {
       lastJobID = match[1];
     }
-    fs.unlinkSync(logFilePath); // Delete the file after reading
+    
+    if(!lt_config.run_settings.verbose){
+      fs.unlinkSync(logFilePath); // Delete the file after reading
+    } 
   } catch (error) {
     console.log("Error in reading log file ", error);
     throw error;
@@ -273,8 +276,10 @@ function downloadHyperExecuteCLI(env) {
     } else {
       return reject(new Error('Unsupported OS type'));
     }
-
     const filePath = path.join(__dirname, binaryfileName);
+    if (fs.existsSync(filePath)) {
+      return resolve(filePath);
+    }
     const file = fs.createWriteStream(filePath);
 
     https.get(downloadUrl, (response) => {
