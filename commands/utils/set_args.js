@@ -448,6 +448,23 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["geo_location"] = "";
     }
 
+    //Check for timezone
+    if ("timezone" in args) {
+      lt_config["run_settings"]["timezone"] = args["timezone"];
+    } else if (!lt_config["run_settings"]["timezone"]) {
+      lt_config["run_settings"]["timezone"] = "";
+    }
+
+    if ("privateCloud" in args) {
+      if (args["privateCloud"]=="true"){
+        lt_config["run_settings"]["privateCloud"] = true;
+      }else{
+        lt_config["run_settings"]["privateCloud"] = false;
+      }
+    }else if (!lt_config["run_settings"]["privateCloud"]) {
+      lt_config["run_settings"]["privateCloud"] = false ;
+    }
+
     //Check for stop on failure location
     if ("stop_on_failure" in args) {
       lt_config["run_settings"]["stop_on_failure"] = true;

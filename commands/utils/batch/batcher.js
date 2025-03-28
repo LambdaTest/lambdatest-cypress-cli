@@ -109,4 +109,5 @@ function make_batches(lt_config) {
 
 module.exports = {
   make_batches: make_batches,
+  get_spec_files:get_spec_files,
 };
