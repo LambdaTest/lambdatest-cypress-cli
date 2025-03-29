@@ -105,14 +105,14 @@ module.exports = function (args) {
                         try {
                           let featureFlags = await batch_runner.getFeatureFlags(
                             lt_config["lambdatest_auth"]["username"],
-                            lt_config["lambdatest_auth"]["username"],
+                            lt_config["lambdatest_auth"]["access_key"],
                             env
                           );
                           if (
                             featureFlags.data &&
                             featureFlags.data.includes("cypress-runon-hyper")
                           ) {
-                            if (!lt_config["tunnel_settings"]["tunnel_name"]) {
+                            if (lt_config["tunnel_settings"] && !lt_config["tunnel_settings"]["tunnel_name"]) {
                               lt_config["tunnel_settings"]["tunnel_name"] =
                                 v4();
                               tunnelArguments.tunnelName =

@@ -83,12 +83,12 @@ function convertConfig(lt_config, outputFilePath) {
 
       for (let key in obj.run_settings.npm_dependencies) {
         he_yaml.pre.push(
-          "npm install " + key + "@" + obj.run_settings.npm_dependencies[key]
+          "npm install " + key + "@" + obj.run_settings.npm_dependencies[key] +" --legacy-peer-deps"
         );
       }
 
-      if (obj.run_settings.npm_dependencies) {
-        he_yaml.pre.push("npm install");
+      if (!obj.run_settings.npm_dependencies) {
+        he_yaml.pre.push("npm install --legacy-peer-deps");
       }
 
       if (obj.tunnel_settings && obj.tunnel_settings.tunnel_name){
@@ -132,6 +132,8 @@ function convertConfig(lt_config, outputFilePath) {
 
       if (obj.run_settings.useNodeVersion) {
         he_yaml.runtime = { language: "node", version: obj.run_settings.useNodeVersion };
+      }else{
+        he_yaml.runtime = { language: "node", "version": "16.18.1" };
       }
 
       if (obj.run_settings.max_duration) {
@@ -163,11 +165,11 @@ function convertConfig(lt_config, outputFilePath) {
       }
 
       if (obj.run_settings.cypress_version) {
-        he_yaml.pre.push("npm install cypress@" + obj.run_settings.cypress_version);
+        he_yaml.pre.push("npm install cypress@" + obj.run_settings.cypress_version+" --legacy-peer-deps");
       }
 
       if (obj.run_settings.npm_dependencies.length == 0 && !obj.run_settings.cypress_version) {
-        he_yaml.pre.push("npm install");
+        he_yaml.pre.push("npm install --legacy-peer-deps");
       }
 
       batcher.get_spec_files(obj.run_settings.specs, obj.run_settings.exclude_specs).then(function (specs) {
