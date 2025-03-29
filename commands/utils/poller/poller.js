@@ -4,7 +4,7 @@ const build_stats = require("./build_stats.js");
 const reports = require("../../../commands/generate_reports.js");
 var build_result = true;
 
-function poll_build(lt_config, session_id, env) {
+function poll_build(lt_config, session_id,hyperexecute, env) {
   return new Promise(function (resolve, reject) {
     async.whilst(
       function test(callback) {
@@ -14,6 +14,7 @@ function poll_build(lt_config, session_id, env) {
         poller.get_build_info(
           lt_config,
           session_id,
+          hyperexecute,
           env,
           update_status,
           callback
