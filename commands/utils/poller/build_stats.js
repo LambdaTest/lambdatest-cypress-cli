@@ -46,7 +46,7 @@ function get_completed_build_info(lt_config, session_id, env) {
   });
 }
 
-function get_build_info(lt_config, session_id, env, update_status, callback) {
+function get_build_info(lt_config, session_id,hyperexecute, env, update_status, callback) {
   let options = {
     method: 'get',
     url: constants[env].SESSION_URL + session_id + constants.BUILD_END_STATES,
@@ -90,14 +90,14 @@ function get_build_info(lt_config, session_id, env, update_status, callback) {
       }
     }
     if (
-      statsNew["running"] +
+        statsNew["running"] +
         statsNew["queued"] +
         statsNew["created"] +
         statsNew["initiated"] +
         statsNew["pqueued"] == 0
     ) {
       if (
-      statsNew["error"] +
+        statsNew["error"] +
         statsNew["lambda error"] +
         statsNew["failed"] +
         statsNew["completed"] +
@@ -117,8 +117,15 @@ function get_build_info(lt_config, session_id, env, update_status, callback) {
         }
         return setTimeout(callback, 5000, null);
       }
+      if (hyperexecute) {
+        const isJobCompleted = await fetchHyperExecuteJobStatus(session_id, env, lt_config["lambdatest_auth"]["username"], lt_config["lambdatest_auth"]["access_key"]);
+        if (!isJobCompleted) {
+          return setTimeout(callback, 5000, null);
+        }
+      }
       update_status(false);
       return callback(null, response.data);
+      
     }
     //Stop the tests if stop on failure is enabled and we get an errored/failed/lambda errored test
     if (lt_config.run_settings.stop_on_failure == true) {
@@ -162,6 +169,49 @@ function get_build_info(lt_config, session_id, env, update_status, callback) {
     }
     })
 
+}
+
+function fetchHyperExecuteJobStatus(jobId, env, username, accessKey) {
+  const url = constants.JobStatus_URL[env] + jobId
+  const options = {
+    method: 'get',
+    url: url,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    auth: {
+      username: username,
+      password: accessKey,
+    },
+  };
+
+  return new Promise((resolve, reject) => {
+    axios(options)
+      .then(response => {
+        // console.log(response)
+        if (response.data && response.data.data && response.data.data.status) {
+          const status = response.data.data.status;
+          if (status !== 'initiated' && status !== 'running') {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        } else {
+          // console.log("Job status not correct")
+          reject('Invalid response structure');
+        }
+      })
+      .catch(error => {
+        // console.log(error)
+        if (error.response) {
+          reject(`Error: ${error.response.status} - ${error.response.statusText}`);
+        } else if (error.request) {
+          reject('No response received from the server');
+        } else {
+          reject(`Error: ${error.message}`);
+        }
+      });
+  });
 }
 
 module.exports = {
