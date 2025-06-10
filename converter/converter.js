@@ -168,7 +168,7 @@ function convertConfig(lt_config, outputFilePath) {
         he_yaml.pre.push("npm install cypress@" + obj.run_settings.cypress_version+" --legacy-peer-deps");
       }
 
-      if (obj.run_settings.npm_dependencies.length == 0 && !obj.run_settings.cypress_version) {
+      if (!obj.run_settings.npm_dependencies ||( obj.run_settings.npm_dependencies.length == 0 && !obj.run_settings.cypress_version)) {
         he_yaml.pre.push("npm install --legacy-peer-deps");
       }
 
