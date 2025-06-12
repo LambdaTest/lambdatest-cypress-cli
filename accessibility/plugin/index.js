@@ -54,6 +54,7 @@ const Accessibility = (on, config) => {
             const accessibility_ext_path = process.env.ACCESSIBILITY_EXTENSION_PATH
         
             launchOptions.args.push(`--load-extension=` + accessibility_ext_path)
+            launchOptions.args.push('--disable-features=DisableLoadExtensionCommandLineSwitch')
               return launchOptions
             }
           }
