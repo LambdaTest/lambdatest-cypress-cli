@@ -124,12 +124,14 @@ const processAccessibilityReport = async (windowNew) => {
         let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
         let bestPracticeValue = Cypress.env("BEST_PRACTICE") === "true";
         let needsReviewValue = Cypress.env("NEEDS_REVIEW") !== "false"; // Default to true
+        let captureScreenshotEnabled = Cypress.env("CAPTURE_SCREENSHOT_ENABLED") !== "false";
 
         const payloadToSend = {
             message: 'SET_CONFIG',
             wcagCriteria: wcagCriteriaValue,
             bestPractice: bestPracticeValue,
-            needsReview: needsReviewValue
+            needsReview: needsReviewValue,
+            captureScreenshotEnabled: captureScreenshotEnabled
         };
 
         console.log('log', "SET SCAN: Payload to send: ", payloadToSend);
