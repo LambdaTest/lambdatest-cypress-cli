@@ -188,13 +188,16 @@ function oldprocessAccessibilityReport(win){
     let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
     let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
     let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
+    let captureScreenshotEnabled = Cypress.env("CAPTURE_SCREENSHOT_ENABLED") || true;
     bestPracticeValue =  bestPracticeValue == "true" ? true : false;
     needsReviewValue = needsReviewValue == "true" ? true : false;
+    captureScreenshotEnabled = captureScreenshotEnabled == "true" ? true : false;
     const payloadToSend = {
         message: 'SET_CONFIG',
         wcagCriteria: wcagCriteriaValue,
         bestPractice: bestPracticeValue,
-        needsReview: needsReviewValue
+        needsReview: needsReviewValue,
+        captureScreenshotEnabled: captureScreenshotEnabled
     }
 
     console.log('log', "payload to send " + payloadToSend);
