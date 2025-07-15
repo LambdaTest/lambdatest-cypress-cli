@@ -1,5 +1,29 @@
 const fs = require("fs");
 const path = require('path');
+
+function getImageResolution(buffer) {
+  try {
+    if (buffer.length < 24) {
+      return { width: 0, height: 0 };
+    }
+    
+    const pngSignature = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+    for (let i = 0; i < 8; i++) {
+      if (buffer[i] !== pngSignature[i]) {
+        return { width: 0, height: 0 };
+      }
+    }
+  
+    const width = buffer.readUInt32BE(16);
+    const height = buffer.readUInt32BE(20);
+    
+    return { width, height };
+  } catch (error) {
+    console.error(`Error extracting image resolution: ${error.message}`);
+    return { width: 0, height: 0 };
+  }
+}
+
 const Accessibility = (on, config) => {
 
     on('task', {
@@ -24,6 +48,47 @@ const Accessibility = (on, config) => {
             return { exists: true, content:fileContent }; 
           } else {
             return { exists: false, content: null }; // Return null if the file doesn't exist
+          }
+        },
+        convertScreenshotToBase64(filePath) {
+          try {
+            const fullPath = path.resolve(filePath);
+            console.log(`Looking for screenshot at: ${fullPath}`);
+            
+            if (fs.existsSync(fullPath)) {
+              const imageBuffer = fs.readFileSync(fullPath);
+              const base64String = imageBuffer.toString('base64');
+              
+              const imageResolution = getImageResolution(imageBuffer);
+              return {
+                base64: base64String,
+                resolution: imageResolution
+              };
+            } else {
+              console.log(`Screenshot file not found at: ${fullPath}`);
+              return null;
+            }
+          } catch (error) {
+            console.error(`Error converting screenshot to base64: ${error.message}`);
+            return null;
+          }
+        },
+        deleteFile(filePath) {
+          try {
+            const fullPath = path.resolve(filePath);
+            console.log(`Attempting to delete file: ${fullPath}`);
+            
+            if (fs.existsSync(fullPath)) {
+              fs.unlinkSync(fullPath);
+              console.log(`File deleted successfully: ${filePath}`);
+              return true;
+            } else {
+              console.log(`File not found for deletion: ${filePath}`);
+              return false;
+            }
+          } catch (error) {
+            console.error(`Error deleting file: ${error.message}`);
+            return false;
           }
         }
   })
