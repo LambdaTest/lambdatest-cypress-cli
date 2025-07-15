@@ -248,12 +248,11 @@ function oldprocessAccessibilityReport(win){
     let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
     bestPracticeValue =  bestPracticeValue == "true" ? true : false;
     needsReviewValue = needsReviewValue == "true" ? true : false;
-    captureScreenshotEnabled = captureScreenshotEnabled == "true" ? true : false;
     const payloadToSend = {
         message: 'SET_CONFIG',
         wcagCriteria: wcagCriteriaValue,
         bestPractice: bestPracticeValue,
-        needsReview: needsReviewValue,
+        needsReview: needsReviewValue
     }
 
     console.log('log', "payload to send " + payloadToSend);
