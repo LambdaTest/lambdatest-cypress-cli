@@ -50,19 +50,19 @@ const performNewLambdaScan = (originalFn, Subject, stateType, ...args) => {
                 .performScanSubjectQuery(cypressCommandChain, setTimeout)
                 .then({ timeout: 30000 }, (newSubject) => {
                     const updatedArgs = updateSubj(args, stateType, newSubject);
-                    const screenshotName = 'accessibility-screenshot';
+                    const screenshotId= crypto.randomUUID();
+                    const screenshotName = 'accessibility-screenshot-'+ screenshotId;
                     cy.screenshot(screenshotName, { capture: 'fullPage' });
                     cy.task('convertScreenshotToBase64', `cypress/screenshots/${Cypress.spec.name}/${screenshotName}.png`).then((result) => {
                         if (result && result.base64) {
                             const imageUrl = `data:image/png;base64,${result.base64}`;
                             const imageResolution = result.resolution;
-                            
                             // Create screenshots array
                             const screenshots = [
                                 {
                                     image_url: imageUrl,
                                     image_resolution: `${imageResolution.width}x${imageResolution.height}`,
-                                    screenshotId: crypto.randomUUID()
+                                    screenshotId: screenshotId
                                 }
                             ];
                             // Store globally for use in processAccessibilityReport

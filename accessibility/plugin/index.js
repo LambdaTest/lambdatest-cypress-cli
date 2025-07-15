@@ -53,7 +53,6 @@ const Accessibility = (on, config) => {
         convertScreenshotToBase64(filePath) {
           try {
             const fullPath = path.resolve(filePath);
-            console.log(`Looking for screenshot at: ${fullPath}`);
             
             if (fs.existsSync(fullPath)) {
               const imageBuffer = fs.readFileSync(fullPath);
@@ -76,11 +75,8 @@ const Accessibility = (on, config) => {
         deleteFile(filePath) {
           try {
             const fullPath = path.resolve(filePath);
-            console.log(`Attempting to delete file: ${fullPath}`);
-            
             if (fs.existsSync(fullPath)) {
               fs.unlinkSync(fullPath);
-              console.log(`File deleted successfully: ${filePath}`);
               return true;
             } else {
               console.log(`File not found for deletion: ${filePath}`);
