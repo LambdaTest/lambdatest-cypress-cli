@@ -4,6 +4,9 @@ const LambdatestLog = (message) => {
     cy.task('lambdatest_log', message);
 }
 
+let globalScreenshots = null;
+const captureScreenshotEnabled = Cypress.env("CAPTURE_SCREENSHOT_ENABLED") !== "false";
+
 const commandsToOverride = [
     'visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check',
     'uncheck', 'select', 'trigger', 'selectFile', 'scrollIntoView', 'scrollTo',
@@ -40,7 +43,43 @@ const performNewLambdaScan = (originalFn, Subject, stateType, ...args) => {
             if (subjectChainFn !== null && subjectChainFn !== void 0) {
                 cypressCommandChain = subjectChainFn.call(cy);
             }
-            cycustomChaining.performScanSubjectQuery(cypressCommandChain, setTimeout).then({timeout: 30000}, (newSubject) => originalFn(...updateSubj(args, stateType, newSubject)));
+                
+            if (captureScreenshotEnabled) {
+                cy.log('Starting performScanSubjectQuery');
+                cycustomChaining
+                .performScanSubjectQuery(cypressCommandChain, setTimeout)
+                .then({ timeout: 30000 }, (newSubject) => {
+                    const updatedArgs = updateSubj(args, stateType, newSubject);
+                    const screenshotId= crypto.randomUUID();
+                    const screenshotName = 'accessibility-screenshot-'+ screenshotId;
+                    cy.screenshot(screenshotName, { capture: 'fullPage' });
+                    cy.task('convertScreenshotToBase64', `cypress/screenshots/${Cypress.spec.name}/${screenshotName}.png`).then((result) => {
+                        if (result && result.base64) {
+                            const imageUrl = `data:image/png;base64,${result.base64}`;
+                            const imageResolution = result.resolution;
+                            // Create screenshots array
+                            const screenshots = [
+                                {
+                                    image_url: imageUrl,
+                                    image_resolution: `${imageResolution.width}x${imageResolution.height}`,
+                                    screenshotId: screenshotId
+                                }
+                            ];
+                            // Store globally for use in processAccessibilityReport
+                            globalScreenshots = screenshots;                            
+                            
+                            cy.task('deleteFile', `cypress/screenshots/${Cypress.spec.name}/${screenshotName}.png`).then((_) => {
+                            }); 
+                    } else {
+                        cy.log('Failed to process screenshot');
+                    }
+                });
+                const result = originalFn(...updatedArgs);
+                return result;
+              });
+            } else {
+                cycustomChaining.performScanSubjectQuery(cypressCommandChain, setTimeout).then({timeout: 30000}, (newSubject) => originalFn(...updateSubj(args, stateType, newSubject)));
+            }
         }
     }
     runCustomizedChainingCommand();
@@ -148,6 +187,25 @@ const processAccessibilityReport = async (windowNew) => {
             const payload = {message: 'GET_LATEST_SCAN_DATA'};
             scanData = await getScanData(windowNew, payload);
             LambdatestLog("GET SCAN:LambdaTest Accessibility: Scanning URL");
+            if(captureScreenshotEnabled){
+                if (scanData && scanData.data && scanData.data.length > 0 && globalScreenshots) {
+                    const firstDataItem = scanData.data[0];
+                    if (firstDataItem.events && firstDataItem.events.length > 0) {
+                        const firstEvent = firstDataItem.events[0];
+                        if (firstEvent.issues && firstEvent.issues.length > 0) {
+                            // Update screenshotId with the actual screenshotId
+                            globalScreenshots[0].screenshotId=firstEvent.issues[0].screenshotId;
+                        }
+                    }
+                    for (let i = 0; i < scanData.data.length; i++) {
+                        if (scanData.data[i].screenshots && Array.isArray(scanData.data[i].screenshots)) {
+                            scanData.data[i].screenshots = globalScreenshots;
+                            break;
+                        }
+                    }
+                }
+                globalScreenshots = null;
+            }
         } catch (err) {
             console.error("GET SCAN:Error while setting scan", err);
             return ;
