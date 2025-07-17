@@ -5,7 +5,7 @@ const LambdatestLog = (message) => {
 }
 
 let globalScreenshots = null;
-const captureScreenshotEnabled = Cypress.env("CAPTURE_SCREENSHOT_ENABLED") !== "false";
+const captureScreenshotEnabled = Cypress.env("CAPTURE_SCREENSHOT_ENABLED") === "true";
 
 const commandsToOverride = [
     'visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check',
@@ -163,7 +163,7 @@ const processAccessibilityReport = async (windowNew) => {
         let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
         let bestPracticeValue = Cypress.env("BEST_PRACTICE") === "true";
         let needsReviewValue = Cypress.env("NEEDS_REVIEW") !== "false"; // Default to true
-        let captureScreenshotEnabled = Cypress.env("CAPTURE_SCREENSHOT_ENABLED") !== "false";
+        let captureScreenshotEnabled = Cypress.env("CAPTURE_SCREENSHOT_ENABLED") === "true";
 
         const payloadToSend = {
             message: 'SET_CONFIG',
