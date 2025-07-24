@@ -1,5 +1,29 @@
 const fs = require("fs");
 const path = require('path');
+
+function getImageResolution(buffer) {
+  try {
+    if (buffer.length < 24) {
+      return { width: 0, height: 0 };
+    }
+    
+    const pngSignature = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+    for (let i = 0; i < 8; i++) {
+      if (buffer[i] !== pngSignature[i]) {
+        return { width: 0, height: 0 };
+      }
+    }
+  
+    const width = buffer.readUInt32BE(16);
+    const height = buffer.readUInt32BE(20);
+    
+    return { width, height };
+  } catch (error) {
+    console.error(`Error extracting image resolution: ${error.message}`);
+    return { width: 0, height: 0 };
+  }
+}
+
 const Accessibility = (on, config) => {
 
     on('task', {
@@ -24,6 +48,43 @@ const Accessibility = (on, config) => {
             return { exists: true, content:fileContent }; 
           } else {
             return { exists: false, content: null }; // Return null if the file doesn't exist
+          }
+        },
+        convertScreenshotToBase64(filePath) {
+          try {
+            const fullPath = path.resolve(filePath);
+            
+            if (fs.existsSync(fullPath)) {
+              const imageBuffer = fs.readFileSync(fullPath);
+              const base64String = imageBuffer.toString('base64');
+              
+              const imageResolution = getImageResolution(imageBuffer);
+              return {
+                base64: base64String,
+                resolution: imageResolution
+              };
+            } else {
+              console.log(`Screenshot file not found at: ${fullPath}`);
+              return null;
+            }
+          } catch (error) {
+            console.error(`Error converting screenshot to base64: ${error.message}`);
+            return null;
+          }
+        },
+        deleteFile(filePath) {
+          try {
+            const fullPath = path.resolve(filePath);
+            if (fs.existsSync(fullPath)) {
+              fs.unlinkSync(fullPath);
+              return true;
+            } else {
+              console.log(`File not found for deletion: ${filePath}`);
+              return false;
+            }
+          } catch (error) {
+            console.error(`Error deleting file: ${error.message}`);
+            return false;
           }
         }
   })
@@ -70,6 +131,7 @@ const Accessibility = (on, config) => {
       config.env.ACCESSIBILITY = process.env.ACCESSIBILITY;
       config.env.TEST_ID = process.env.TEST_ID;
       config.env.ACCESSIBILITY_OVERIDE_COMMANDS = process.env.ACCESSIBILITY_OVERIDE_COMMANDS;
+      config.env.CAPTURE_SCREENSHOT_ENABLED = process.env.CAPTURE_SCREENSHOT_ENABLED;
       config.env.GENERATE_REPORT_API = process.env.GENERATE_REPORT_API || "NA";
       console.log(`parameter for accessibility report ACCESSIBILITY - ` + config.env.ACCESSIBILITY)
       console.log(`parameter for accessibility report WCAG_CRITERIA - ` + config.env.WCAG_CRITERIA)
@@ -80,7 +142,7 @@ const Accessibility = (on, config) => {
       console.log(`parameter for accessibility report ACCESSIBILITY_EXTENSION_PATH -` + process.env.ACCESSIBILITY_EXTENSION_PATH)
       console.log(`parameter for accessibility report ACCESSIBILITY_OVERIDE_COMMANDS -` + config.env.ACCESSIBILITY_OVERIDE_COMMANDS)
       console.log(`parameter for accessibility report GENERATE_REPORT_API -` + config.env.GENERATE_REPORT_API)
-
+      console.log(`parameter for accessibility report CAPTURE_SCREENSHOT_ENABLED -` + config.env.CAPTURE_SCREENSHOT_ENABLED)
 
       return config;
 }
