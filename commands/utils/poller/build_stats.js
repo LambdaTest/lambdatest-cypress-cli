@@ -30,8 +30,9 @@ function get_completed_build_info(lt_config, session_id, env) {
         if (error.response.status == 401) {
           reject("Unauthorized");
         } else {
+          console.log("error.response.status - ",error.response.status)
           console.log(error.response.data);
-          reject("No response for build status");
+          reject("No response for build status when getting completed build info");
         }
       } else if (error.request) {
         // The request was made but no response was received
@@ -139,8 +140,10 @@ function get_build_info(lt_config, session_id,hyperexecute, env, update_status, 
     return setTimeout(callback, 5000, null);
 
   } else {
+    console.log(`[DEBUG] Response status is not 200: ${response.status}`);
+    console.log("response.data - ",response.data)
     update_status(false);
-    return callback("No response for build status");
+    return callback("No response for build status when getting build info");
   }
   })
   .catch(error => {
@@ -151,8 +154,11 @@ function get_build_info(lt_config, session_id,hyperexecute, env, update_status, 
         update_status(false);
         return callback("Unauthorized");
       } else {
+        console.log('error.response.status - ', error.response)
+        console.log("error.response.data - ",error.response.data)
+        console.log("error.response.status - ",error.response.status)
         update_status(false);
-        return callback("No response for build status");
+        return callback("No response for build status when getting info of build.");
       }
     } else if (error.request) {
       // The request was made but no response was received
