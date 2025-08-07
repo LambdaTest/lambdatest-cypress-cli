@@ -154,7 +154,7 @@ function get_build_info(lt_config, session_id,hyperexecute, env, update_status, 
         update_status(false);
         return callback("Unauthorized");
       } else {
-        console.log('error.response.status - ', error.response)
+        console.log('error.response - ', error.response)
         console.log("error.response.data - ",error.response.data)
         console.log("error.response.status - ",error.response.status)
         update_status(false);
