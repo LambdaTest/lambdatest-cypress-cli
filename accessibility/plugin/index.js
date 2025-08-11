@@ -94,7 +94,7 @@ const Accessibility = (on, config) => {
     on('before:browser:launch', (browser = {}, launchOptions) => {
         try {
           if (process.env.ACCESSIBILITY_EXTENSION_PATH !== undefined) {
-            if (browser.name !== 'chrome' && browser.name !== 'edge') {
+            if (browser.name !== 'chrome' && browser.name !== 'edge' && browser.name !== 'chrome-for-testing') {
               console.log(`Accessibility Automation will run only on Chrome and Edge browsers. But browser used is ` + browser.name);
               browser_validation = false;
             }
