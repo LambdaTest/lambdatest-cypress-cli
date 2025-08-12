@@ -5,7 +5,7 @@ const LambdatestLog = (message) => {
 }
 
 let globalScreenshots = null;
-const captureScreenshotEnabled = Cypress.env("CAPTURE_SCREENSHOT_ENABLED") === "true";
+const captureScreenshot = Cypress.env("CAPTURE_SCREENSHOT") === "true";
 
 const commandsToOverride = [
     'visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check',
@@ -43,8 +43,8 @@ const performNewLambdaScan = (originalFn, Subject, stateType, ...args) => {
             if (subjectChainFn !== null && subjectChainFn !== void 0) {
                 cypressCommandChain = subjectChainFn.call(cy);
             }
-                
-            if (captureScreenshotEnabled) {
+
+            if (captureScreenshot) {
                 cy.log('Starting performScanSubjectQuery');
                 cycustomChaining
                 .performScanSubjectQuery(cypressCommandChain, setTimeout)
@@ -163,14 +163,16 @@ const processAccessibilityReport = async (windowNew) => {
         let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
         let bestPracticeValue = Cypress.env("BEST_PRACTICE") === "true";
         let needsReviewValue = Cypress.env("NEEDS_REVIEW") !== "false"; // Default to true
-        let captureScreenshotEnabled = Cypress.env("CAPTURE_SCREENSHOT_ENABLED") === "true";
+        let captureScreenshot = Cypress.env("CAPTURE_SCREENSHOT") === "true";
+        let passedTestCases = Cypress.env("PASSED_TEST_CASES") === "true";
 
         const payloadToSend = {
             message: 'SET_CONFIG',
             wcagCriteria: wcagCriteriaValue,
             bestPractice: bestPracticeValue,
             needsReview: needsReviewValue,
-            captureScreenshotEnabled: captureScreenshotEnabled
+            captureScreenshot: captureScreenshot,
+            passedTestCases: passedTestCases
         };
 
         console.log('log', "SET SCAN: Payload to send: ", payloadToSend);
@@ -187,7 +189,7 @@ const processAccessibilityReport = async (windowNew) => {
             const payload = {message: 'GET_LATEST_SCAN_DATA'};
             scanData = await getScanData(windowNew, payload);
             LambdatestLog("GET SCAN:LambdaTest Accessibility: Scanning URL");
-            if(captureScreenshotEnabled){
+            if (captureScreenshot) {
                 if (scanData && scanData.data && scanData.data.length > 0 && globalScreenshots) {
                     const firstDataItem = scanData.data[0];
                     if (firstDataItem.events && firstDataItem.events.length > 0) {
@@ -220,7 +222,7 @@ const processAccessibilityReport = async (windowNew) => {
             const filePath =  Cypress.env("ACCESSIBILITY_REPORT_PATH") || ('cypress/results/accessibilityReport_'  + testId + '.json');
             console.log("TestID is",testId);
             const payloadToSend = {
-                message: 'SEND_ACESSIBILITY_DATA',
+                message: 'SEND_ACCESSIBILITY_DATA',
                 testId : testId,
                 scanData: scanData,
                 accessibilityReportPath:filePath,
