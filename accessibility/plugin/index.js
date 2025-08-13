@@ -131,7 +131,9 @@ const Accessibility = (on, config) => {
       config.env.ACCESSIBILITY = process.env.ACCESSIBILITY;
       config.env.TEST_ID = process.env.TEST_ID;
       config.env.ACCESSIBILITY_OVERIDE_COMMANDS = process.env.ACCESSIBILITY_OVERIDE_COMMANDS;
-      config.env.CAPTURE_SCREENSHOT_ENABLED = process.env.CAPTURE_SCREENSHOT_ENABLED;
+      config.env.CAPTURE_SCREENSHOT = process.env.CAPTURE_SCREENSHOT;
+      config.env.PASSED_TEST_CASES = process.env.PASSED_TEST_CASES;
+
       config.env.GENERATE_REPORT_API = process.env.GENERATE_REPORT_API || "NA";
       console.log(`parameter for accessibility report ACCESSIBILITY - ` + config.env.ACCESSIBILITY)
       console.log(`parameter for accessibility report WCAG_CRITERIA - ` + config.env.WCAG_CRITERIA)
@@ -142,7 +144,8 @@ const Accessibility = (on, config) => {
       console.log(`parameter for accessibility report ACCESSIBILITY_EXTENSION_PATH -` + process.env.ACCESSIBILITY_EXTENSION_PATH)
       console.log(`parameter for accessibility report ACCESSIBILITY_OVERIDE_COMMANDS -` + config.env.ACCESSIBILITY_OVERIDE_COMMANDS)
       console.log(`parameter for accessibility report GENERATE_REPORT_API -` + config.env.GENERATE_REPORT_API)
-      console.log(`parameter for accessibility report CAPTURE_SCREENSHOT_ENABLED -` + config.env.CAPTURE_SCREENSHOT_ENABLED)
+      console.log(`parameter for accessibility report CAPTURE_SCREENSHOT -` + config.env.CAPTURE_SCREENSHOT)
+      console.log(`parameter for accessibility report PASSED_TEST_CASES -` + config.env.PASSED_TEST_CASES)
 
       return config;
 }
