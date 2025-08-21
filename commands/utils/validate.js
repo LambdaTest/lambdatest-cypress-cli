@@ -372,6 +372,7 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     if (lt_config.run_settings.tags) {
       if (lt_config.run_settings.tags.length > 20) {
         reject("Test Tags can not be more than 20")
+      }
       for (let i = 0; i < lt_config.run_settings.tags.length; i++) {
         if (lt_config.run_settings.tags[i].length > 50) {
           reject("Test Tags can not have over 50 characters");
