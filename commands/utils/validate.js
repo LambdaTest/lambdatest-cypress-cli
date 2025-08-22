@@ -354,11 +354,11 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     }
 
     //Validate Build Tags
-    //1) less than 20
+    //1) less than 15
     //2) each tag should be less than 50 characters
     if (lt_config.run_settings.build_tags) {
-      if (lt_config.run_settings.build_tags.length > 20) {
-        reject("Build Tags can not be more than 20");
+      if (lt_config.run_settings.build_tags.length > 15) {
+        reject("Build Tags can not be more than 15");
       }
       for (let i = 0; i < lt_config.run_settings.build_tags.length; i++) {
         if (lt_config.run_settings.build_tags[i].length > 50) {
@@ -367,11 +367,11 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
     //Validate Test Tags
-    //1) less than 20
+    //1) less than 15
     //2) each tag should be less than 50 characters
     if (lt_config.run_settings.tags) {
-      if (lt_config.run_settings.tags.length > 20) {
-        reject("Test Tags can not be more than 20")
+      if (lt_config.run_settings.tags.length > 15) {
+        reject("Test Tags can not be more than 15")
       }
       for (let i = 0; i < lt_config.run_settings.tags.length; i++) {
         if (lt_config.run_settings.tags[i].length > 50) {
