@@ -363,6 +363,14 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["network"] = false;
     }
 
+    if ("video" in args) {
+      lt_config["run_settings"]["video"] = true
+        ? args["video"] == "true"
+        : false;
+    } else if (!lt_config["run_settings"]["video"]) {
+      lt_config["run_settings"]["video"] = true;
+    }
+
     if ("network_http2" in args) {
       if (args["network_http2"] == "true") {
         lt_config.run_settings.network_http2 = true;

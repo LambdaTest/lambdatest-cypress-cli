@@ -191,6 +191,13 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
 
+    //validate if video field contains expected value
+    if ("video" in lt_config["run_settings"]) {
+      if (![true, false].includes(lt_config["run_settings"]["video"])) {
+        reject("Error!! boolean value is expected in video key");
+      }
+    }
+
     //validate if network_http2 field contains expected value
     if ("network_http2" in lt_config["run_settings"]) {
       if (![true, false].includes(lt_config["run_settings"]["network_http2"])) {
