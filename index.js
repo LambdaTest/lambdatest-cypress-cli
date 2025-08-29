@@ -122,6 +122,11 @@ const argv = require("yargs")
           describe: "Capture Network logs",
           type: "string",
         })
+        .option("video", {
+          alias: "video",
+          describe: "Capture video recording",
+          type: "string",
+        })
         .option("fullHar", {
           alias: "fullHar",
           describe: "Capture Full Har Network logs",

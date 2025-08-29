@@ -23,6 +23,7 @@ module.exports = {
     specs: "<path_of_cypress_spec_files>",
     ignore_files: "",
     network: false,
+    video: true,
     headless: false,
     npm_dependencies: {
       cypress: "9.6.0",
