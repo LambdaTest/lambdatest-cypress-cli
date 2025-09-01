@@ -364,10 +364,8 @@ function sync_args_from_cmd(args) {
     }
 
     if ("video" in args) {
-      lt_config["run_settings"]["video"] = true
-        ? args["video"] == "true"
-        : false;
-    } else if (!lt_config["run_settings"]["video"]) {
+      lt_config["run_settings"]["video"] = args["video"] == "true";
+    } else if (lt_config["run_settings"]["video"] === undefined) {
       lt_config["run_settings"]["video"] = true;
     }
 
