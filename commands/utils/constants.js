@@ -130,7 +130,8 @@ module.exports = {
   },
   FeatureFlagURL:{
     stage:"https://api-stage-hyperexecute.lambdatestinternal.com/sentinel/v1.0/featureflags",
-    prod:"https://api-hyperexecute.lambdatest.com/sentinel/v1.0/featureflags"
+    prod:"https://api-hyperexecute.lambdatest.com/sentinel/v1.0/featureflags",
+    beta:"https://api-stage-hyperexecute.lambdatestinternal.com/sentinel/v1.0/featureflags"
   },
   JobStatus_URL:{
     stage:"https://api-stage-hyperexecute.lambdatestinternal.com/sentinel/v1.0/job/",
