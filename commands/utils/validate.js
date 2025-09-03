@@ -191,6 +191,13 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
 
+    //validate if video field contains expected value
+    if ("video" in lt_config["run_settings"]) {
+      if (![true, false].includes(lt_config["run_settings"]["video"])) {
+        reject("Error!! boolean value is expected in video key");
+      }
+    }
+
     //validate if network_http2 field contains expected value
     if ("network_http2" in lt_config["run_settings"]) {
       if (![true, false].includes(lt_config["run_settings"]["network_http2"])) {
@@ -354,11 +361,11 @@ module.exports = validate_config = function (lt_config, validation_configs) {
     }
 
     //Validate Build Tags
-    //1) less than 5
+    //1) less than 15
     //2) each tag should be less than 50 characters
     if (lt_config.run_settings.build_tags) {
-      if (lt_config.run_settings.build_tags.length > 5) {
-        reject("Build Tags can not be more than 5");
+      if (lt_config.run_settings.build_tags.length > 15) {
+        reject("Build Tags can not be more than 15");
       }
       for (let i = 0; i < lt_config.run_settings.build_tags.length; i++) {
         if (lt_config.run_settings.build_tags[i].length > 50) {
@@ -367,11 +374,11 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
     //Validate Test Tags
-    //1) less than 6
+    //1) less than 15
     //2) each tag should be less than 50 characters
     if (lt_config.run_settings.tags) {
-      if (lt_config.run_settings.tags.length > 6) {
-        reject("Test Tags can not be more than 6");
+      if (lt_config.run_settings.tags.length > 15) {
+        reject("Test Tags can not be more than 15")
       }
       for (let i = 0; i < lt_config.run_settings.tags.length; i++) {
         if (lt_config.run_settings.tags[i].length > 50) {
