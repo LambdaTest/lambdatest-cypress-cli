@@ -165,6 +165,7 @@ const processAccessibilityReport = async (windowNew) => {
         let needsReviewValue = Cypress.env("NEEDS_REVIEW") !== "false"; // Default to true
         let captureScreenshot = Cypress.env("CAPTURE_SCREENSHOT") === "true";
         let passedTestCases = Cypress.env("PASSED_TEST_CASES") === "true";
+        let testId = Cypress.env("TEST_ID") || ""
 
         const payloadToSend = {
             message: 'SET_CONFIG',
@@ -172,7 +173,8 @@ const processAccessibilityReport = async (windowNew) => {
             bestPractice: bestPracticeValue,
             needsReview: needsReviewValue,
             captureScreenshot: captureScreenshot,
-            passedTestCases: passedTestCases
+            passedTestCases: passedTestCases,
+            testId: testId
         };
 
         console.log('log', "SET SCAN: Payload to send: ", payloadToSend);
@@ -186,7 +188,7 @@ const processAccessibilityReport = async (windowNew) => {
 
         let scanData;
         try {
-            const payload = {message: 'GET_LATEST_SCAN_DATA'};
+            const payload = {message: 'GET_LATEST_SCAN_DATA', testId: testId};
             scanData = await getScanData(windowNew, payload);
             LambdatestLog("GET SCAN:LambdaTest Accessibility: Scanning URL");
             if (captureScreenshot) {
@@ -248,17 +250,18 @@ function oldprocessAccessibilityReport(win){
     let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
     let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
     let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
+    let testId = Cypress.env("TEST_ID") || ""
     bestPracticeValue =  bestPracticeValue == "true" ? true : false;
     needsReviewValue = needsReviewValue == "true" ? true : false;
     const payloadToSend = {
         message: 'SET_CONFIG',
         wcagCriteria: wcagCriteriaValue,
         bestPractice: bestPracticeValue,
-        needsReview: needsReviewValue
+        needsReview: needsReviewValue,
+        testId: testId
     }
 
     console.log('log', "payload to send " + payloadToSend);
-    let testId = Cypress.env("TEST_ID") || ""
 
     const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
 
@@ -267,6 +270,7 @@ function oldprocessAccessibilityReport(win){
 
         const payload = {
             message: 'GET_LATEST_SCAN_DATA',
+            testId: testId
         }
 
         cy.wrap(getScanData(win, payload), {timeout: 45000}).then((res) => {
