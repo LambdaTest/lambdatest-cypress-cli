@@ -261,6 +261,11 @@ const argv = require("yargs")
           describe: "Set custom timezone in machine for cypress.",
           type: "string",
         })
+        .option("reg",{
+          alias: "region",
+          describe: "Set data center region (e.g., us, eu)",
+          type: "string",
+        })
         .option("pC",{
           alias: "privateCloud",
           describe: "Set custom private Cloud",
