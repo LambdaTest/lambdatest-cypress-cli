@@ -263,7 +263,7 @@ const argv = require("yargs")
         })
         .option("reg",{
           alias: "region",
-          describe: "Set data center region (e.g., us, eu)",
+          describe: "Set data center region (e.g., us, eu, ap)",
           type: "string",
         })
         .option("pC",{
