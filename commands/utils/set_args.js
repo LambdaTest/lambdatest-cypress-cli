@@ -461,6 +461,13 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["timezone"] = "";
     }
 
+    //Check for region
+    if ("region" in args) {
+      lt_config["run_settings"]["region"] = args["region"];
+    } else if (!lt_config["run_settings"]["region"]) {
+      lt_config["run_settings"]["region"] = "";
+    }
+
     if ("privateCloud" in args) {
       if (args["privateCloud"]=="true"){
         lt_config["run_settings"]["privateCloud"] = true;

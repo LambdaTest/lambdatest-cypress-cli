@@ -205,6 +205,17 @@ module.exports = validate_config = function (lt_config, validation_configs) {
       }
     }
 
+    //validate if region field contains expected value
+    if ("region" in lt_config["run_settings"]) {
+      if (
+        !(
+          typeof lt_config["run_settings"]["region"] === "string"
+        )
+      ) {
+        reject("Error!! string value is expected in region key");
+      }
+    }
+
     //validate if accessibility field contains expected value
     if ("accessibility" in lt_config["run_settings"]) {
       if (![true, false].includes(lt_config["run_settings"]["accessibility"])) {
