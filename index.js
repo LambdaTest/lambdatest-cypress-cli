@@ -270,6 +270,11 @@ const argv = require("yargs")
           alias: "privateCloud",
           describe: "Set custom private Cloud",
           type: "bool",
+        })
+        .option("enableCFT", {
+          alias: "enableCFT",
+          describe: "Enable Chrome for Testing feature flag",
+          type: "bool",
         });
     },
     function (argv) {

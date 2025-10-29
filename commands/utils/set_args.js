@@ -478,6 +478,14 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["privateCloud"] = false ;
     }
 
+    if ("enableCFT" in args) {
+      if (args["enableCFT"] == "true") {
+        lt_config.run_settings.enableCFT = true;
+      } else {
+        lt_config.run_settings.enableCFT = false;
+      }
+    }
+
     //Check for stop on failure location
     if ("stop_on_failure" in args) {
       lt_config["run_settings"]["stop_on_failure"] = true;
