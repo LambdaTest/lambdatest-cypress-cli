@@ -389,6 +389,10 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["useNode18"] = false;
     }
 
+    if ("useNodeVersion" in args) {
+      lt_config.run_settings.useNodeVersion = args["useNodeVersion"];
+    }
+
     if ("accessibility" in args) {
       if (args["accessibility"] == "true") {
         lt_config.run_settings.accessibility = true;
@@ -476,6 +480,14 @@ function sync_args_from_cmd(args) {
       }
     }else if (!lt_config["run_settings"]["privateCloud"]) {
       lt_config["run_settings"]["privateCloud"] = false ;
+    }
+
+    if ("enableCFT" in args) {
+      if (args["enableCFT"] == "true") {
+        lt_config.run_settings.enableCFT = true;
+      } else {
+        lt_config.run_settings.enableCFT = false;
+      }
     }
 
     //Check for stop on failure location
