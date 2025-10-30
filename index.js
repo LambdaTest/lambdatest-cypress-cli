@@ -246,6 +246,11 @@ const argv = require("yargs")
           describe: "Use node version 18 for cypress",
           type: "bool",
         })
+        .option("nodeV", {
+          alias: "useNodeVersion",
+          describe: "Specify Node.js version for Cypress runtime",
+          type: "string",
+        })
         .option("net_sse", {
           alias: "network_sse",
           describe: "Bypass sse events calls for Network logs",

@@ -389,6 +389,10 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["useNode18"] = false;
     }
 
+    if ("useNodeVersion" in args) {
+      lt_config.run_settings.useNodeVersion = args["useNodeVersion"];
+    }
+
     if ("accessibility" in args) {
       if (args["accessibility"] == "true") {
         lt_config.run_settings.accessibility = true;
