@@ -120,7 +120,7 @@ const Accessibility = (on, config) => {
               return launchOptions
             }
           }
-          cli_version = execSync("lambdatest-cypress --version");
+          cli_version = execSync("npx lambdatest-cypress --version");
           cli_version = cli_version.toString().trim();
         } catch(err) {
           console.log(`Error in loading Accessibility Automation extension: ${err.message}`);
