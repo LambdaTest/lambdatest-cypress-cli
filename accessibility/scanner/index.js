@@ -194,19 +194,16 @@ const processAccessibilityReport = async (windowNew) => {
             if (captureScreenshot) {
                 if (scanData && scanData.data && scanData.data.length > 0 && globalScreenshots) {
                     const firstDataItem = scanData.data[0];
+                    
+                    // Extension always provides screenshotId and screenBound in each issue
+                    // Get screenshotId from the first issue to use the extension's ID
                     if (firstDataItem.events && firstDataItem.events.length > 0) {
                         const firstEvent = firstDataItem.events[0];
-                        if (firstEvent.issues && firstEvent.issues.length > 0) {
-                            // Update screenshotId with the actual screenshotId
-                            globalScreenshots[0].screenshotId=firstEvent.issues[0].screenshotId;
+                        if (firstEvent.issues && firstEvent.issues.length > 0 && firstEvent.issues[0].screenshotId) {
+                            globalScreenshots[0].screenshotId = firstEvent.issues[0].screenshotId;
                         }
                     }
-                    for (let i = 0; i < scanData.data.length; i++) {
-                        if (scanData.data[i].screenshots && Array.isArray(scanData.data[i].screenshots)) {
-                            scanData.data[i].screenshots = globalScreenshots;
-                            break;
-                        }
-                    }
+                    scanData.data[0].screenshots = globalScreenshots;
                 }
                 globalScreenshots = null;
             }
