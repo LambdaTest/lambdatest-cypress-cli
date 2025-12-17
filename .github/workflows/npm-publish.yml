@@ -7,37 +7,34 @@ on:
   release:
     types: [created]
 
-permissions:
-  id-token: write  # Required for OIDC
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'lambdatest'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: 20
+          node-version: 16
       - run: npm ci
 
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: 20
+          node-version: 16
           registry-url: https://registry.npmjs.org/
       - name: PUBLISHING Cypress CLI Version ${{ github.event.release.tag_name }}
         run: |
-          npm install -g npm@latest
           npm ci
           npm publish --access public
           echo "CHECKING on NPM REPO, whether new version starts reflecting there or not:";
           npm view lambdatest-cypress-cli versions --json
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Send custom JSON data to Slack workflow
         id: slack
         uses: slackapi/slack-github-action@v1.17.0
