@@ -6,7 +6,6 @@ const LambdatestLog = (message) => {
 
 let globalScreenshots = null;
 const captureScreenshot = Cypress.env("CAPTURE_SCREENSHOT") === "true";
-const scanIframes = Cypress.env("SCAN_IFRAMES") === "true"; // Default to false
 
 const commandsToOverride = [
     'visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check',
@@ -166,7 +165,6 @@ const processAccessibilityReport = async (windowNew) => {
         let needsReviewValue = Cypress.env("NEEDS_REVIEW") !== "false"; // Default to true
         let captureScreenshot = Cypress.env("CAPTURE_SCREENSHOT") === "true";
         let passedTestCases = Cypress.env("PASSED_TEST_CASES") === "true";
-        let scanIframes = Cypress.env("SCAN_IFRAMES") === "true"; // Default to false
         let testId = Cypress.env("TEST_ID") || ""
 
         const payloadToSend = {
@@ -176,7 +174,6 @@ const processAccessibilityReport = async (windowNew) => {
             needsReview: needsReviewValue,
             captureScreenshot: captureScreenshot,
             passedTestCases: passedTestCases,
-            scanIframes: scanIframes,
             testId: testId
         };
 
