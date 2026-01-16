@@ -6,6 +6,7 @@ const LambdatestLog = (message) => {
 
 let globalScreenshots = null;
 const captureScreenshot = Cypress.env("CAPTURE_SCREENSHOT") === "true";
+let scanCount = 0;
 
 const commandsToOverride = [
     'visit', 'click', 'type', 'request', 'dblclick', 'rightclick', 'clear', 'check',
@@ -190,6 +191,12 @@ const processAccessibilityReport = async (windowNew) => {
         try {
             const payload = {message: 'GET_LATEST_SCAN_DATA', testId: testId};
             scanData = await getScanData(windowNew, payload);
+            
+            if (scanData && !(scanData instanceof Error)) {
+                scanCount++;
+                scanData.scanCount = scanCount;
+            }
+            
             LambdatestLog("GET SCAN:LambdaTest Accessibility: Scanning URL");
             if (captureScreenshot) {
                 if (scanData && scanData.data && scanData.data.length > 0 && globalScreenshots) {
@@ -273,6 +280,10 @@ function oldprocessAccessibilityReport(win){
         cy.wrap(getScanData(win, payload), {timeout: 45000}).then((res) => {
             LambdatestLog('log', "scanning data ");
 
+            if (res && !(res instanceof Error) && res.message == "GET_LATEST_SCAN_DATA") {
+                scanCount++;
+                res.scanCount = scanCount;
+            }
 
             cy.task('initializeFile', filePath).then((filePath) => {
                 cy.task('readFileIfExists', filePath,{ log: true, timeout: 45000 }).then((result) => {
