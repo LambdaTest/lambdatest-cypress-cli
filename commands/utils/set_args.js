@@ -612,7 +612,14 @@ function sync_args_from_cmd(args) {
 
     lt_config["run_settings"]["sys_envs"] = envs;
 
-    if ("exclude_specs" in lt_config["run_settings"]) {
+    if ("exclude_specs" in args) {
+      lt_config["run_settings"]["exclude_specs"] =
+        args["exclude_specs"].split(",");
+      console.log(
+        "specs to exclude are",
+        lt_config["run_settings"]["exclude_specs"]
+      );
+    } else if ("exclude_specs" in lt_config["run_settings"]) {
       lt_config["run_settings"]["exclude_specs"] =
         lt_config["run_settings"]["exclude_specs"].split(",");
       console.log(
@@ -620,7 +627,7 @@ function sync_args_from_cmd(args) {
         lt_config["run_settings"]["exclude_specs"]
       );
     } else {
-      lt_config["run_settings"]["exclude_specs"] == [];
+      lt_config["run_settings"]["exclude_specs"] = [];
     }
 
     if ("fullHar" in args) {
