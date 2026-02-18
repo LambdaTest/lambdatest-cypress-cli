@@ -102,6 +102,11 @@ const argv = require("yargs")
           describe: "Files to ignore in the project zip",
           type: "string",
         })
+        .option("es", {
+          alias: "exclude_specs",
+          describe: "Comma-separated spec file paths or patterns to exclude from test execution",
+          type: "string",
+        })
         .option("sync", {
           alias: "sync-mode",
           describe: "Sync Build",
