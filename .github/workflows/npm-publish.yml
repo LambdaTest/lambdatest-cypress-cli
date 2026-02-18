@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-      - run: npm ci
+      - run: npm i
 
   publish-npm:
     needs: build
@@ -29,7 +29,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: PUBLISHING Cypress CLI Version ${{ github.event.release.tag_name }}
         run: |
-          npm ci
+          npm i
           npm publish --access public
           echo "CHECKING on NPM REPO, whether new version starts reflecting there or not:";
           npm view lambdatest-cypress-cli versions --json
