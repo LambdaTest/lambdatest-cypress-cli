@@ -1,7 +1,7 @@
-const https = require('https');
 const axios = require('axios');
 const constants = require("./utils/constants.js");
 const process = require("process");
+const { createHttpsAgent } = require("./utils/proxy_agent.js");
 
 function get_build_info(args) {
   return new Promise(function (resolve, reject) {
@@ -47,6 +47,7 @@ function get_build_info(args) {
         username: username,
         password: access_key,
       },
+      proxy: false,
     };
     if ("reject_unauthorized" in args) {
       if (
@@ -57,10 +58,14 @@ function get_build_info(args) {
         return;
       } else {
         if (args["reject_unauthorized"] == "false") {
-          options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+          options.httpsAgent = createHttpsAgent(false);
           console.log("Setting rejectUnauthorized to false for web requests");
+        } else {
+          options.httpsAgent = createHttpsAgent(true);
         }
       }
+    } else {
+      options.httpsAgent = createHttpsAgent(true);
     }
 
     axios(options)

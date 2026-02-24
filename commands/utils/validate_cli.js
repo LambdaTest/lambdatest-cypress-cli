@@ -1,18 +1,22 @@
-const https = require('https');
 const axios = require('axios');
 const constants = require("./constants.js");
+const { createHttpsAgent } = require("./proxy_agent.js");
 
 function validate_cli(env = "prod", rejectUnauthorized) {
   console.log("Validating CLI");
   return new Promise(function (resolve, reject) {
+    let requestUrl = constants[env].INTEGRATION_BASE_URL + constants.CLI;
     let options = {
       method: 'get',
-      url: constants[env].INTEGRATION_BASE_URL + constants.CLI,
+      url: requestUrl,
+      proxy: false,
     };
     if (rejectUnauthorized == false) {
-      options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+      options.httpsAgent = createHttpsAgent(false);
+    } else {
+      options.httpsAgent = createHttpsAgent(true);
     }
-   
+
     axios(options)
     .then(response => {
       resolve(response.data);
