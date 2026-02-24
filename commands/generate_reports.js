@@ -37,11 +37,13 @@ function download_artefact(
       gzip: true,
       timeout: 120000,
       responseType: 'stream',
-      httpsAgent: createHttpsAgent(rejectUnauthorized !== false),
       proxy: false,
     };
     if (rejectUnauthorized == false) {
+      options.httpsAgent = createHttpsAgent(false);
       console.log("Setting rejectUnauthorized to false for web requests");
+    } else {
+      options.httpsAgent = createHttpsAgent(true);
     }
 
     axios(options)

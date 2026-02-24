@@ -9,9 +9,13 @@ function validate_cli(env = "prod", rejectUnauthorized) {
     let options = {
       method: 'get',
       url: requestUrl,
-      httpsAgent: createHttpsAgent(rejectUnauthorized !== false),
       proxy: false,
     };
+    if (rejectUnauthorized == false) {
+      options.httpsAgent = createHttpsAgent(false);
+    } else {
+      options.httpsAgent = createHttpsAgent(true);
+    }
 
     console.log("[DEBUG] Request URL:", requestUrl);
     console.log("[DEBUG] rejectUnauthorized:", rejectUnauthorized);

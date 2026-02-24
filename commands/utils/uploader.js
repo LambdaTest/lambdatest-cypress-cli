@@ -15,9 +15,14 @@ function get_signed_url(lt_config, prefix, env = "prod") {
     }
     let options = {
       headers: api_headers,
-      httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
       proxy: false,
     };
+
+    if (lt_config.run_settings.reject_unauthorized == false) {
+      options.httpsAgent = createHttpsAgent(false);
+    } else {
+      options.httpsAgent = createHttpsAgent(true);
+    }
     let data = {
       Username: lt_config['lambdatest_auth']['username'],
       token: lt_config['lambdatest_auth']['access_key'],
@@ -78,9 +83,14 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
           headers: {
             'Content-Type': 'application/zip',
           },
-          httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
           proxy: false,
         };
+
+        if (lt_config.run_settings.reject_unauthorized == false) {
+          options.httpsAgent = createHttpsAgent(false);
+        } else {
+          options.httpsAgent = createHttpsAgent(true);
+        }
 
         axios.put(url, formData, options)
         .then(response => {

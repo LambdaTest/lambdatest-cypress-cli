@@ -40,18 +40,6 @@ function get_build_info(args) {
         );
       }
     }
-    if ("reject_unauthorized" in args) {
-      if (
-        args["reject_unauthorized"] != "false" &&
-        args["reject_unauthorized"] != "true"
-      ) {
-        console.log("reject_unauthorized has to boolean");
-        return;
-      }
-      if (args["reject_unauthorized"] == "false") {
-        console.log("Setting rejectUnauthorized to false for web requests");
-      }
-    }
     let options = {
       method: 'get',
       url: constants[env].BUILD_BASE_URL + args.buildId,
@@ -59,9 +47,26 @@ function get_build_info(args) {
         username: username,
         password: access_key,
       },
-      httpsAgent: createHttpsAgent(args["reject_unauthorized"] !== "false"),
       proxy: false,
     };
+    if ("reject_unauthorized" in args) {
+      if (
+        args["reject_unauthorized"] != "false" &&
+        args["reject_unauthorized"] != "true"
+      ) {
+        console.log("reject_unauthorized has to boolean");
+        return;
+      } else {
+        if (args["reject_unauthorized"] == "false") {
+          options.httpsAgent = createHttpsAgent(false);
+          console.log("Setting rejectUnauthorized to false for web requests");
+        } else {
+          options.httpsAgent = createHttpsAgent(true);
+        }
+      }
+    } else {
+      options.httpsAgent = createHttpsAgent(true);
+    }
 
     axios(options)
     .then(response => {

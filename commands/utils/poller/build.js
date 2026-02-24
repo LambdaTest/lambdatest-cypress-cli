@@ -11,9 +11,13 @@ function stop_cypress_session(lt_config, session_id, env) {
         Username: lt_config["lambdatest_auth"]["username"],
       },
       method: "PUT",
-      httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
       proxy: false,
     };
+    if (lt_config.run_settings.reject_unauthorized == false) {
+      options.httpsAgent = createHttpsAgent(false);
+    } else {
+      options.httpsAgent = createHttpsAgent(true);
+    }
 
     axios(options)
     .then(response => {

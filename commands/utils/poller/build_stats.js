@@ -12,9 +12,14 @@ function get_completed_build_info(lt_config, session_id, env) {
       username: lt_config["lambdatest_auth"]["username"],
       password: lt_config["lambdatest_auth"]["access_key"],
     },
-    httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
     proxy: false,
   };
+
+  if (lt_config.run_settings.reject_unauthorized == false) {
+    options.httpsAgent = createHttpsAgent(false);
+  } else {
+    options.httpsAgent = createHttpsAgent(true);
+  }
 
   return new Promise(function (resolve, reject) {
     axios(options)
@@ -53,9 +58,14 @@ function get_build_info(lt_config, session_id,hyperexecute, env, update_status, 
       username: lt_config["lambdatest_auth"]["username"],
       password: lt_config["lambdatest_auth"]["access_key"],
     },
-    httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
     proxy: false,
   };
+
+  if (lt_config.run_settings.reject_unauthorized == false) {
+    options.httpsAgent = createHttpsAgent(false);
+  } else {
+    options.httpsAgent = createHttpsAgent(true);
+  }
 
   axios(options)
   .then(async response => {

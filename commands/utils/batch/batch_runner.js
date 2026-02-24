@@ -26,9 +26,13 @@ function run_test(payload, env = "prod", rejectUnauthorized,lt_config) {
     let options = {
       url: constants[env].INTEGRATION_BASE_URL + constants.RUN_URL,
       data: payload,
-      httpsAgent: createHttpsAgent(rejectUnauthorized !== false),
       proxy: false,
     };
+    if (rejectUnauthorized == false) {
+      options.httpsAgent = createHttpsAgent(false);
+    } else {
+      options.httpsAgent = createHttpsAgent(true);
+    }
     let responseData = null;
     getFeatureFlags(
       lt_config["lambdatest_auth"]["username"],
