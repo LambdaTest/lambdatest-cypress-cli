@@ -13,9 +13,9 @@ const builds = require("../poller/build");
 const batcher = require("./batcher.js");
 const reports = require("../../../commands/generate_reports.js");
 const { fail } = require("yargs");
-const https = require('https');
 const axios = require('axios');
 const converter=require("../../../converter/converter.js");
+const { createHttpsAgent } = require("../proxy_agent.js");
 const { execSync } = require('child_process');
 
 var batchCounter = 0;
@@ -26,10 +26,9 @@ function run_test(payload, env = "prod", rejectUnauthorized,lt_config) {
     let options = {
       url: constants[env].INTEGRATION_BASE_URL + constants.RUN_URL,
       data: payload,
+      httpsAgent: createHttpsAgent(rejectUnauthorized !== false),
+      proxy: false,
     };
-    if (rejectUnauthorized == false) {
-      options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
-    }
     let responseData = null;
     getFeatureFlags(
       lt_config["lambdatest_auth"]["username"],
@@ -171,7 +170,9 @@ async function getFeatureFlags(username, accessKey,env="prod") {
     axios.get(url, {
       headers: {
         'Authorization': `Basic ${auth}`
-      }
+      },
+      httpsAgent: createHttpsAgent(true),
+      proxy: false,
     })
     .then(response => {
       resolve(response.data);
@@ -243,7 +244,9 @@ async function pollJobStatus(jobID,username,accessKey,env) {
       const response = await axios.get(constants.JobStatus_URL[env]+jobID, {
         headers: {
           'Authorization': `Basic ${auth}`
-        }
+        },
+        httpsAgent: createHttpsAgent(true),
+        proxy: false,
       });
       const data = response.data;
       // console.log(`Polling attempt ${attempt + 1}`);
@@ -282,7 +285,15 @@ function downloadHyperExecuteCLI(env) {
     }
     const file = fs.createWriteStream(filePath);
 
-    https.get(downloadUrl, (response) => {
+    const proxyUrl = process.env.HTTPS_PROXY ||
+                     process.env.https_proxy ||
+                     process.env.HTTP_PROXY ||
+                     process.env.http_proxy;
+    const downloadOptions = proxyUrl
+      ? { agent: new (require('https-proxy-agent'))(proxyUrl) }
+      : {};
+
+    https.get(downloadUrl, downloadOptions, (response) => {
       response.pipe(file);
       file.on('finish', () => {
         file.close(() => {

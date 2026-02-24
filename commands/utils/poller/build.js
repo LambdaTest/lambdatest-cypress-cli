@@ -1,6 +1,6 @@
 const constants = require("../constants");
-const https = require('https');
 const axios = require('axios');
+const { createHttpsAgent } = require("../proxy_agent.js");
 //https://api.cypress-v3.dev.lambdatest.io/api/v1/test/stop/?sessionId=4a7434b9-1905-4aaf-a178-9167acb00c5d
 function stop_cypress_session(lt_config, session_id, env) {
   return new Promise(function (resolve, reject) {
@@ -11,10 +11,9 @@ function stop_cypress_session(lt_config, session_id, env) {
         Username: lt_config["lambdatest_auth"]["username"],
       },
       method: "PUT",
+      httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
+      proxy: false,
     };
-    if (lt_config.run_settings.reject_unauthorized == false) {
-      options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
-    }
 
     axios(options)
     .then(response => {

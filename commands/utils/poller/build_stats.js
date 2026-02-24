@@ -1,7 +1,7 @@
 const constants = require("../constants");
 const builds = require("./build");
-const https = require('https');
 const axios = require('axios');
+const { createHttpsAgent } = require("../proxy_agent.js");
 var get_build_info_count = 0;
 
 function get_completed_build_info(lt_config, session_id, env) {
@@ -12,11 +12,9 @@ function get_completed_build_info(lt_config, session_id, env) {
       username: lt_config["lambdatest_auth"]["username"],
       password: lt_config["lambdatest_auth"]["access_key"],
     },
+    httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
+    proxy: false,
   };
-
-  if (lt_config.run_settings.reject_unauthorized == false) {
-    options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
-  }
 
   return new Promise(function (resolve, reject) {
     axios(options)
@@ -55,11 +53,9 @@ function get_build_info(lt_config, session_id,hyperexecute, env, update_status, 
       username: lt_config["lambdatest_auth"]["username"],
       password: lt_config["lambdatest_auth"]["access_key"],
     },
+    httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
+    proxy: false,
   };
-
-  if (lt_config.run_settings.reject_unauthorized == false) {
-    options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
-  }
 
   axios(options)
   .then(async response => {
@@ -189,6 +185,8 @@ function fetchHyperExecuteJobStatus(jobId, env, username, accessKey) {
       username: username,
       password: accessKey,
     },
+    httpsAgent: createHttpsAgent(true),
+    proxy: false,
   };
 
   return new Promise((resolve, reject) => {

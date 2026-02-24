@@ -1,9 +1,9 @@
-const https = require('https');
 const axios = require('axios');
 const fs = require("fs");
 const constants = require("./constants.js");
 const { reject } = require('async');
 const FormData = require('form-data');
+const { createHttpsAgent } = require("./proxy_agent.js");
 
 
 function get_signed_url(lt_config, prefix, env = "prod") {
@@ -14,17 +14,15 @@ function get_signed_url(lt_config, prefix, env = "prod") {
       'Content-Type': 'application/json'
     }
     let options = {
-      headers: api_headers
+      headers: api_headers,
+      httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
+      proxy: false,
     };
     let data = {
       Username: lt_config['lambdatest_auth']['username'],
       token: lt_config['lambdatest_auth']['access_key'],
       prefix: prefix,
     };
-
-    if (lt_config.run_settings.reject_unauthorized == false) {
-      options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
-    }
 
     axios.post(url, data, options)
     .then(response => {
@@ -76,18 +74,15 @@ function upload_zip(lt_config, file_name, prefix = "project", env = "prod") {
         formData.append('filename', file_name);
         formData.append(file_name, fs.createReadStream(file_name));
         
-        const headers = {
-          'Content-Type': 'application/zip',
-        };
         let options = {
-          headers: headers
+          headers: {
+            'Content-Type': 'application/zip',
+          },
+          httpsAgent: createHttpsAgent(lt_config.run_settings.reject_unauthorized !== false),
+          proxy: false,
         };
 
-        if (lt_config.run_settings.reject_unauthorized == false) {
-          options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
-        }
-       
-        axios.put(url, formData, headers)
+        axios.put(url, formData, options)
         .then(response => {
           console.log(`Uploaded ` + prefix + ` file successfully`);
           resolve(responseDataURL);

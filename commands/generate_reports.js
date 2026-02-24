@@ -1,4 +1,3 @@
-const https = require('https');
 const axios = require('axios');
 const constants = require("./utils/constants.js");
 const process = require("process");
@@ -7,6 +6,7 @@ const { access } = require("fs");
 var fs = require("fs");
 const StreamZip = require("node-stream-zip");
 const path = require("path");
+const { createHttpsAgent } = require("./utils/proxy_agent.js");
 
 function download_artefact(
   username,
@@ -36,10 +36,11 @@ function download_artefact(
       },
       gzip: true,
       timeout: 120000,
-      responseType: 'stream'
+      responseType: 'stream',
+      httpsAgent: createHttpsAgent(rejectUnauthorized !== false),
+      proxy: false,
     };
     if (rejectUnauthorized == false) {
-      options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
       console.log("Setting rejectUnauthorized to false for web requests");
     }
 
