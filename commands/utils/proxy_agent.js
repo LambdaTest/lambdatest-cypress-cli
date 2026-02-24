@@ -1,6 +1,5 @@
 const https = require('https');
-const url = require('url');
-const HttpsProxyAgent = require('https-proxy-agent');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 
 /**
  * Creates an HTTPS agent that supports authenticated proxy servers
@@ -17,15 +16,10 @@ function createHttpsAgent(rejectUnauthorized = true) {
                    process.env.http_proxy;
 
   if (proxyUrl) {
-    // https-proxy-agent v5 accepts a string URL or a url.parse() result object.
-    // We parse it ourselves so we can merge in rejectUnauthorized for the
-    // target TLS connection (used after the CONNECT tunnel is established).
-    const parsed = url.parse(proxyUrl);
-    parsed.rejectUnauthorized = rejectUnauthorized;
-    return new HttpsProxyAgent(parsed);
+    return new HttpsProxyAgent(proxyUrl, { rejectUnauthorized });
   }
 
-  return new https.Agent({ rejectUnauthorized: rejectUnauthorized });
+  return new https.Agent({ rejectUnauthorized });
 }
 
 module.exports = { createHttpsAgent };
