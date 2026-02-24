@@ -13,6 +13,7 @@ const builds = require("../poller/build");
 const batcher = require("./batcher.js");
 const reports = require("../../../commands/generate_reports.js");
 const { fail } = require("yargs");
+const https = require('https');
 const axios = require('axios');
 const converter=require("../../../converter/converter.js");
 const { createHttpsAgent } = require("../proxy_agent.js");
@@ -289,13 +290,7 @@ function downloadHyperExecuteCLI(env) {
     }
     const file = fs.createWriteStream(filePath);
 
-    const proxyUrl = process.env.HTTPS_PROXY ||
-                     process.env.https_proxy ||
-                     process.env.HTTP_PROXY ||
-                     process.env.http_proxy;
-    const downloadOptions = proxyUrl
-      ? { agent: new (require('https-proxy-agent'))(proxyUrl) }
-      : {};
+    const downloadOptions = { agent: createHttpsAgent(true) };
 
     https.get(downloadUrl, downloadOptions, (response) => {
       response.pipe(file);
