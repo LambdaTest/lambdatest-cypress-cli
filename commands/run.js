@@ -60,9 +60,10 @@ module.exports = function (args) {
       }
       if (cli_flag == false) {
         console.log(
-          "Unsupported version detected!!!! Please upgrade your CLI to @latest"
+          "WARNING: Unsupported CLI version (" + cli_version + "). Proceeding anyway..."
         );
-      } else {
+      }
+      {
         if ("lambdatest-config-file" in args) {
           //sync arguments between lt config and command line
           set_args
