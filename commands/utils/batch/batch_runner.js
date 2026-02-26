@@ -43,7 +43,7 @@ function run_test(payload, env = "prod", rejectUnauthorized,lt_config) {
         env
       );
     } catch (e) {
-      console.log("Error while fetching feature flags in run_test, proceeding without feature flags:", e.message || e);
+      console.log("FF not found. Continuing");
     }
 
     (async function () {
