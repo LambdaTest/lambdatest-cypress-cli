@@ -65,7 +65,7 @@ function get_build_info(args) {
         }
       }
     } else {
-      options.httpsAgent = createHttpsAgent(false);
+      options.httpsAgent = createHttpsAgent(true);
     }
 
     axios(options)

@@ -181,7 +181,7 @@ function generate_report(args) {
         access_key: access_key,
       },
       run_settings: {
-        reject_unauthorized: false,
+        reject_unauthorized: true,
       },
     };
 

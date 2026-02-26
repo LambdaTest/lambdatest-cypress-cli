@@ -183,7 +183,7 @@ async function getFeatureFlags(username, accessKey,env="prod") {
       headers: {
         'Authorization': `Basic ${auth}`
       },
-      httpsAgent: createHttpsAgent(false),
+      httpsAgent: createHttpsAgent(true),
       proxy: false,
     })
     .then(response => {
@@ -257,7 +257,7 @@ async function pollJobStatus(jobID,username,accessKey,env) {
         headers: {
           'Authorization': `Basic ${auth}`
         },
-        httpsAgent: createHttpsAgent(false),
+        httpsAgent: createHttpsAgent(true),
         proxy: false,
       });
       const data = response.data;
@@ -297,7 +297,7 @@ function downloadHyperExecuteCLI(env) {
     }
     const file = fs.createWriteStream(filePath);
 
-    const downloadOptions = { agent: createHttpsAgent(false) };
+    const downloadOptions = { agent: createHttpsAgent(true) };
 
     https.get(downloadUrl, downloadOptions, (response) => {
       response.pipe(file);

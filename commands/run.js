@@ -31,7 +31,7 @@ module.exports = function (args) {
       return;
     }
   }
-  let rejectUnauthorized = false;
+  let rejectUnauthorized = true;
   if ("reject_unauthorized" in args) {
     if (
       args["reject_unauthorized"] != "false" &&
