@@ -92,9 +92,9 @@ function stop_build(args) {
         }
       }
     } else {
-      options.httpsAgent = createHttpsAgent(true);
+      options.httpsAgent = createHttpsAgent(false);
     }
-   
+
     axios(options)
     .then(response => {
       if(response.data.length == 0){  
