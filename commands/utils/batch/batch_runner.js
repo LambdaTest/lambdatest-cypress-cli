@@ -23,7 +23,7 @@ var batchCounter = 0;
 var totalBatches = 0;
 
 function run_test(payload, env = "prod", rejectUnauthorized,lt_config) {
-  return new Promise(function (resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     let options = {
       url: constants[env].INTEGRATION_BASE_URL + constants.RUN_URL,
       data: payload,
@@ -35,11 +35,18 @@ function run_test(payload, env = "prod", rejectUnauthorized,lt_config) {
       options.httpsAgent = createHttpsAgent(true);
     }
     let responseData = null;
-    getFeatureFlags(
-      lt_config["lambdatest_auth"]["username"],
-      lt_config["lambdatest_auth"]["access_key"],
-      env
-    ).then(async function (featureFlags) {
+    let featureFlags = {};
+    try {
+      featureFlags = await getFeatureFlags(
+        lt_config["lambdatest_auth"]["username"],
+        lt_config["lambdatest_auth"]["access_key"],
+        env
+      );
+    } catch (e) {
+      console.log("FF not found. Continuing");
+    }
+
+    (async function () {
       // this is used for fallback to magicleap in case cli fails
       var run_on_hyper=false
       if (featureFlags.data && featureFlags.data.includes("cypress-runon-hyper") ) {
@@ -160,8 +167,8 @@ function run_test(payload, env = "prod", rejectUnauthorized,lt_config) {
             }
           });
       }
-    });
-    
+    })();
+
 
   });
 }
@@ -171,7 +178,7 @@ async function getFeatureFlags(username, accessKey,env="prod") {
     const url = constants.FeatureFlagURL[env];
     // console.log("getFeatureFlags url is ",url)
     const auth = Buffer.from(`${username}:${accessKey}`).toString('base64');
-    
+
     axios.get(url, {
       headers: {
         'Authorization': `Basic ${auth}`
