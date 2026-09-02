@@ -127,16 +127,21 @@ const Accessibility = (on, config) => {
         }
         
       })
-      config.env.WCAG_CRITERIA= process.env.WCAG_CRITERIA;
-      config.env.BEST_PRACTICE= process.env.BEST_PRACTICE;
-      config.env.NEEDS_REVIEW= process.env.NEEDS_REVIEW;
-      config.env.ACCESSIBILITY_REPORT_PATH = process.env.ACCESSIBILITY_REPORT_PATH;
-      config.env.ACCESSIBILITY = process.env.ACCESSIBILITY;
-      config.env.TEST_ID = process.env.TEST_ID;
-      config.env.ACCESSIBILITY_OVERIDE_COMMANDS = process.env.ACCESSIBILITY_OVERIDE_COMMANDS;
-      config.env.CAPTURE_SCREENSHOT = process.env.CAPTURE_SCREENSHOT;
-      config.env.PASSED_TEST_CASES = process.env.PASSED_TEST_CASES;
-      config.env.GENERATE_REPORT_API = process.env.GENERATE_REPORT_API || "NA";
+      const accessibilityEnv = {
+        WCAG_CRITERIA: process.env.WCAG_CRITERIA,
+        BEST_PRACTICE: process.env.BEST_PRACTICE,
+        NEEDS_REVIEW: process.env.NEEDS_REVIEW,
+        ACCESSIBILITY_REPORT_PATH: process.env.ACCESSIBILITY_REPORT_PATH,
+        ACCESSIBILITY: process.env.ACCESSIBILITY,
+        TEST_ID: process.env.TEST_ID,
+        ACCESSIBILITY_OVERIDE_COMMANDS: process.env.ACCESSIBILITY_OVERIDE_COMMANDS,
+        CAPTURE_SCREENSHOT: process.env.CAPTURE_SCREENSHOT,
+        PASSED_TEST_CASES: process.env.PASSED_TEST_CASES,
+        GENERATE_REPORT_API: process.env.GENERATE_REPORT_API || "NA",
+      };
+      Object.assign(config.env, accessibilityEnv);
+      // Cypress >= 15.10: Cypress.env() is removed in the browser; values must be exposed
+      config.expose = Object.assign(config.expose || {}, accessibilityEnv);
       console.log(`parameter for accessibility report ACCESSIBILITY - ` + config.env.ACCESSIBILITY)
       console.log(`parameter for accessibility report WCAG_CRITERIA - ` + config.env.WCAG_CRITERIA)
       console.log(`parameter for accessibility report BEST_PRACTICE -` + config.env.BEST_PRACTICE)
