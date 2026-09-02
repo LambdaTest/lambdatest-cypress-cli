@@ -1,11 +1,15 @@
 
+// Cypress >= 15.10 exposes values via Cypress.expose(); Cypress.env() is removed in v16
+const getA11yEnv = (key) =>
+    typeof Cypress.expose === 'function' ? Cypress.expose(key) : Cypress.env(key);
+
 const LambdatestLog = (message) => {
-    if (!Cypress.env('LAMBDATEST_LOGS')) return;
+    if (!getA11yEnv('LAMBDATEST_LOGS')) return;
     cy.task('lambdatest_log', message);
 }
 
 let globalScreenshots = null;
-const captureScreenshot = Cypress.env("CAPTURE_SCREENSHOT") === "true";
+const captureScreenshot = getA11yEnv("CAPTURE_SCREENSHOT") === "true";
 let scanCount = 0;
 
 const commandsToOverride = [
@@ -161,12 +165,12 @@ const sendScanData = (win, payload) => {
 
 const processAccessibilityReport = async (windowNew) => {
     try {
-        let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
-        let bestPracticeValue = Cypress.env("BEST_PRACTICE") === "true";
-        let needsReviewValue = Cypress.env("NEEDS_REVIEW") !== "false"; // Default to true
-        let captureScreenshot = Cypress.env("CAPTURE_SCREENSHOT") === "true";
-        let passedTestCases = Cypress.env("PASSED_TEST_CASES") === "true";
-        let testId = Cypress.env("TEST_ID") || ""
+        let wcagCriteriaValue = getA11yEnv("WCAG_CRITERIA") || "wcag21a";
+        let bestPracticeValue = getA11yEnv("BEST_PRACTICE") === "true";
+        let needsReviewValue = getA11yEnv("NEEDS_REVIEW") !== "false"; // Default to true
+        let captureScreenshot = getA11yEnv("CAPTURE_SCREENSHOT") === "true";
+        let passedTestCases = getA11yEnv("PASSED_TEST_CASES") === "true";
+        let testId = getA11yEnv("TEST_ID") || ""
 
         const payloadToSend = {
             message: 'SET_CONFIG',
@@ -223,9 +227,9 @@ const processAccessibilityReport = async (windowNew) => {
 
         try {
 
-            const testId = Cypress.env("TEST_ID") || "dummy1234"
-            const reportAPI = Cypress.env("GENERATE_REPORT_API") || "http://localhost:43000/api/v1.0/cypress/generateAccessibilityReport"
-            const filePath =  Cypress.env("ACCESSIBILITY_REPORT_PATH") || ('cypress/results/accessibilityReport_'  + testId + '.json');
+            const testId = getA11yEnv("TEST_ID") || "dummy1234"
+            const reportAPI = getA11yEnv("GENERATE_REPORT_API") || "http://localhost:43000/api/v1.0/cypress/generateAccessibilityReport"
+            const filePath =  getA11yEnv("ACCESSIBILITY_REPORT_PATH") || ('cypress/results/accessibilityReport_'  + testId + '.json');
             console.log("TestID is",testId);
             const payloadToSend = {
                 message: 'SEND_ACCESSIBILITY_DATA',
@@ -251,10 +255,10 @@ const processAccessibilityReport = async (windowNew) => {
 }
 
 function oldprocessAccessibilityReport(win){
-    let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
-    let bestPracticeValue = Cypress.env("BEST_PRACTICE") || false;
-    let needsReviewValue = Cypress.env("NEEDS_REVIEW") || true;
-    let testId = Cypress.env("TEST_ID") || ""
+    let wcagCriteriaValue = getA11yEnv("WCAG_CRITERIA") || "wcag21a";
+    let bestPracticeValue = getA11yEnv("BEST_PRACTICE") || false;
+    let needsReviewValue = getA11yEnv("NEEDS_REVIEW") || true;
+    let testId = getA11yEnv("TEST_ID") || ""
     bestPracticeValue =  bestPracticeValue == "true" ? true : false;
     needsReviewValue = needsReviewValue == "true" ? true : false;
     const payloadToSend = {
@@ -267,7 +271,7 @@ function oldprocessAccessibilityReport(win){
 
     console.log('log', "payload to send " + payloadToSend);
 
-    const filePath = Cypress.env("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
+    const filePath = getA11yEnv("ACCESSIBILITY_REPORT_PATH") || 'cypress/results/accessibilityReport_' + testId + '.json';
 
     cy.wrap(setScanConfig(win, payloadToSend), {timeout: 30000}).then((res) => {
         console.log('logging config reponse', res);
@@ -324,12 +328,12 @@ function oldprocessAccessibilityReport(win){
     });
 }
 
-const overRideCommands = JSON.parse(Cypress.env("ACCESSIBILITY_OVERIDE_COMMANDS") || "false");
+const overRideCommands = JSON.parse(getA11yEnv("ACCESSIBILITY_OVERIDE_COMMANDS") || "false");
 
 if (overRideCommands) {
     commandsToOverride.forEach((command) => {
         Cypress.Commands.overwrite(command, (originalFn, ...args) => {
-            let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+            let isAccessibilityLoaded = getA11yEnv("ACCESSIBILITY") || false;
             const state = cy.state('current'), Subject = 'getSubjectFromChain' in cy;
             const stateName = state === null || state === void 0 ? void 0 : state.get('name');
             let stateType = null;
@@ -351,7 +355,7 @@ if (overRideCommands) {
         }
 
         if (!commandsToWrap.includes(command.attributes.name)) return;
-        let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+        let isAccessibilityLoaded = getA11yEnv("ACCESSIBILITY") || false;
         if (!isAccessibilityLoaded){
             console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
             return;
@@ -368,14 +372,14 @@ if (overRideCommands) {
 afterEach(() => {
     if(overRideCommands){
         cy.window().then(async (win) => {
-            let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+            let isAccessibilityLoaded = getA11yEnv("ACCESSIBILITY") || false;
             if (!isAccessibilityLoaded) return cy.wrap({});
 
             cy.wrap(processAccessibilityReport(win), {timeout: 45000})
         });
     }else{
         console.log("after each hook")
-        let isAccessibilityLoaded = Cypress.env("ACCESSIBILITY") || false;
+        let isAccessibilityLoaded = getA11yEnv("ACCESSIBILITY") || false;
         if (!isAccessibilityLoaded){
             console.log('log', "accessibility not enabled " + isAccessibilityLoaded);
             return;
