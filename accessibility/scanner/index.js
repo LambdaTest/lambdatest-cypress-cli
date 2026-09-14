@@ -159,6 +159,18 @@ const sendScanData = (win, payload) => {
     });
 };
 
+// The orchestrators serialise these as JSON, since env vars are flat strings.
+const parseExclusionList = (raw) => {
+    if (!raw) return [];
+    try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        console.error("Accessibility: could not parse exclusion list", raw, e);
+        return [];
+    }
+};
+
 const processAccessibilityReport = async (windowNew) => {
     try {
         let wcagCriteriaValue = Cypress.env("WCAG_CRITERIA") || "wcag21a";
@@ -167,6 +179,10 @@ const processAccessibilityReport = async (windowNew) => {
         let captureScreenshot = Cypress.env("CAPTURE_SCREENSHOT") === "true";
         let passedTestCases = Cypress.env("PASSED_TEST_CASES") === "true";
         let testId = Cypress.env("TEST_ID") || ""
+        // Forwarded unexpanded: the extension resolves them against the axe it
+        // runs, so an id axe does not know is dropped rather than throwing.
+        let excludeRules = parseExclusionList(Cypress.env("EXCLUDE_RULES"));
+        let excludeRuleCategories = parseExclusionList(Cypress.env("EXCLUDE_RULE_CATEGORIES"));
 
         const payloadToSend = {
             message: 'SET_CONFIG',
@@ -175,6 +191,8 @@ const processAccessibilityReport = async (windowNew) => {
             needsReview: needsReviewValue,
             captureScreenshot: captureScreenshot,
             passedTestCases: passedTestCases,
+            excludeRules: excludeRules,
+            excludeRuleCategories: excludeRuleCategories,
             testId: testId
         };
 
