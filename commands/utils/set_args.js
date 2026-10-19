@@ -403,6 +403,41 @@ function sync_args_from_cmd(args) {
       lt_config["run_settings"]["accessibility"] = false;
     }
 
+    // The backend takes an array only, so a comma string is resolved here
+    // rather than failing the whole batch at decode.
+    for (const key of [
+      "accessibility.excludeRules",
+      "accessibility.excludeRuleCategories",
+    ]) {
+      // null means unset, not a bad type.
+      if (!(key in lt_config["run_settings"]) || lt_config["run_settings"][key] === null) {
+        delete lt_config["run_settings"][key];
+        continue;
+      }
+
+      const value = lt_config["run_settings"][key];
+      let entries = null;
+      if (Array.isArray(value)) {
+        entries = value;
+      } else if (typeof value === "string") {
+        entries = value.split(",");
+      }
+
+      // Dropped, not forwarded: one entry the backend cannot decode would
+      // reject every test in the run.
+      if (entries === null || entries.some((entry) => typeof entry !== "string")) {
+        console.log(
+          `Warning !! Value of ${key} must be an array of strings or a comma-separated string. Ignoring it`
+        );
+        delete lt_config["run_settings"][key];
+        continue;
+      }
+
+      lt_config["run_settings"][key] = entries
+        .map((entry) => entry.trim())
+        .filter((entry) => entry !== "");
+    }
+
     if ("network_ws" in args) {
       if (args["network_ws"] == "true") {
         lt_config.run_settings.network_ws = true;

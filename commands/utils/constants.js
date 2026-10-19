@@ -64,6 +64,8 @@ module.exports = {
       "https://api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
       "https://api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
+    ACCESSIBILITY_VALIDATE_URL:
+      "https://api.lambdatest.com/accessibility/api/v1/validate-rules",
   },
   beta: {
     INTEGRATION_BASE_URL:
@@ -76,6 +78,8 @@ module.exports = {
       "https://api-cypdevenv22-dev.lambdatestinternal.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
       "https://api-cypdevenv22-dev.lambdatestinternal.com/automation/api/v1/cypress/artefacts/test/",
+    ACCESSIBILITY_VALIDATE_URL:
+      "https://api-cypdevenv22-dev.lambdatestinternal.com/accessibility/api/v1/validate-rules",
   },
 
   stage: {
@@ -87,6 +91,8 @@ module.exports = {
       "https://stage-api.lambdatestinternal.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
       "https://stage-api.lambdatestinternal.com/automation/api/v1/cypress/artefacts/test/",
+    ACCESSIBILITY_VALIDATE_URL:
+      "https://stage-api.lambdatestinternal.com/accessibility/api/v1/validate-rules",
   },
 
   stage_new: {
@@ -98,6 +104,8 @@ module.exports = {
       "https://prestage-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
       "https://prestage-api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
+    ACCESSIBILITY_VALIDATE_URL:
+      "https://prestage-api.lambdatest.com/accessibility/api/v1/validate-rules",
   },
   preprod: {
     INTEGRATION_BASE_URL: "https://preprod-api.lambdatest.com/liis",
@@ -108,6 +116,8 @@ module.exports = {
       "https://preprod-api.lambdatest.com/automation/api/v1/sessions?limit=200&session_id=",
     REPORT_URL:
       "https://preprod-api.lambdatest.com/automation/api/v1/cypress/artefacts/test/",
+    ACCESSIBILITY_VALIDATE_URL:
+      "https://preprod-api.lambdatest.com/accessibility/api/v1/validate-rules",
   },
 
   HyperExecuteCLIBinaryDownloadLinks: {
