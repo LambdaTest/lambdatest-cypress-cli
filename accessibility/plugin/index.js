@@ -137,6 +137,8 @@ const Accessibility = (on, config) => {
       config.env.CAPTURE_SCREENSHOT = process.env.CAPTURE_SCREENSHOT;
       config.env.PASSED_TEST_CASES = process.env.PASSED_TEST_CASES;
       config.env.GENERATE_REPORT_API = process.env.GENERATE_REPORT_API || "NA";
+      config.env.EXCLUDE_RULES = process.env.EXCLUDE_RULES;
+      config.env.EXCLUDE_RULE_CATEGORIES = process.env.EXCLUDE_RULE_CATEGORIES;
       console.log(`parameter for accessibility report ACCESSIBILITY - ` + config.env.ACCESSIBILITY)
       console.log(`parameter for accessibility report WCAG_CRITERIA - ` + config.env.WCAG_CRITERIA)
       console.log(`parameter for accessibility report BEST_PRACTICE -` + config.env.BEST_PRACTICE)
@@ -148,6 +150,8 @@ const Accessibility = (on, config) => {
       console.log(`parameter for accessibility report GENERATE_REPORT_API -` + config.env.GENERATE_REPORT_API)
       console.log(`parameter for accessibility report CAPTURE_SCREENSHOT -` + config.env.CAPTURE_SCREENSHOT)
       console.log(`parameter for accessibility report PASSED_TEST_CASES -` + config.env.PASSED_TEST_CASES)
+      console.log(`parameter for accessibility report EXCLUDE_RULES -` + config.env.EXCLUDE_RULES)
+      console.log(`parameter for accessibility report EXCLUDE_RULE_CATEGORIES -` + config.env.EXCLUDE_RULE_CATEGORIES)
       console.log(`parameter for accessibility report CYPRESS_CLI_VERSION -` + cli_version)
 
       return config;
