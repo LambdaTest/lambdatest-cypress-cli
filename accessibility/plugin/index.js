@@ -139,6 +139,11 @@ const Accessibility = (on, config) => {
       config.env.GENERATE_REPORT_API = process.env.GENERATE_REPORT_API || "NA";
       config.env.EXCLUDE_RULES = process.env.EXCLUDE_RULES;
       config.env.EXCLUDE_RULE_CATEGORIES = process.env.EXCLUDE_RULE_CATEGORIES;
+      // Cypress >= 15.10 reads these in the browser via Cypress.expose(); Cypress.env() is removed in 16.
+      config.expose = config.expose || {};
+      ["WCAG_CRITERIA", "BEST_PRACTICE", "NEEDS_REVIEW", "ACCESSIBILITY_REPORT_PATH", "ACCESSIBILITY", "TEST_ID",
+        "ACCESSIBILITY_OVERIDE_COMMANDS", "CAPTURE_SCREENSHOT", "PASSED_TEST_CASES", "GENERATE_REPORT_API",
+        "EXCLUDE_RULES", "EXCLUDE_RULE_CATEGORIES"].forEach((key) => { config.expose[key] = config.env[key]; });
       console.log(`parameter for accessibility report ACCESSIBILITY - ` + config.env.ACCESSIBILITY)
       console.log(`parameter for accessibility report WCAG_CRITERIA - ` + config.env.WCAG_CRITERIA)
       console.log(`parameter for accessibility report BEST_PRACTICE -` + config.env.BEST_PRACTICE)
